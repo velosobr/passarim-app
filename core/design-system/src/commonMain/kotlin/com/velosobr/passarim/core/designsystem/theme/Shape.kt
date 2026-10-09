@@ -1,0 +1,20 @@
+package com.velosobr.passarim.core.designsystem.theme
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Shapes
+import androidx.compose.ui.unit.dp
+
+/** Formas dos tokens: 12dp (cards), 16dp (campos), 28dp (chips e botões grandes). */
+val PassarimShapes =
+    Shapes(
+        small = RoundedCornerShape(12.dp),
+        medium = RoundedCornerShape(16.dp),
+        large = RoundedCornerShape(28.dp),
+    )
+
+/** Espaçamento dos tokens: grade de 4dp, margem de tela 16dp, alvo de toque mínimo 48dp. */
+object PassarimDimens {
+    val unit = 4.dp
+    val screenMargin = 16.dp
+    val touchTarget = 48.dp
+}

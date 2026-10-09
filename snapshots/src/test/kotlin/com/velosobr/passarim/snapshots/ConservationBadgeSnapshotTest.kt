@@ -1,0 +1,66 @@
+package com.velosobr.passarim.snapshots
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import app.cash.paparazzi.DeviceConfig
+import app.cash.paparazzi.Paparazzi
+import com.android.resources.NightMode
+import com.velosobr.passarim.core.designsystem.components.ConservationBadge
+import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
+import com.velosobr.passarim.core.domain.ConservationStatus
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.setResourceReaderAndroidContext
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+
+/** Selo de conservação em claro e escuro, com fonte 1.0×, 1.3× e 2.0×. */
+@OptIn(ExperimentalResourceApi::class)
+@RunWith(Parameterized::class)
+class ConservationBadgeSnapshotTest(
+    private val dark: Boolean,
+    private val fontScale: Float,
+) {
+    @get:Rule
+    val paparazzi =
+        Paparazzi(
+            deviceConfig =
+                DeviceConfig.PIXEL_5.copy(
+                    nightMode = if (dark) NightMode.NIGHT else NightMode.NOTNIGHT,
+                    fontScale = fontScale,
+                ),
+        )
+
+    @Before
+    fun setUp() {
+        // O Compose Multiplatform lê strings e fontes pelo contexto Android; no Paparazzi ninguém o inicializa.
+        setResourceReaderAndroidContext(paparazzi.context)
+    }
+
+    @Test
+    fun allStatuses() {
+        val name = "${if (dark) "dark" else "light"}-${fontScale}x"
+        paparazzi.snapshot(name) {
+            PassarimTheme(darkTheme = dark) {
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ConservationStatus.entries.forEach { ConservationBadge(it) }
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "dark={0}, fontScale={1}")
+        fun params(): List<Array<Any>> = listOf(false, true).flatMap { dark -> listOf(1.0f, 1.3f, 2.0f).map { arrayOf<Any>(dark, it) } }
+    }
+}

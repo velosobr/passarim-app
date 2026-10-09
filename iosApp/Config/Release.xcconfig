@@ -1,0 +1,3 @@
+// Release: só HTTPS. Endereço reservado e inválido até a etapa 6 (deploy).
+PASSARIM_DEBUG = NO
+BFF_BASE_URL = https:/$()/api.passarim.invalid

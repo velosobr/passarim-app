@@ -1,0 +1,5 @@
+<resources>
+    <!-- Valores dos tokens (passarim-tokens.json): surface claro e primaryContainer escuro. -->
+    <color name="splash_background">#F6FBF3</color>
+    <color name="ic_launcher_background">#00522A</color>
+</resources>

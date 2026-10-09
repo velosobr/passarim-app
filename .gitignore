@@ -1,0 +1,13 @@
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+build/
+local.properties
+# IDEs e sistema
+.idea/
+*.iml
+.DS_Store
+# Xcode (o projeto é gerado por XcodeGen)
+iosApp/iosApp.xcodeproj/
+iosApp/build/
+iosApp/Config/Local.xcconfig

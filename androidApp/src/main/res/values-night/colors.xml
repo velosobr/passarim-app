@@ -1,0 +1,4 @@
+<resources>
+    <!-- surface do tema escuro (tokens). -->
+    <color name="splash_background">#101410</color>
+</resources>

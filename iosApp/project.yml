@@ -1,0 +1,41 @@
+# Projeto Xcode gerado por XcodeGen (`xcodegen generate` dentro de iosApp/). O .xcodeproj não é versionado.
+name: iosApp
+options:
+  bundleIdPrefix: com.velosobr
+  deploymentTarget:
+    iOS: "15.0"
+configFiles:
+  Debug: Config/Debug.xcconfig
+  Release: Config/Release.xcconfig
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.velosobr.passarim
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+    SWIFT_VERSION: "5.0"
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    # O script do Gradle precisa ler e escrever fora da pasta do app.
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../app/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+    OTHER_LDFLAGS: "-framework PassarimApp"
+  configs:
+    Debug:
+      INFOPLIST_FILE: iosApp/Info-Debug.plist
+    Release:
+      INFOPLIST_FILE: iosApp/Info-Release.plist
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: iosApp
+        excludes:
+          - Info-Debug.plist
+          - Info-Release.plist
+    preBuildScripts:
+      - name: Compilar o framework Kotlin
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
+          ./gradlew :app:embedAndSignAppleFrameworkForXcode
