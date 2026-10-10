@@ -26,7 +26,7 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class ConservationBadgeSnapshotTest(
     private val dark: Boolean,
-    private val fontScale: Float,
+    private val fontScalePercent: Int,
 ) {
     @get:Rule
     val paparazzi =
@@ -34,7 +34,7 @@ class ConservationBadgeSnapshotTest(
             deviceConfig =
                 DeviceConfig.PIXEL_5.copy(
                     nightMode = if (dark) NightMode.NIGHT else NightMode.NOTNIGHT,
-                    fontScale = fontScale,
+                    fontScale = fontScalePercent / 100f,
                 ),
         )
 
@@ -46,7 +46,7 @@ class ConservationBadgeSnapshotTest(
 
     @Test
     fun allStatuses() {
-        val name = "${if (dark) "dark" else "light"}-${fontScale}x"
+        val name = "${if (dark) "dark" else "light"}-${fontScalePercent / 100f}x"
         paparazzi.snapshot(name) {
             PassarimTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -60,7 +60,9 @@ class ConservationBadgeSnapshotTest(
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "dark={0}, fontScale={1}")
-        fun params(): List<Array<Any>> = listOf(false, true).flatMap { dark -> listOf(1.0f, 1.3f, 2.0f).map { arrayOf<Any>(dark, it) } }
+        // Percentuais inteiros: um Float no nome do teste viraria "1,3" ou "1.3" conforme o locale da máquina,
+        // e o nome vira nome de arquivo de referência (gravado no Mac, verificado no Linux do CI).
+        @Parameterized.Parameters(name = "dark={0}, fontScale={1}%")
+        fun params(): List<Array<Any>> = listOf(false, true).flatMap { dark -> listOf(100, 130, 200).map { arrayOf<Any>(dark, it) } }
     }
 }

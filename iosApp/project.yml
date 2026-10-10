@@ -18,6 +18,8 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: NO
     FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../app/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
     OTHER_LDFLAGS: "-framework PassarimApp"
+    # O framework só existe para iosSimulatorArm64: sem isto, o destino genérico também compila x86_64.
+    EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
   configs:
     Debug:
       INFOPLIST_FILE: iosApp/Info-Debug.plist
