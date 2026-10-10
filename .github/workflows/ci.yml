@@ -23,14 +23,14 @@ jobs:
         run: ./gradlew ktlintCheck detekt allTests :snapshots:verifyPaparazziDebug :androidApp:assembleDebug
       - name: Diferenças dos snapshots (só em falha)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: paparazzi-diffs
           path: snapshots/build/paparazzi/failures
           if-no-files-found: ignore
       - name: Relatórios de teste (só em falha)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: "**/build/reports/tests"
