@@ -10,6 +10,7 @@ Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Com
 |---|---|
 | JDK | **21** (o Paparazzi 2.x gera bytecode Java 21) |
 | Android SDK | plataforma 37 (`compileSdk` 37) e um emulador ou aparelho |
+| Android Studio | **Quail 3 (2026.1.4) ou mais novo**. O AGP 9.4 não abre em versões anteriores: o Narwhal (2025.1) e o Otter recusam o sync com "The project is using an incompatible version (AGP 9.4.1) of the Android Gradle plugin". Em *Settings › Build Tools › Gradle*, use o **JDK 21** como Gradle JDK |
 | Xcode | 16+ com um simulador iOS (só para o iOS) |
 | XcodeGen | `brew install xcodegen` (gera o projeto Xcode) |
 | Docker | para o backend local (`passarim-docs`) |
