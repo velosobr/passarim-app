@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21 # o Paparazzi 2.x exige JDK 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: ktlint, detekt, testes, snapshots e APK debug
         run: ./gradlew ktlintCheck detekt allTests :snapshots:verifyPaparazziDebug :androidApp:assembleDebug
       - name: Diferenças dos snapshots (só em falha)
@@ -44,7 +44,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - uses: actions/setup-go@v5
         with:
           go-version: stable
@@ -76,7 +76,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Link do framework iOS
         run: ./gradlew :app:linkDebugFrameworkIosSimulatorArm64
       - name: Build do projeto Xcode (simulador, sem assinatura)
