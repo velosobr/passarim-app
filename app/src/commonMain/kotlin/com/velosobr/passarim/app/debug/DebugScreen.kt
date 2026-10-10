@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,7 @@ fun DebugScreen(
     onAction: (DebugAction) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(PassarimDimens.screenMargin),
+        modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(PassarimDimens.screenMargin),
         verticalArrangement = Arrangement.spacedBy(PassarimDimens.screenMargin),
     ) {
         Text(stringResource(Res.string.debug_title), style = MaterialTheme.typography.titleLarge)
