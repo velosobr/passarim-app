@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.feature.explore.domain)
-            implementation(projects.core.presentation)
+            api(projects.core.presentation) // ExploreState expõe ScreenError
             implementation(projects.core.designSystem)
             implementation(libs.compose.resources)
             implementation(libs.lifecycle.viewmodel.savedstate)

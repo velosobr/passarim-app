@@ -7,7 +7,8 @@ android {
 }
 
 dependencies {
-    // A partir da 5b, cada feature/*/presentation também entra aqui.
+    // Cada feature/*/presentation entra aqui, com `implementation` (os recursos precisam virar assets).
     implementation(projects.core.designSystem)
+    implementation(projects.feature.explore.presentation)
     testImplementation(libs.junit4)
 }
