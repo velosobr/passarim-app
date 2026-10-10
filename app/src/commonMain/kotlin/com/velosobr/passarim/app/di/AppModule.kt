@@ -3,6 +3,7 @@ package com.velosobr.passarim.app.di
 import com.velosobr.passarim.app.debug.DebugViewModel
 import com.velosobr.passarim.core.data.coreDataModule
 import com.velosobr.passarim.core.domain.AppConfig
+import com.velosobr.passarim.feature.explore.data.exploreDataModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -23,6 +24,6 @@ fun initKoin(
 ) {
     startKoin {
         platform()
-        modules(module { single { config } }, coreDataModule, debugModule)
+        modules(module { single { config } }, coreDataModule, exploreDataModule, debugModule)
     }
 }
