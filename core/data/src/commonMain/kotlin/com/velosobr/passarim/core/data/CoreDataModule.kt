@@ -7,5 +7,6 @@ import org.koin.dsl.module
 val coreDataModule =
     module {
         single { createHttpClient(platformHttpEngine(), get()) }
+        single { MediaUrlRewriter(get()) }
         single<FiltersRepository> { RemoteFiltersRepository(get()) }
     }
