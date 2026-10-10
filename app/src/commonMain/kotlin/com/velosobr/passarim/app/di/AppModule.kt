@@ -1,17 +1,19 @@
 package com.velosobr.passarim.app.di
 
-import com.velosobr.passarim.app.debug.DebugViewModel
+import com.velosobr.passarim.app.favorites.InMemoryFavoritesRepository
 import com.velosobr.passarim.core.data.coreDataModule
 import com.velosobr.passarim.core.domain.AppConfig
+import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.feature.explore.data.exploreDataModule
+import com.velosobr.passarim.feature.explore.presentation.explorePresentationModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-private val debugModule =
+/** O que só o `app` decide: os favoritos ficam em memória até a 5d trazer o Room. */
+private val appModule =
     module {
-        viewModelOf(::DebugViewModel)
+        single<FavoritesRepository> { InMemoryFavoritesRepository() }
     }
 
 /**
@@ -24,6 +26,6 @@ fun initKoin(
 ) {
     startKoin {
         platform()
-        modules(module { single { config } }, coreDataModule, exploreDataModule, debugModule)
+        modules(module { single { config } }, coreDataModule, appModule, exploreDataModule, explorePresentationModule)
     }
 }

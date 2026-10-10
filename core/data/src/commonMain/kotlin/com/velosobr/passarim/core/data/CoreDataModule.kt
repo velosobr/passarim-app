@@ -6,5 +6,6 @@ import org.koin.dsl.module
 val coreDataModule =
     module {
         single { createHttpClient(platformHttpEngine(), get()) }
+        single(MediaHttpClientQualifier) { createMediaHttpClient(platformHttpEngine()) }
         single { MediaUrlRewriter(get()) }
     }

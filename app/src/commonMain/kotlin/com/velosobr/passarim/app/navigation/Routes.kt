@@ -16,6 +16,8 @@ data object FavoritesRoute
 @Serializable
 data object SettingsRoute
 
-/** Tela cheia, fora das abas e só em debug: prova da conexão com o BFF. */
+/** Tela cheia, empilhada sobre as abas (sem a barra inferior). A tela real chega na 5c. */
 @Serializable
-data object DebugRoute
+data class DetailRoute(
+    val id: String,
+)

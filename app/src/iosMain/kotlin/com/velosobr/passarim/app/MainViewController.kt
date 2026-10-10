@@ -19,5 +19,5 @@ fun MainViewController(
         initKoin(config)
         koinStarted = true
     }
-    return ComposeUIViewController { App(config) }
+    return ComposeUIViewController { App() }
 }
