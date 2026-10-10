@@ -2,7 +2,7 @@
 
 Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Compose Multiplatform**: todo o código de produto fica em `commonMain`; Android e iOS só têm uma casca fina. O app fala com o BFF do [`passarim-bff`](https://github.com/velosobr/passarim-bff), que roda localmente no `docker compose` do [`passarim-docs`](https://github.com/velosobr/passarim-docs).
 
-> Estado: **etapa 5a (fundação)**. O app abre com splash e as abas Explorar · Favoritos · Configurações (ainda vazias) e tem uma tela de depuração que prova a conexão com o BFF. As telas de produto chegam nas fatias 5b a 5e (specs em `passarim-docs/docs/superpowers/specs/`).
+> Estado: **etapa 5b (Explorar)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros de bioma e estado, paginação e favoritos (em memória até a 5d). Detalhe, Favoritos e Configurações chegam nas fatias 5c a 5e (specs em `passarim-docs/docs/superpowers/specs/`).
 
 ## Requisitos
 
@@ -27,22 +27,34 @@ graph TD
     app --> core-data
     app --> core-presentation
     app --> core-design-system
+    app --> explore-data
+    app --> explore-presentation
+    explore-presentation --> explore-domain
+    explore-presentation --> core-presentation
+    explore-presentation --> core-design-system
+    explore-data --> explore-domain
+    explore-data --> core-data
+    explore-domain --> core-domain
     core-data --> core-domain
     core-presentation --> core-domain
     core-design-system --> core-domain
     core-database --> core-domain
     snapshots --> core-design-system
+    snapshots --> explore-presentation
 ```
 
 | Módulo | Papel |
 |---|---|
 | `androidApp` | Casca Android: `Application`, `Activity`, splash, ícone adaptativo, `BuildConfig` |
 | `iosApp` | Casca iOS: projeto Xcode gerado por XcodeGen, Info.plist, ícone e Launch Screen |
-| `app` | `App()`, navegação (abas), Koin, tela de depuração, ponto de entrada do iOS |
+| `app` | `App()`, navegação (abas e telas empilhadas), Koin, Coil, favoritos em memória, ponto de entrada do iOS |
 | `core:domain` | `Result`, `DataError`, `AppConfig`, modelos e interfaces de repositório |
-| `core:data` | Ktor (`safeCall`), repositórios que falam com o BFF, `MediaUrlRewriter` |
-| `core:presentation` | `UiText`, `ObserveAsEvents`, mensagens de erro |
-| `core:design-system` | Tema (tokens, Manrope), componentes genéricos |
+| `core:data` | Ktor (`safeCall`), o cliente da API e o de mídia, `MediaUrlRewriter` |
+| `core:presentation` | `UiText`, `ObserveAsEvents`, mensagens de erro, `ScreenError` |
+| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card de espécie, busca, chip, estados, skeleton) |
+| `feature:explore:domain` | `ExploreRepository`, `SpeciesPage`, limpeza da busca |
+| `feature:explore:data` | `GET /v1/species` e `GET /v1/filters` (DTOs e mappers) |
+| `feature:explore:presentation` | `ExploreViewModel` (MVI), tela, sheet de filtros |
 | `core:database` | Reservado para o Room (etapa 5d); alvo `jvm()` só para testes |
 | `snapshots` | Testes de snapshot com Paparazzi (módulo Android puro) |
 | `build-logic` | *Convention plugins* do Gradle |
@@ -62,9 +74,9 @@ Regras: `presentation → domain ← data`; features nunca dependem entre si; s�
 
 O texto puro (HTTP) só é permitido no **debug** (network security config no Android, exceção de ATS no iOS). O release exige HTTPS e aponta para um endereço reservado e inválido até a etapa 6 (deploy).
 
-**Prova da conexão:** em debug, a aba Configurações tem o botão "Depuração", que busca `GET /v1/filters` e mostra a contagem de biomas e estados. Com o backend parado, mostra "Sem conexão".
+**Conferindo a conexão:** a aba Explorar já lista as aves do BFF. Com o backend parado, mostra "Sem conexão"; com o Traefik no ar e as réplicas do BFF paradas, "Serviço indisponível".
 
-**Mídia:** o BFF monta URLs de mídia com `localhost`. No debug o `MediaUrlRewriter` troca só o host pelo do BFF (por exemplo `10.0.2.2`), mantendo a porta. O `compose` não muda.
+**Mídia:** o BFF monta URLs de mídia com `localhost`. No debug o `MediaUrlRewriter` troca só o host pelo do BFF (por exemplo `10.0.2.2`), mantendo a porta. O `compose` não muda. As fotos são baixadas pelo Coil 3 com um `HttpClient` próprio para mídia (sem a URL base da API e com timeouts maiores).
 
 No simulador iOS listado por `xcrun simctl list devices`, prefira `-destination 'platform=iOS Simulator,id=<UDID>'` ao nome do aparelho se o `xcodebuild` não achar o destino.
 
