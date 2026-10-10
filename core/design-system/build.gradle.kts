@@ -11,6 +11,7 @@ kotlin {
             api(libs.compose.material3)
             api(libs.compose.ui)
             api(libs.compose.resources)
+            implementation(libs.coil.compose)
         }
         commonTest.dependencies {
             implementation(libs.assertk)
