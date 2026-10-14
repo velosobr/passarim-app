@@ -78,4 +78,6 @@ class FakeFavoritesRepository : FavoritesRepository {
     override suspend fun toggle(summary: SpeciesSummary) {
         ids.value = if (summary.id in ids.value) ids.value - summary.id else ids.value + summary.id
     }
+
+    override suspend fun refresh(summary: SpeciesSummary) = Unit
 }

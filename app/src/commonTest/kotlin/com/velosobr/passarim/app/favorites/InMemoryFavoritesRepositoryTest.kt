@@ -26,4 +26,17 @@ class InMemoryFavoritesRepositoryTest {
                 assertThat(awaitItem()).isEqualTo(setOf("sabia-laranjeira"))
             }
         }
+
+    @Test
+    fun `refresh atualiza o resumo de um favorito e ignora quem nao e favorito`() =
+        runTest {
+            val repo = InMemoryFavoritesRepository()
+            repo.toggle(bemTeVi)
+            val novaFoto = bemTeVi.copy(thumbnailUrl = "https://media/bem-te-vi.webp")
+
+            repo.refresh(novaFoto)
+            repo.refresh(sabia)
+
+            assertThat(repo.summaries.value).isEqualTo(mapOf("bem-te-vi" to novaFoto))
+        }
 }

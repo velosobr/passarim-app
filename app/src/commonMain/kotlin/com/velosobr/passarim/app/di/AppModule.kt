@@ -1,19 +1,21 @@
 package com.velosobr.passarim.app.di
 
 import com.velosobr.passarim.app.favorites.InMemoryFavoritesRepository
+import com.velosobr.passarim.app.settings.InMemorySettingsRepository
 import com.velosobr.passarim.core.data.coreDataModule
 import com.velosobr.passarim.core.domain.AppConfig
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.explore.data.exploreDataModule
 import com.velosobr.passarim.feature.explore.presentation.explorePresentationModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-/** O que só o `app` decide: os favoritos ficam em memória até a 5d trazer o Room. */
 private val appModule =
     module {
         single<FavoritesRepository> { InMemoryFavoritesRepository() }
+        single<SettingsRepository> { InMemorySettingsRepository() }
     }
 
 /**

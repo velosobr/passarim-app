@@ -12,4 +12,6 @@ interface FavoritesRepository {
 
     /** Favorita a espécie se ela não for favorita; senão, desfavorita. */
     suspend fun toggle(summary: SpeciesSummary)
+
+    suspend fun refresh(summary: SpeciesSummary)
 }

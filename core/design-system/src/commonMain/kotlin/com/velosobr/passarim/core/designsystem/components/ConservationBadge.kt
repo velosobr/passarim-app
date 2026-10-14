@@ -18,8 +18,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.designsystem.resources.Res
 import com.velosobr.passarim.core.designsystem.resources.conservation_cr
+import com.velosobr.passarim.core.designsystem.resources.conservation_dd
 import com.velosobr.passarim.core.designsystem.resources.conservation_en
 import com.velosobr.passarim.core.designsystem.resources.conservation_ew
+import com.velosobr.passarim.core.designsystem.resources.conservation_ex
 import com.velosobr.passarim.core.designsystem.resources.conservation_lc
 import com.velosobr.passarim.core.designsystem.resources.conservation_nt
 import com.velosobr.passarim.core.designsystem.resources.conservation_vu
@@ -62,4 +64,6 @@ private fun ConservationStatus.label(): StringResource =
         ConservationStatus.EN -> Res.string.conservation_en
         ConservationStatus.CR -> Res.string.conservation_cr
         ConservationStatus.EW -> Res.string.conservation_ew
+        ConservationStatus.EX -> Res.string.conservation_ex
+        ConservationStatus.DD -> Res.string.conservation_dd
     }
