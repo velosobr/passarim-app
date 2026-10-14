@@ -5,18 +5,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import coil3.compose.setSingletonImageLoaderFactory
-import com.velosobr.passarim.app.detail.DetailPlaceholder
 import com.velosobr.passarim.app.images.passarimImageLoader
 import com.velosobr.passarim.app.navigation.DetailRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
 import com.velosobr.passarim.core.data.MediaHttpClientQualifier
 import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
+import com.velosobr.passarim.feature.detail.presentation.DetailRoot
 import io.ktor.client.HttpClient
 import org.koin.compose.koinInject
 
@@ -35,8 +35,8 @@ fun App() {
                 composable<TabsRoute> {
                     TabsScreen(onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) })
                 }
-                composable<DetailRoute> { entry ->
-                    DetailPlaceholder(id = entry.toRoute<DetailRoute>().id, onBack = { rootNav.popBackStack() })
+                composable<DetailRoute> {
+                    DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
                 }
             }
         }

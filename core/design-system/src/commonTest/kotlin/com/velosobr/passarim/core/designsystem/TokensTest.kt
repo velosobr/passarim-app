@@ -50,6 +50,14 @@ class TokensTest {
     }
 
     @Test
+    fun `EX e DD batem com os tokens nos dois temas`() {
+        assertThat(LightConservationPalette[ConservationStatus.EX].background).isEqualTo(Color(0xFFDDDDDD))
+        assertThat(LightConservationPalette[ConservationStatus.DD].content).isEqualTo(Color(0xFF14304D))
+        assertThat(DarkConservationPalette[ConservationStatus.EX].background).isEqualTo(Color(0xFF3C3C3C))
+        assertThat(DarkConservationPalette[ConservationStatus.DD].content).isEqualTo(Color(0xFFD3E4F5))
+    }
+
+    @Test
     fun `as paletas de conservacao tem todos os status com contraste minimo de 4_5`() {
         listOf(LightConservationPalette, DarkConservationPalette).forEach { palette ->
             ConservationStatus.entries.forEach { status ->

@@ -26,6 +26,8 @@ val LightConservationPalette =
             ConservationStatus.EN to ConservationColor(background = Color(0xFFFFC9A3), content = Color(0xFF5A2200)),
             ConservationStatus.CR to ConservationColor(background = Color(0xFFFFB4AB), content = Color(0xFF5C0008)),
             ConservationStatus.EW to ConservationColor(background = Color(0xFFE1D5F0), content = Color(0xFF2E1A4D)),
+            ConservationStatus.EX to ConservationColor(background = Color(0xFFDDDDDD), content = Color(0xFF1F1F1F)),
+            ConservationStatus.DD to ConservationColor(background = Color(0xFFD3E4F5), content = Color(0xFF14304D)),
         ),
     )
 
@@ -38,6 +40,8 @@ val DarkConservationPalette =
             ConservationStatus.EN to ConservationColor(background = Color(0xFF6E3000), content = Color(0xFFFFC9A3)),
             ConservationStatus.CR to ConservationColor(background = Color(0xFF8A1018), content = Color(0xFFFFDAD6)),
             ConservationStatus.EW to ConservationColor(background = Color(0xFF44306A), content = Color(0xFFE8DDFF)),
+            ConservationStatus.EX to ConservationColor(background = Color(0xFF3C3C3C), content = Color(0xFFE3E3E3)),
+            ConservationStatus.DD to ConservationColor(background = Color(0xFF22405E), content = Color(0xFFD3E4F5)),
         ),
     )
 

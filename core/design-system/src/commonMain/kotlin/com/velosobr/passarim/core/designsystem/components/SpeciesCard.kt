@@ -18,9 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -28,10 +26,8 @@ import coil3.compose.AsyncImage
 import com.velosobr.passarim.core.designsystem.resources.Res
 import com.velosobr.passarim.core.designsystem.resources.favorite_add
 import com.velosobr.passarim.core.designsystem.resources.favorite_remove
-import com.velosobr.passarim.core.designsystem.resources.ic_bird
 import com.velosobr.passarim.core.designsystem.resources.ic_favorite_filled
 import com.velosobr.passarim.core.designsystem.resources.ic_favorites
-import com.velosobr.passarim.core.designsystem.resources.photo_placeholder
 import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -76,30 +72,6 @@ fun SpeciesCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-    }
-}
-
-@Composable
-private fun PhotoPlaceholder() {
-    val colors = MaterialTheme.colorScheme
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Brush.linearGradient(listOf(colors.primaryContainer, colors.surfaceVariant))),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            vectorResource(Res.drawable.ic_bird),
-            contentDescription = null,
-            tint = colors.onPrimaryContainer,
-            modifier = Modifier.alpha(0.45f),
-        )
-        Text(
-            stringResource(Res.string.photo_placeholder),
-            style = MaterialTheme.typography.labelSmall,
-            color = colors.onSurfaceVariant,
-            modifier = Modifier.align(Alignment.BottomStart).padding(start = 8.dp, bottom = 6.dp),
-        )
     }
 }
 

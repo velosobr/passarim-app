@@ -1,0 +1,49 @@
+<resources>
+    <string name="map_attribution">© OpenFreeMap © OpenMapTiles · dados © OpenStreetMap</string>
+    <string name="map_unavailable">Mapa indisponível</string>
+    <string name="back">Voltar</string>
+    <string name="family">Família %1$s</string>
+    <string name="fact_size_value">%1$d cm</string>
+    <string name="fact_size">Tamanho</string>
+    <string name="fact_occurrence">Ocorrência</string>
+    <plurals name="fact_biomes">
+        <item quantity="one">%1$d bioma</item>
+        <item quantity="other">%1$d biomas</item>
+    </plurals>
+    <plurals name="fact_states">
+        <item quantity="one">%1$d estado</item>
+        <item quantity="other">%1$d estados</item>
+    </plurals>
+    <string name="section_biome">Bioma</string>
+    <string name="section_diet">Dieta</string>
+    <string name="section_song">Canto</string>
+    <string name="section_about">Sobre a ave</string>
+    <string name="section_facts">Curiosidades</string>
+    <string name="section_gallery">Galeria</string>
+    <string name="section_where">Onde encontrar</string>
+    <string name="fact_bullet">• %1$s</string>
+    <string name="credit_photo">Foto: %1$s</string>
+    <string name="credit_photo_numbered">Foto %1$d: %2$s</string>
+    <string name="credit_audio">Gravação: %1$s</string>
+    <string name="credit_text">Texto: %1$s</string>
+    <string name="credit_unknown_author">Autor não informado</string>
+    <string name="credit_unknown_license">Licença não informada</string>
+    <string name="credit_open_source">Abrir fonte</string>
+    <string name="credits_toggle">Créditos e licenças desta ave</string>
+    <string name="audio_play">Tocar canto</string>
+    <string name="audio_pause">Pausar canto</string>
+    <string name="audio_error">Não foi possível tocar o canto. Toque para tentar de novo.</string>
+    <string name="audio_progress">Progresso do canto</string>
+    <string name="not_found_title">Ave não encontrada</string>
+    <string name="not_found_body">Essa ave não está mais no catálogo ou o link está incorreto.</string>
+    <string name="not_found_action">Voltar para Explorar</string>
+    <string name="error_no_connection_title">Sem conexão</string>
+    <string name="error_no_connection_body">Verifique sua internet e tente de novo.</string>
+    <string name="error_server_title">Serviço indisponível</string>
+    <string name="error_server_body">Não conseguimos carregar esta ave agora. Tente novamente em alguns instantes.</string>
+    <string name="error_rate_limited_title">Muitas tentativas seguidas</string>
+    <string name="error_rate_limited_body">Aguarde alguns segundos e tente de novo.</string>
+    <string name="error_generic_title">Algo deu errado</string>
+    <string name="error_generic_body">Não conseguimos carregar esta ave. Tente de novo.</string>
+    <string name="retry">Tentar novamente</string>
+</resources>

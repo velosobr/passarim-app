@@ -2,7 +2,7 @@
 
 Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Compose Multiplatform**: todo o código de produto fica em `commonMain`; Android e iOS só têm uma casca fina. O app fala com o BFF do [`passarim-bff`](https://github.com/velosobr/passarim-bff), que roda localmente no `docker compose` do [`passarim-docs`](https://github.com/velosobr/passarim-docs).
 
-> Estado: **etapa 5b (Explorar)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros de bioma e estado, paginação e favoritos (em memória até a 5d). Detalhe, Favoritos e Configurações chegam nas fatias 5c a 5e (specs em `passarim-docs/docs/superpowers/specs/`).
+> Estado: **etapa 5c (Detalhe)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros, paginação e favoritos. Tocar numa ave abre o Detalhe: foto, selo de conservação, fatos, canto com player, curiosidades, galeria, mapa "Onde encontrar" e créditos. Favoritos e configurações ficam em memória até a 5d; as telas de Favoritos e Configurações chegam nas fatias 5d e 5e (specs em `passarim-docs/docs/superpowers/specs/`).
 
 ## Requisitos
 
@@ -11,7 +11,7 @@ Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Com
 | JDK | **21** (o Paparazzi 2.x gera bytecode Java 21) |
 | Android SDK | plataforma 37 (`compileSdk` 37) e um emulador ou aparelho |
 | Android Studio | **Quail 3 (2026.1.4) ou mais novo**. O AGP 9.4 não abre em versões anteriores: o Narwhal (2025.1) e o Otter recusam o sync com "The project is using an incompatible version (AGP 9.4.1) of the Android Gradle plugin". Em *Settings › Build Tools › Gradle*, use o **JDK 21** como Gradle JDK |
-| Xcode | 16+ com um simulador iOS (só para o iOS) |
+| Xcode | **26.4** com um simulador iOS (só para o iOS). O Kotlin 2.4.21 é compilado contra o SDK do iOS 26.4: com o Xcode 16 o app compila, mas os testes iOS dos módulos com mapa não linkam (`framework '_LocationEssentials' not found`). O app roda no iOS **16** ou mais novo |
 | XcodeGen | `brew install xcodegen` (gera o projeto Xcode) |
 | Docker | para o backend local (`passarim-docs`) |
 
@@ -29,32 +29,44 @@ graph TD
     app --> core-design-system
     app --> explore-data
     app --> explore-presentation
+    app --> detail-data
+    app --> detail-presentation
     explore-presentation --> explore-domain
     explore-presentation --> core-presentation
     explore-presentation --> core-design-system
     explore-data --> explore-domain
     explore-data --> core-data
     explore-domain --> core-domain
+    detail-presentation --> detail-domain
+    detail-presentation --> core-presentation
+    detail-presentation --> core-design-system
+    detail-data --> detail-domain
+    detail-data --> core-data
+    detail-domain --> core-domain
     core-data --> core-domain
     core-presentation --> core-domain
     core-design-system --> core-domain
     core-database --> core-domain
     snapshots --> core-design-system
     snapshots --> explore-presentation
+    snapshots --> detail-presentation
 ```
 
 | Módulo | Papel |
 |---|---|
 | `androidApp` | Casca Android: `Application`, `Activity`, splash, ícone adaptativo, `BuildConfig` |
 | `iosApp` | Casca iOS: projeto Xcode gerado por XcodeGen, Info.plist, ícone e Launch Screen |
-| `app` | `App()`, navegação (abas e telas empilhadas), Koin, Coil, favoritos em memória, ponto de entrada do iOS |
+| `app` | `App()`, navegação (abas e telas empilhadas), Koin, Coil, favoritos e configurações em memória, ponto de entrada do iOS |
 | `core:domain` | `Result`, `DataError`, `AppConfig`, modelos e interfaces de repositório |
 | `core:data` | Ktor (`safeCall`), o cliente da API e o de mídia, `MediaUrlRewriter` |
 | `core:presentation` | `UiText`, `ObserveAsEvents`, mensagens de erro, `ScreenError` |
-| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card de espécie, busca, chip, estados, skeleton) |
+| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card de espécie, busca, chip, estados, skeleton, hero, fatos, chips rotulados, crédito, galeria) |
 | `feature:explore:domain` | `ExploreRepository`, `SpeciesPage`, limpeza da busca |
 | `feature:explore:data` | `GET /v1/species` e `GET /v1/filters` (DTOs e mappers) |
 | `feature:explore:presentation` | `ExploreViewModel` (MVI), tela, sheet de filtros |
+| `feature:detail:domain` | `SpeciesDetail`, `DetailRepository`, `AudioPlayer`, validação do id, licenças e links |
+| `feature:detail:data` | `GET /v1/species/{id}` (DTOs e mapper que trata nulos e vazios) |
+| `feature:detail:presentation` | `DetailViewModel` (MVI), tela, player (Media3 no Android, AVPlayer no iOS) e mapa (MapLibre) |
 | `core:database` | Reservado para o Room (etapa 5d); alvo `jvm()` só para testes |
 | `snapshots` | Testes de snapshot com Paparazzi (módulo Android puro) |
 | `build-logic` | *Convention plugins* do Gradle |
@@ -77,6 +89,8 @@ O texto puro (HTTP) só é permitido no **debug** (network security config no An
 **Conferindo a conexão:** a aba Explorar já lista as aves do BFF. Com o backend parado, mostra "Sem conexão"; com o Traefik no ar e as réplicas do BFF paradas, "Serviço indisponível".
 
 **Mídia:** o BFF monta URLs de mídia com `localhost`. No debug o `MediaUrlRewriter` troca só o host pelo do BFF (por exemplo `10.0.2.2`), mantendo a porta. O `compose` não muda. As fotos são baixadas pelo Coil 3 com um `HttpClient` próprio para mídia (sem a URL base da API e com timeouts maiores).
+
+**Detalhe:** o canto é transmitido do SeaweedFS a cada reprodução (sem cache de áudio). No iOS a sessão de áudio fica em `playback`, então o canto toca com o aparelho no modo silencioso. O mapa usa o estilo público do OpenFreeMap (sem chave): os tiles vêm direto da internet, não do BFF. Sem internet, ou com o servidor de tiles fora, a seção mostra "Mapa indisponível" e a lista de estados.
 
 No simulador iOS listado por `xcrun simctl list devices`, prefira `-destination 'platform=iOS Simulator,id=<UDID>'` ao nome do aparelho se o `xcodebuild` não achar o destino.
 
@@ -105,4 +119,4 @@ HTTPS apenas fora do debug · nenhum segredo no app · R8 no release (regras de 
 
 ## Convenções
 
-Commits no formato `<tipo>: mensagem` em português, direto na `main`. Código comentado em português, para estudante; identificadores em inglês. Cada decisão técnica relevante vira um ADR no `passarim-docs`.
+Commits no formato `<tipo>: mensagem` em português, numa branch por fatia, com PR para a `main`. Identificadores em inglês. O código não leva comentários explicativos (o plano de cada fatia, no `passarim-docs`, conta a história); só fatos externos ao repositório, como o contrato do BFF ou um limite de biblioteca. Cada decisão técnica relevante vira um ADR no `passarim-docs`.
