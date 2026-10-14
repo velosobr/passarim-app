@@ -10,5 +10,6 @@ dependencies {
     // Cada feature/*/presentation entra aqui, com `implementation` (os recursos precisam virar assets).
     implementation(projects.core.designSystem)
     implementation(projects.feature.explore.presentation)
+    implementation(projects.feature.detail.presentation)
     testImplementation(libs.junit4)
 }
