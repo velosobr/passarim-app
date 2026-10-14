@@ -4,10 +4,5 @@
     <string name="tab_favorites">Favoritos</string>
     <string name="tab_settings">Configurações</string>
     <string name="placeholder_in_progress">Em construção</string>
-    <string name="debug_open">Depuração</string>
-    <string name="debug_title">Depuração: conexão com o BFF</string>
-    <string name="debug_biomes">Biomas: %1$d</string>
-    <string name="debug_states">Estados: %1$d</string>
-    <string name="debug_retry">Tentar novamente</string>
     <string name="back">Voltar</string>
 </resources>

@@ -5,4 +5,9 @@
     <string name="conservation_en">Em perigo</string>
     <string name="conservation_cr">Criticamente em perigo</string>
     <string name="conservation_ew">Extinta na natureza</string>
+    <string name="photo_placeholder">foto ilustrativa</string>
+    <string name="favorite_add">Favoritar %1$s</string>
+    <string name="favorite_remove">Desfavoritar %1$s</string>
+    <string name="search_clear">Limpar busca</string>
+    <string name="filter_remove">Remover filtro %1$s</string>
 </resources>
