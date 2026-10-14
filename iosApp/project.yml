@@ -3,7 +3,7 @@ name: iosApp
 options:
   bundleIdPrefix: com.velosobr
   deploymentTarget:
-    iOS: "15.0"
+    iOS: "16.0"
 configFiles:
   Debug: Config/Debug.xcconfig
   Release: Config/Release.xcconfig

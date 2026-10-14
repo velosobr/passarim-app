@@ -16,7 +16,7 @@ data object FavoritesRoute
 @Serializable
 data object SettingsRoute
 
-/** Tela cheia, empilhada sobre as abas (sem a barra inferior). A tela real chega na 5c. */
+/** Tela cheia, empilhada sobre as abas (sem a barra inferior). */
 @Serializable
 data class DetailRoute(
     val id: String,

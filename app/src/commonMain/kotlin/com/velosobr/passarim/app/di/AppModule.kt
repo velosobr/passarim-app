@@ -6,6 +6,8 @@ import com.velosobr.passarim.core.data.coreDataModule
 import com.velosobr.passarim.core.domain.AppConfig
 import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.SettingsRepository
+import com.velosobr.passarim.feature.detail.data.detailDataModule
+import com.velosobr.passarim.feature.detail.presentation.detailPresentationModule
 import com.velosobr.passarim.feature.explore.data.exploreDataModule
 import com.velosobr.passarim.feature.explore.presentation.explorePresentationModule
 import org.koin.core.KoinApplication
@@ -28,6 +30,14 @@ fun initKoin(
 ) {
     startKoin {
         platform()
-        modules(module { single { config } }, coreDataModule, appModule, exploreDataModule, explorePresentationModule)
+        modules(
+            module { single { config } },
+            coreDataModule,
+            appModule,
+            exploreDataModule,
+            explorePresentationModule,
+            detailDataModule,
+            detailPresentationModule,
+        )
     }
 }

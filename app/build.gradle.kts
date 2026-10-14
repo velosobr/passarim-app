@@ -13,6 +13,8 @@ kotlin {
             implementation(projects.core.designSystem)
             implementation(projects.feature.explore.data)
             implementation(projects.feature.explore.presentation)
+            implementation(projects.feature.detail.data)
+            implementation(projects.feature.detail.presentation)
             implementation(libs.compose.resources)
             implementation(libs.navigation.compose)
             implementation(libs.koin.core)
