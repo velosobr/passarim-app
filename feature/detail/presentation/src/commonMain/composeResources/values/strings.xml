@@ -1,0 +1,4 @@
+<resources>
+    <string name="map_attribution">© OpenFreeMap © OpenMapTiles · dados © OpenStreetMap</string>
+    <string name="map_unavailable">Mapa indisponível</string>
+</resources>

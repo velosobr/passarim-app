@@ -12,9 +12,11 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.savedstate)
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.maplibre.compose)
         }
         androidMain.dependencies {
             implementation(libs.media3.exoplayer)
+            implementation(libs.maplibre.runtime.opengl)
             implementation(libs.koin.android)
         }
         commonTest.dependencies {
