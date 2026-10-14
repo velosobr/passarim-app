@@ -13,6 +13,10 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
         }
+        androidMain.dependencies {
+            implementation(libs.media3.exoplayer)
+            implementation(libs.koin.android)
+        }
         commonTest.dependencies {
             implementation(libs.assertk)
             implementation(libs.turbine)
