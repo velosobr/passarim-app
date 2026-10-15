@@ -26,6 +26,7 @@ import com.velosobr.passarim.app.navigation.SettingsRoute
 import com.velosobr.passarim.app.resources.Res
 import com.velosobr.passarim.app.resources.placeholder_in_progress
 import com.velosobr.passarim.feature.explore.presentation.ExploreRoot
+import com.velosobr.passarim.feature.favorites.presentation.FavoritesRoot
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -55,7 +56,9 @@ fun TabsScreen(onOpenDetail: (String) -> Unit) {
             composable<ExploreRoute> {
                 ExploreRoot(onOpenDetail = onOpenDetail, onOpenFavorites = { navController.navigateToTab(Tab.Favorites) })
             }
-            composable<FavoritesRoute> { TabPlaceholder(Tab.Favorites) }
+            composable<FavoritesRoute> {
+                FavoritesRoot(onOpenDetail = onOpenDetail, onOpenExplore = { navController.navigateToTab(Tab.Explore) })
+            }
             composable<SettingsRoute> { TabPlaceholder(Tab.Settings) }
         }
     }

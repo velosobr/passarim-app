@@ -1,0 +1,7 @@
+<resources>
+    <string name="favorites_title">Favoritos</string>
+    <string name="favorites_subtitle">Salvos neste aparelho. Funcionam sem internet.</string>
+    <string name="empty_title">Nenhum favorito ainda</string>
+    <string name="empty_body">Toque no coração de uma ave para guardá-la aqui. Os favoritos ficam salvos no aparelho e funcionam sem internet.</string>
+    <string name="explore_birds">Explorar aves</string>
+</resources>
