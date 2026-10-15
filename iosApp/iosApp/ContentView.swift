@@ -9,10 +9,12 @@ struct ComposeView: UIViewControllerRepresentable {
         let isDebug = (info?["PassarimDebug"] as? String) == "YES"
         // No debug, a mídia local (localhost) é reescrita para o mesmo host do BFF.
         let mediaHost = isDebug ? URL(string: baseUrl)?.host : nil
+        let versionName = info?["CFBundleShortVersionString"] as? String ?? ""
         return MainViewControllerKt.MainViewController(
             baseUrl: baseUrl,
             isDebug: isDebug,
-            mediaHostOverride: mediaHost
+            mediaHostOverride: mediaHost,
+            versionName: versionName
         )
     }
 

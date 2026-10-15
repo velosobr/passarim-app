@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
 class RemoteFiltersRepositoryTest {
-    private val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null)
+    private val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null, versionName = "1.0.0")
 
     private val body =
         """

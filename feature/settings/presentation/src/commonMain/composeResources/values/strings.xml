@@ -1,0 +1,25 @@
+<resources>
+    <string name="settings_title">Configurações</string>
+    <string name="section_appearance">Aparência</string>
+    <string name="theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="dynamic_colors">Cores dinâmicas</string>
+    <string name="dynamic_colors_body">Usa as cores do papel de parede (Android 12+)</string>
+    <string name="section_playback">Reprodução</string>
+    <string name="autoplay">Tocar canto ao abrir ave</string>
+    <string name="autoplay_body">Começa a tocar assim que o detalhe abre</string>
+    <string name="section_data">Dados</string>
+    <string name="storage">Dados e armazenamento</string>
+    <string name="storage_body">Limpar cache de imagens</string>
+    <string name="section_about">Sobre</string>
+    <string name="about_row">Sobre o Passarim</string>
+    <string name="about_row_body">Versão %1$s · créditos e licenças</string>
+    <string name="image_cache">Cache de imagens</string>
+    <string name="image_cache_body">Libera espaço; as imagens são baixadas de novo quando você abrir a ave</string>
+    <string name="clear_cache">Limpar cache</string>
+    <string name="cache_cleared">Cache de imagens limpo</string>
+    <string name="favorites">Favoritos</string>
+    <string name="favorites_kept">Ficam salvos no aparelho e não são apagados ao limpar o cache</string>
+</resources>

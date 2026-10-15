@@ -19,5 +19,6 @@ class PassarimApplication : Application() {
             baseUrl = BuildConfig.BASE_URL,
             // No debug, a mídia local (`localhost`) é reescrita para o mesmo host do BFF (10.0.2.2 no emulador).
             mediaHostOverride = if (BuildConfig.DEBUG) URI(BuildConfig.BASE_URL).host else null,
+            versionName = BuildConfig.VERSION_NAME,
         )
 }

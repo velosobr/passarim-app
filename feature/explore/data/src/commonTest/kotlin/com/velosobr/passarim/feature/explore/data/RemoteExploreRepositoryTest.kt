@@ -34,7 +34,8 @@ class RemoteExploreRepositoryTest {
         mediaHostOverride: String? = null,
         onRequest: (Url) -> Unit = {},
     ): RemoteExploreRepository {
-        val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = mediaHostOverride)
+        val config =
+            AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = mediaHostOverride, versionName = "1.0.0")
         val engine =
             MockEngine { request ->
                 onRequest(request.url)
@@ -101,7 +102,7 @@ class RemoteExploreRepositoryTest {
     @Test
     fun `propaga o erro do safeCall`() =
         runTest {
-            val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null)
+            val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null, versionName = "1.0.0")
             val engine =
                 MockEngine { respond("404 page not found", HttpStatusCode.NotFound, headersOf(HttpHeaders.ContentType, "text/plain")) }
             val result = RemoteExploreRepository(createHttpClient(engine, config), MediaUrlRewriter(config)).list("", null, null, null)
