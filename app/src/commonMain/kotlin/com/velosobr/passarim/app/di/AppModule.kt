@@ -1,10 +1,9 @@
 package com.velosobr.passarim.app.di
 
-import com.velosobr.passarim.app.favorites.InMemoryFavoritesRepository
 import com.velosobr.passarim.app.settings.InMemorySettingsRepository
 import com.velosobr.passarim.core.data.coreDataModule
+import com.velosobr.passarim.core.database.databaseModule
 import com.velosobr.passarim.core.domain.AppConfig
-import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.detail.data.detailDataModule
 import com.velosobr.passarim.feature.detail.presentation.detailPresentationModule
@@ -16,7 +15,6 @@ import org.koin.dsl.module
 
 private val appModule =
     module {
-        single<FavoritesRepository> { InMemoryFavoritesRepository() }
         single<SettingsRepository> { InMemorySettingsRepository() }
     }
 
@@ -33,6 +31,7 @@ fun initKoin(
         modules(
             module { single { config } },
             coreDataModule,
+            databaseModule,
             appModule,
             exploreDataModule,
             explorePresentationModule,

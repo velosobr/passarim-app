@@ -16,6 +16,7 @@ import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.domain.WhereToFind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 const val ARARA_ID = "anodorhynchus-hyacinthinus"
 const val AUDIO_URL = "https://media/arara.aac"
@@ -57,6 +58,8 @@ class FakeFavoritesRepository : FavoritesRepository {
     val refreshed = mutableListOf<SpeciesSummary>()
 
     override fun observeIds(): Flow<Set<String>> = ids
+
+    override fun observeAll(): Flow<List<SpeciesSummary>> = flowOf(emptyList())
 
     override suspend fun toggle(summary: SpeciesSummary) {
         toggled += summary
