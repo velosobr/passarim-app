@@ -9,25 +9,23 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import com.velosobr.passarim.app.images.passarimImageLoader
 import com.velosobr.passarim.app.navigation.DetailRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
-import com.velosobr.passarim.core.data.MediaHttpClientQualifier
 import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
 import com.velosobr.passarim.feature.detail.presentation.DetailRoot
-import io.ktor.client.HttpClient
 import org.koin.compose.koinInject
 
 /**
  * Raiz do app. O `NavHost` raiz tem as abas (`TabsRoute`) e, por cima delas, as telas cheias, como o
- * detalhe (`DetailRoute`). O Coil é configurado aqui uma vez, com o `HttpClient` de mídia.
+ * detalhe (`DetailRoute`).
  */
 @Composable
 fun App() {
-    val mediaClient = koinInject<HttpClient>(MediaHttpClientQualifier)
-    setSingletonImageLoaderFactory { context -> passarimImageLoader(context, mediaClient) }
+    val imageLoader = koinInject<ImageLoader>()
+    setSingletonImageLoaderFactory { imageLoader }
     PassarimTheme {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             val rootNav = rememberNavController()

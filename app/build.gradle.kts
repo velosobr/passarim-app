@@ -16,6 +16,7 @@ kotlin {
             implementation(projects.feature.explore.presentation)
             implementation(projects.feature.detail.data)
             implementation(projects.feature.detail.presentation)
+            implementation(projects.feature.settings.data)
             implementation(libs.compose.resources)
             implementation(libs.navigation.compose)
             implementation(libs.koin.core)
@@ -25,6 +26,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
+        }
+        androidMain.dependencies {
+            implementation(libs.koin.android)
         }
         commonTest.dependencies {
             implementation(libs.assertk)
