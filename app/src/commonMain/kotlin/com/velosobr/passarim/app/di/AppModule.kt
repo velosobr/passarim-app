@@ -10,6 +10,7 @@ import com.velosobr.passarim.feature.explore.data.exploreDataModule
 import com.velosobr.passarim.feature.explore.presentation.explorePresentationModule
 import com.velosobr.passarim.feature.favorites.presentation.favoritesPresentationModule
 import com.velosobr.passarim.feature.settings.data.settingsDataModule
+import com.velosobr.passarim.feature.settings.presentation.settingsPresentationModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -35,6 +36,7 @@ fun initKoin(
             detailDataModule,
             detailPresentationModule,
             favoritesPresentationModule,
+            settingsPresentationModule,
         )
     }
 }

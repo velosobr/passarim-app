@@ -1,8 +1,5 @@
 package com.velosobr.passarim.app.tabs
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -11,7 +8,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -23,10 +19,9 @@ import androidx.navigation.compose.rememberNavController
 import com.velosobr.passarim.app.navigation.ExploreRoute
 import com.velosobr.passarim.app.navigation.FavoritesRoute
 import com.velosobr.passarim.app.navigation.SettingsRoute
-import com.velosobr.passarim.app.resources.Res
-import com.velosobr.passarim.app.resources.placeholder_in_progress
 import com.velosobr.passarim.feature.explore.presentation.ExploreRoot
 import com.velosobr.passarim.feature.favorites.presentation.FavoritesRoot
+import com.velosobr.passarim.feature.settings.presentation.SettingsRoot
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -35,7 +30,11 @@ import org.jetbrains.compose.resources.vectorResource
  * guarda e restaura o estado (`saveState`/`restoreState`).
  */
 @Composable
-fun TabsScreen(onOpenDetail: (String) -> Unit) {
+fun TabsScreen(
+    onOpenDetail: (String) -> Unit,
+    onOpenStorage: () -> Unit,
+    onOpenAbout: () -> Unit,
+) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     Scaffold(
@@ -59,7 +58,7 @@ fun TabsScreen(onOpenDetail: (String) -> Unit) {
             composable<FavoritesRoute> {
                 FavoritesRoot(onOpenDetail = onOpenDetail, onOpenExplore = { navController.navigateToTab(Tab.Explore) })
             }
-            composable<SettingsRoute> { TabPlaceholder(Tab.Settings) }
+            composable<SettingsRoute> { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
         }
     }
 }
@@ -70,16 +69,5 @@ private fun NavHostController.navigateToTab(tab: Tab) {
         popUpTo(graph.findStartDestination().id) { saveState = true }
         launchSingleTop = true
         restoreState = true
-    }
-}
-
-/** Conteúdo vazio das abas; a fatia 5d troca isto pelas telas reais. */
-@Composable
-private fun TabPlaceholder(tab: Tab) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(tab.label))
-            Text(stringResource(Res.string.placeholder_in_progress))
-        }
     }
 }

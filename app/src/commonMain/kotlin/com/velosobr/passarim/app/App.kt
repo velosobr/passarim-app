@@ -16,13 +16,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
+import com.velosobr.passarim.app.navigation.AboutRoute
 import com.velosobr.passarim.app.navigation.DetailRoute
+import com.velosobr.passarim.app.navigation.LicensesRoute
+import com.velosobr.passarim.app.navigation.StorageRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
+import com.velosobr.passarim.app.theme.SystemBarsAppearance
 import com.velosobr.passarim.app.theme.isDark
 import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.detail.presentation.DetailRoot
+import com.velosobr.passarim.feature.settings.presentation.AboutRoot
+import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
+import com.velosobr.passarim.feature.settings.presentation.StorageRoot
 import org.koin.compose.koinInject
 
 @Composable
@@ -33,7 +40,9 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
     val settings by remember(settingsRepository) { settingsRepository.observe() }.collectAsState(initial = null)
     val loaded = settings ?: return
     LaunchedEffect(Unit) { onSettingsLoaded() }
-    PassarimTheme(darkTheme = loaded.theme.isDark(isSystemInDarkTheme()), dynamicColor = loaded.dynamicColors) {
+    val darkTheme = loaded.theme.isDark(isSystemInDarkTheme())
+    SystemBarsAppearance(darkTheme)
+    PassarimTheme(darkTheme = darkTheme, dynamicColor = loaded.dynamicColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             AppNavHost()
         }
@@ -45,10 +54,26 @@ private fun AppNavHost() {
     val rootNav = rememberNavController()
     NavHost(rootNav, startDestination = TabsRoute) {
         composable<TabsRoute> {
-            TabsScreen(onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) })
+            TabsScreen(
+                onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) },
+                onOpenStorage = { rootNav.navigate(StorageRoute) },
+                onOpenAbout = { rootNav.navigate(AboutRoute) },
+            )
         }
         composable<DetailRoute> {
             DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+        }
+        composable<StorageRoute> {
+            StorageRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+        }
+        composable<AboutRoute> {
+            AboutRoot(
+                onBack = dropUnlessResumed { rootNav.popBackStack() },
+                onOpenLicenses = { rootNav.navigate(LicensesRoute) },
+            )
+        }
+        composable<LicensesRoute> {
+            LicensesRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
         }
     }
 }

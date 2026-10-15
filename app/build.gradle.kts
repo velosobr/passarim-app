@@ -18,6 +18,7 @@ kotlin {
             implementation(projects.feature.detail.presentation)
             implementation(projects.feature.favorites.presentation)
             implementation(projects.feature.settings.data)
+            implementation(projects.feature.settings.presentation)
             implementation(libs.compose.resources)
             implementation(libs.navigation.compose)
             implementation(libs.koin.core)

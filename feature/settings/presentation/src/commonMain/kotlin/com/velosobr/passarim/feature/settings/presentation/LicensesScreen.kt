@@ -2,6 +2,7 @@ package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,7 +26,7 @@ fun LicensesScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize().systemBarsPadding()) {
         BackTopBar(stringResource(Res.string.open_source_licenses), onBack = onBack)
         LibrariesContainer(libraries, Modifier.fillMaxSize())
     }

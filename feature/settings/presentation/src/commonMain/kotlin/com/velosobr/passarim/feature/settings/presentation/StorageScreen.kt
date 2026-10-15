@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledTonalButton
@@ -43,7 +44,7 @@ fun StorageScreen(
     onAction: (StorageAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(modifier.fillMaxSize().systemBarsPadding().verticalScroll(rememberScrollState())) {
         BackTopBar(stringResource(Res.string.storage), onBack = { onAction(StorageAction.Back) })
         SettingsRow(
             title = stringResource(Res.string.image_cache),

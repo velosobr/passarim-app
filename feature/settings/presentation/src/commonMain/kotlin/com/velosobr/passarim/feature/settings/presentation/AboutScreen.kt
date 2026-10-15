@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -63,7 +64,13 @@ fun AboutScreen(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
 ) {
-    Column(modifier.fillMaxSize().verticalScroll(scrollState).padding(bottom = 16.dp)) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+            .verticalScroll(scrollState)
+            .padding(bottom = 16.dp),
+    ) {
         BackTopBar(stringResource(Res.string.about_title), onBack = { onAction(AboutAction.Back) })
         AppHeader(state.versionName)
         Text(
