@@ -2,7 +2,7 @@
 
 Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Compose Multiplatform**: todo o código de produto fica em `commonMain`; Android e iOS só têm uma casca fina. O app fala com o BFF do [`passarim-bff`](https://github.com/velosobr/passarim-bff), que roda localmente no `docker compose` do [`passarim-docs`](https://github.com/velosobr/passarim-docs).
 
-> Estado: **etapa 5c (Detalhe)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros, paginação e favoritos. Tocar numa ave abre o Detalhe: foto, selo de conservação, fatos, canto com player, curiosidades, galeria, mapa "Onde encontrar" e créditos. Favoritos e configurações ficam em memória até a 5d; as telas de Favoritos e Configurações chegam nas fatias 5d e 5e (specs em `passarim-docs/docs/superpowers/specs/`).
+> Estado: **etapa 5d (Favoritos e Configurações)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros, paginação e favoritos. Tocar numa ave abre o Detalhe: foto, selo de conservação, fatos, canto com player, curiosidades, galeria, mapa "Onde encontrar" e créditos. Os favoritos ficam no aparelho (Room) e abrem sem internet. Configurações traz tema (Sistema, Claro, Escuro), cores dinâmicas (Android 12+), "Tocar canto ao abrir ave" (DataStore), Dados e armazenamento (limpar o cache de imagens), Sobre e as licenças de código aberto. A 5e fecha o app (specs em `passarim-docs/docs/superpowers/specs/`).
 
 ## Requisitos
 
@@ -31,6 +31,10 @@ graph TD
     app --> explore-presentation
     app --> detail-data
     app --> detail-presentation
+    app --> favorites-presentation
+    app --> settings-data
+    app --> settings-presentation
+    app --> core-database
     explore-presentation --> explore-domain
     explore-presentation --> core-presentation
     explore-presentation --> core-design-system
@@ -43,6 +47,11 @@ graph TD
     detail-data --> detail-domain
     detail-data --> core-data
     detail-domain --> core-domain
+    favorites-presentation --> core-presentation
+    favorites-presentation --> core-design-system
+    settings-presentation --> core-presentation
+    settings-presentation --> core-design-system
+    settings-data --> core-domain
     core-data --> core-domain
     core-presentation --> core-domain
     core-design-system --> core-domain
@@ -50,24 +59,29 @@ graph TD
     snapshots --> core-design-system
     snapshots --> explore-presentation
     snapshots --> detail-presentation
+    snapshots --> favorites-presentation
+    snapshots --> settings-presentation
 ```
 
 | Módulo | Papel |
 |---|---|
 | `androidApp` | Casca Android: `Application`, `Activity`, splash, ícone adaptativo, `BuildConfig` |
 | `iosApp` | Casca iOS: projeto Xcode gerado por XcodeGen, Info.plist, ícone e Launch Screen |
-| `app` | `App()`, navegação (abas e telas empilhadas), Koin, Coil, favoritos e configurações em memória, ponto de entrada do iOS |
-| `core:domain` | `Result`, `DataError`, `AppConfig`, modelos e interfaces de repositório |
+| `app` | `App()` (tema lido das configurações), navegação (abas e telas empilhadas), Koin, `ImageLoader` do Coil, ponto de entrada do iOS |
+| `core:domain` | `Result`, `DataError`, `AppConfig`, `Settings`, modelos e interfaces de repositório e do limpador de cache; alvo `jvm()` só para os testes do banco |
 | `core:data` | Ktor (`safeCall`), o cliente da API e o de mídia, `MediaUrlRewriter` |
 | `core:presentation` | `UiText`, `ObserveAsEvents`, mensagens de erro, `ScreenError` |
-| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card de espécie, busca, chip, estados, skeleton, hero, fatos, chips rotulados, crédito, galeria) |
+| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card e item de lista de espécie, busca, chip, estados, skeleton, hero, fatos, chips rotulados, crédito, galeria, título de tela, barra com voltar), cores dinâmicas |
 | `feature:explore:domain` | `ExploreRepository`, `SpeciesPage`, limpeza da busca |
 | `feature:explore:data` | `GET /v1/species` e `GET /v1/filters` (DTOs e mappers) |
 | `feature:explore:presentation` | `ExploreViewModel` (MVI), tela, sheet de filtros |
 | `feature:detail:domain` | `SpeciesDetail`, `DetailRepository`, `AudioPlayer`, validação do id, licenças e links |
 | `feature:detail:data` | `GET /v1/species/{id}` (DTOs e mapper que trata nulos e vazios) |
 | `feature:detail:presentation` | `DetailViewModel` (MVI), tela, player (Media3 no Android, AVPlayer no iOS) e mapa (MapLibre) |
-| `core:database` | Reservado para o Room (etapa 5d); alvo `jvm()` só para testes |
+| `feature:favorites:presentation` | `FavoritesViewModel` (MVI) e a lista de Favoritos com o estado vazio |
+| `feature:settings:data` | `DataStoreSettingsRepository` e o limpador do cache do Coil |
+| `feature:settings:presentation` | Configurações, Dados e armazenamento, Sobre e Licenças (AboutLibraries) |
+| `core:database` | Room KMP: `FavoriteEntity`, `FavoriteDao`, `PassarimDatabase` e `LocalFavoritesRepository`; esquemas em `core/database/schemas`; alvo `jvm()` só para testes |
 | `snapshots` | Testes de snapshot com Paparazzi (módulo Android puro) |
 | `build-logic` | *Convention plugins* do Gradle |
 
@@ -86,7 +100,7 @@ Regras: `presentation → domain ← data`; features nunca dependem entre si; s�
 
 O texto puro (HTTP) só é permitido no **debug** (network security config no Android, exceção de ATS no iOS). O release exige HTTPS e aponta para um endereço reservado e inválido até a etapa 6 (deploy).
 
-**Conferindo a conexão:** a aba Explorar já lista as aves do BFF. Com o backend parado, mostra "Sem conexão"; com o Traefik no ar e as réplicas do BFF paradas, "Serviço indisponível".
+**Conferindo a conexão:** a aba Explorar já lista as aves do BFF. Com o backend parado, mostra "Sem conexão"; com o Traefik no ar e as réplicas do BFF paradas, "Serviço indisponível". A aba Favoritos continua funcionando nos dois casos.
 
 **Mídia:** o BFF monta URLs de mídia com `localhost`. No debug o `MediaUrlRewriter` troca só o host pelo do BFF (por exemplo `10.0.2.2`), mantendo a porta. O `compose` não muda. As fotos são baixadas pelo Coil 3 com um `HttpClient` próprio para mídia (sem a URL base da API e com timeouts maiores).
 
@@ -107,7 +121,9 @@ scripts/osv-gate.sh                     # vulnerabilidades altas/críticas nas d
 
 - A lógica usa `kotlin.test` + Turbine + AssertK em `commonTest`. Só os snapshots usam JUnit4 (a regra do Paparazzi).
 - Os snapshots cobrem claro e escuro × fonte 1.0×, 1.3× e 2.0×. O Paparazzi usado é a **2.0.0-alpha05** (a 1.3.5 estável não funciona com o AGP 9 nem com o Gradle atual); o fallback é o Roborazzi.
-- Depois de mudar dependências: `./gradlew resolveAndLockShipped --write-locks` e commite os `gradle.lockfile`. O CI confere se as travas estão em dia.
+- Depois de mudar dependências: `./gradlew resolveAndLockShipped --write-locks :androidApp:exportLibraryDefinitions` e commite os `gradle.lockfile` e o `aboutlibraries.json` (a lista da tela de licenças, gerada do classpath de release do Android). O CI confere os dois.
+- Mudou uma entidade do Room? Suba a `version` do `PassarimDatabase`, escreva a migração e commite o JSON novo de `core/database/schemas`.
+- Os testes do Room rodam em `./gradlew :core:database:jvmTest` (banco em memória com o `BundledSQLiteDriver`).
 
 ## Design
 
