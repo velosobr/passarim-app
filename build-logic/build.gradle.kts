@@ -15,4 +15,5 @@ dependencies {
     implementation(libs.paparazzi.gradlePlugin)
     implementation(libs.ktlint.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
+    implementation(libs.aboutlibraries.gradlePlugin)
 }

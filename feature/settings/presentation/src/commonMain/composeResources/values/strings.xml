@@ -22,4 +22,20 @@
     <string name="cache_cleared">Cache de imagens limpo</string>
     <string name="favorites">Favoritos</string>
     <string name="favorites_kept">Ficam salvos no aparelho e não são apagados ao limpar o cache</string>
+    <string name="about_title">Sobre</string>
+    <string name="app_name">Passarim</string>
+    <string name="version">Versão %1$s</string>
+    <string name="credits_title">Créditos e licenças</string>
+    <string name="credits_body">O Passarim é gratuito e sem anúncios. Fotos e cantos de aves são de autores que os compartilham sob licenças Creative Commons (CC0, CC BY, CC BY-SA, CC BY-NC e CC BY-NC-SA). O autor e a licença aparecem em cada ave.</string>
+    <string name="credit_songs">Cantos</string>
+    <string name="credit_songs_source">xeno-canto</string>
+    <string name="credit_texts">Textos</string>
+    <string name="credit_texts_source">Wikipédia · CC BY-SA</string>
+    <string name="credit_species">Lista de espécies</string>
+    <string name="credit_species_source">Comitê Brasileiro de Registros Ornitológicos (CBRO)</string>
+    <string name="credit_map">Mapa</string>
+    <string name="credit_map_source">© OpenFreeMap © OpenMapTiles · dados © OpenStreetMap</string>
+    <string name="privacy_policy">Política de privacidade</string>
+    <string name="privacy_policy_body">O app não coleta dados pessoais</string>
+    <string name="open_source_licenses">Licenças de código aberto</string>
 </resources>

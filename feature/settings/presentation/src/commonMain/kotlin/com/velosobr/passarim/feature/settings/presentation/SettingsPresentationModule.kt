@@ -10,4 +10,5 @@ val settingsPresentationModule =
     module {
         viewModel { SettingsViewModel(get(), isDynamicColorSupported, get<AppConfig>().versionName) }
         viewModelOf(::StorageViewModel)
+        viewModel { AboutViewModel(get<AppConfig>().versionName) }
     }

@@ -11,6 +11,8 @@ kotlin {
             implementation(libs.compose.resources)
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.aboutlibraries.core)
+            implementation(libs.aboutlibraries.compose.m3)
         }
         commonTest.dependencies {
             implementation(libs.assertk)

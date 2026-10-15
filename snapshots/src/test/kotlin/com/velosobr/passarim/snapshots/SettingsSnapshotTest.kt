@@ -3,6 +3,8 @@ package com.velosobr.passarim.snapshots
 import androidx.compose.foundation.ScrollState
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.ThemeMode
+import com.velosobr.passarim.feature.settings.presentation.AboutScreen
+import com.velosobr.passarim.feature.settings.presentation.AboutState
 import com.velosobr.passarim.feature.settings.presentation.SettingsScreen
 import com.velosobr.passarim.feature.settings.presentation.SettingsState
 import com.velosobr.passarim.feature.settings.presentation.StorageScreen
@@ -45,4 +47,10 @@ class SettingsSnapshotTest(
 
     @Test
     fun storageCleared() = snap("storage-cleared") { StorageScreen(state = StorageState.Cleared, onAction = {}) }
+
+    @Test
+    fun about() = snap("about") { AboutScreen(state = AboutState("1.0.0"), onAction = {}) }
+
+    @Test
+    fun aboutEnd() = snap("about-end") { AboutScreen(state = AboutState("1.0.0"), onAction = {}, scrollState = ScrollState(Int.MAX_VALUE)) }
 }
