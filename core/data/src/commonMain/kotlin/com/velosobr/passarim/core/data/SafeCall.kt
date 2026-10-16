@@ -1,3 +1,5 @@
+// Chamada segura ao BFF: transforma respostas e falhas em Result.
+//
 // Capturar `Exception` aqui é proposital: qualquer falha de transporte vira um erro tipado do app
 // (o cancelamento de corrotina é sempre relançado antes).
 @file:Suppress("TooGenericExceptionCaught", "SwallowedException")
@@ -25,6 +27,12 @@ import kotlinx.serialization.Serializable
  * Respostas de erro viram o erro do `code` do problem+json do BFF; se a resposta **não** for
  * problem+json (um 404 em texto puro do Traefik com as réplicas paradas, por exemplo),
  * classifica pelo status HTTP.
+ *
+ * "reified" (só possível em funções inline) mantém o tipo T disponível em
+ * tempo de execução, e é isso que permite response.body<T>() saber em que
+ * classe converter o JSON. CancellationException é relançada porque é o
+ * sinal de que a coroutine foi cancelada (a tela fechou); engoli-la deixaria
+ * a coroutine rodando à toa.
  */
 suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, DataError.Network> {
     val response =
@@ -48,11 +56,17 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
     }
 }
 
+/** O corpo de erro problem+json do BFF; só o `code` interessa ao app. */
 @Serializable
 internal data class ProblemDto(
     val code: String? = null,
 )
 
+/**
+ * Falha de transporte: estouro de prazo vira Timeout; o resto (sem rede, DNS,
+ * conexão recusada) vira NoConnection. @PublishedApi deixa uma função
+ * internal ser usada dentro de uma função inline pública.
+ */
 @PublishedApi
 internal fun Exception.toNetworkError(): DataError.Network =
     when (this) {
@@ -60,6 +74,7 @@ internal fun Exception.toNetworkError(): DataError.Network =
         else -> DataError.Network.NoConnection
     }
 
+/** Resposta de erro: lê o `code` do problem+json ou, sem ele, classifica pelo status. */
 @PublishedApi
 internal suspend fun HttpResponse.toNetworkError(): DataError.Network {
     val isProblem = contentType()?.match("application/problem+json") == true
@@ -77,6 +92,7 @@ internal suspend fun HttpResponse.toNetworkError(): DataError.Network {
     return status.value.toNetworkError()
 }
 
+/** Traduz o `code` estável do contrato do BFF no erro do app. */
 private fun String.toNetworkError(retryAfterSeconds: Int?): DataError.Network =
     when (this) {
         "SPECIES_NOT_FOUND", "NOT_FOUND" -> DataError.Network.NotFound
@@ -87,6 +103,10 @@ private fun String.toNetworkError(retryAfterSeconds: Int?): DataError.Network =
         else -> DataError.Network.Unknown
     }
 
+/**
+ * Status sem problem+json: 404/502/503/504 costumam ser o Traefik sem réplica
+ * do BFF no ar, então viram "serviço indisponível".
+ */
 private fun Int.toNetworkError(): DataError.Network =
     when (this) {
         404, 502, 503, 504 -> DataError.Network.ServiceUnavailable

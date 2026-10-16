@@ -1,3 +1,5 @@
+// Implementação do FavoritesRepository do domínio sobre o Room.
+
 package com.velosobr.passarim.core.database
 
 import com.velosobr.passarim.core.domain.FavoritesRepository
@@ -7,6 +9,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
 
+/**
+ * Favoritos guardados no banco local. [now] é o relógio, trocado nos testes.
+ * distinctUntilChanged evita emitir o mesmo conjunto de ids duas vezes
+ * seguidas (o Room avisa a cada escrita na tabela, mesmo sem mudança nos ids).
+ */
 class LocalFavoritesRepository(
     private val dao: FavoriteDao,
     private val now: () -> Long = { Clock.System.now().toEpochMilliseconds() },

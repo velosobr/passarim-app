@@ -1,3 +1,6 @@
+// Testes do safeCall com o MockEngine do Ktor, que responde no lugar do BFF
+// sem rede. runTest (das coroutines) roda funções suspend dentro do teste.
+
 package com.velosobr.passarim.core.data
 
 import assertk.assertThat
@@ -20,17 +23,21 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
 
+/** Cada tipo de resposta e de falha vira o Result esperado. */
 class SafeCallTest {
+    /** Pong é um DTO mínimo para testar a leitura do corpo. */
     @Serializable
     private data class Pong(
         val message: String,
     )
 
+    /** client cria um HttpClient cujo "servidor" é a função handler. */
     private fun client(handler: MockRequestHandler) = HttpClient(MockEngine(handler)) { install(ContentNegotiation) { json(bffJson) } }
 
     private suspend fun call(handler: MockRequestHandler): Result<Pong, DataError.Network> =
         client(handler).let { c -> safeCall<Pong> { c.get("http://localhost/ping") } }
 
+    /** problem responde um erro em problem+json com o code dado. */
     private fun problem(
         code: String,
         status: HttpStatusCode,
@@ -48,6 +55,7 @@ class SafeCallTest {
             )
         }
 
+    /** plain responde um erro em texto puro, como um proxy faria. */
     private fun plain(
         status: HttpStatusCode,
         body: String = "",
