@@ -1,3 +1,6 @@
+// Inicialização da injeção de dependências (Koin) com os módulos de todas
+// as camadas e features.
+
 package com.velosobr.passarim.app.di
 
 import com.velosobr.passarim.app.images.imageLoaderModule

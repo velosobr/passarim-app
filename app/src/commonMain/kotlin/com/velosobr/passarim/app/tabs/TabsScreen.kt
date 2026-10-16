@@ -1,3 +1,5 @@
+// A tela com a barra inferior e a navegação dentro de cada aba.
+
 package com.velosobr.passarim.app.tabs
 
 import androidx.compose.foundation.layout.padding

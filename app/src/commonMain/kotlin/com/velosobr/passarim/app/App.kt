@@ -1,3 +1,5 @@
+// A raiz do app: tema, carregador de imagens e a navegação de primeiro nível.
+
 package com.velosobr.passarim.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,6 +34,16 @@ import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
 import com.velosobr.passarim.feature.settings.presentation.StorageRoot
 import org.koin.compose.koinInject
 
+/**
+ * O app inteiro, chamado pelo Android (MainActivity) e pelo iOS
+ * (MainViewController). Espera as configurações do DataStore antes de
+ * desenhar, para a primeira tela já sair no tema certo; [onSettingsLoaded]
+ * avisa a plataforma (o Android segura o splash até lá).
+ *
+ * koinInject pega uma peça do Koin dentro de uma função @Composable.
+ * collectAsState transforma o Flow das configurações num estado que, ao
+ * mudar, recompõe a tela; remember guarda o Flow entre recomposições.
+ */
 @Composable
 fun App(onSettingsLoaded: () -> Unit = {}) {
     val imageLoader = koinInject<ImageLoader>()
@@ -49,6 +61,13 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
     }
 }
 
+/**
+ * Navegação de primeiro nível: as abas e as telas que abrem por cima delas.
+ * Cada rota é uma classe @Serializable (Routes.kt), e os argumentos (o id da
+ * espécie) vão nela. dropUnlessResumed ignora o toque em "voltar" quando a
+ * tela já está saindo, o que evita voltar duas vezes com toques rápidos. Os
+ * blocos de rota só ligam as telas: os efeitos ficam dentro delas.
+ */
 @Composable
 private fun AppNavHost() {
     val rootNav = rememberNavController()

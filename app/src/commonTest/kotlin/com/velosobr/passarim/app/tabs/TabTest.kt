@@ -1,3 +1,5 @@
+// Teste das abas: a ordem da barra inferior.
+
 package com.velosobr.passarim.app.tabs
 
 import assertk.assertThat

@@ -1,3 +1,6 @@
+// As rotas de navegação. Com o Navigation Compose, cada rota é uma classe
+// @Serializable: a biblioteca converte a classe (e os argumentos) num destino.
+
 package com.velosobr.passarim.app.navigation
 
 import kotlinx.serialization.Serializable
@@ -10,9 +13,11 @@ data object TabsRoute
 @Serializable
 data object ExploreRoute
 
+/** A aba Favoritos. */
 @Serializable
 data object FavoritesRoute
 
+/** A aba Configurações. */
 @Serializable
 data object SettingsRoute
 
@@ -22,11 +27,14 @@ data class DetailRoute(
     val id: String,
 )
 
+/** Dados e armazenamento (limpar cache), aberta pelas Configurações. */
 @Serializable
 data object StorageRoute
 
+/** Sobre o app. */
 @Serializable
 data object AboutRoute
 
+/** As licenças das bibliotecas, aberta pelo Sobre. */
 @Serializable
 data object LicensesRoute
