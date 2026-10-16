@@ -1,3 +1,5 @@
+// Testes da decisão do tema escuro.
+
 package com.velosobr.passarim.app.theme
 
 import assertk.assertThat

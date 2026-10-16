@@ -1,3 +1,5 @@
+// Ponte entre o app Swift e o app Compose no iOS.
+
 package com.velosobr.passarim.app
 
 import androidx.compose.ui.window.ComposeUIViewController
@@ -5,9 +7,15 @@ import com.velosobr.passarim.app.di.initKoin
 import com.velosobr.passarim.core.domain.AppConfig
 import platform.UIKit.UIViewController
 
+/** O Koin só pode ser iniciado uma vez por processo; esta marca evita a segunda vez. */
 private var koinStarted = false
 
-/** Ponto de entrada do iOS: o Swift passa a configuração lida do xcconfig/Info.plist. */
+/**
+ * Ponto de entrada do iOS: o Swift passa a configuração lida do xcconfig/Info.plist.
+ * Devolve um UIViewController (a "tela" do UIKit) com o app Compose dentro. O
+ * nome começa com maiúscula porque, para o Swift, ele se parece com um tipo;
+ * por isso o @Suppress das regras de nome.
+ */
 @Suppress("ktlint:standard:function-naming", "FunctionNaming")
 fun MainViewController(
     baseUrl: String,

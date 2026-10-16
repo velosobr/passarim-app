@@ -1,3 +1,5 @@
+// As abas da barra inferior.
+
 package com.velosobr.passarim.app.tabs
 
 import com.velosobr.passarim.app.navigation.ExploreRoute
