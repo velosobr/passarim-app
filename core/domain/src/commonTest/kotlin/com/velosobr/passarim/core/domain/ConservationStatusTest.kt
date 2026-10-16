@@ -1,3 +1,6 @@
+// Testes da conversão do código de conservação. Em Kotlin, o nome de um
+// teste pode ser uma frase entre crases, o que deixa o relatório legível.
+
 package com.velosobr.passarim.core.domain
 
 import assertk.assertThat
