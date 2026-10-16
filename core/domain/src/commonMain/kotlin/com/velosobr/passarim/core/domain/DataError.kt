@@ -1,6 +1,12 @@
+// Os erros que o app sabe tratar, organizados por origem.
+
 package com.velosobr.passarim.core.domain
 
-/** Erros de dados do app. Hoje só existe a rede (BFF); Room entra na 5d. */
+/**
+ * Erros de dados do app. Hoje só há erros de rede (as chamadas ao BFF); o
+ * banco local não tem erros próprios. "data object" é um objeto único com
+ * toString legível, bom para erros que não carregam dados.
+ */
 sealed interface DataError : Error {
     sealed interface Network : DataError {
         data object NoConnection : Network
