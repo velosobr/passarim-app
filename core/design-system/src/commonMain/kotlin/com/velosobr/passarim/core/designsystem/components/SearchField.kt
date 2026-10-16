@@ -1,3 +1,8 @@
+// Campo de busca do Explorar.
+//
+// O campo não guarda o texto sozinho: quem chama passa [value] e recebe cada
+// mudança em [onValueChange] ("state hoisting", o estado fica com quem usa).
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.layout.heightIn

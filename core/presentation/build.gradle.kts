@@ -1,3 +1,8 @@
+// Build do core:presentation: o que todas as telas compartilham (textos,
+// erros de tela, eventos). O plugin "passarim.kmp-compose" liga o Compose
+// Multiplatform. As dependências são "api" porque as features usam esses
+// tipos (ViewModel, StringResource) direto.
+
 plugins {
     id("passarim.kmp-compose")
 }

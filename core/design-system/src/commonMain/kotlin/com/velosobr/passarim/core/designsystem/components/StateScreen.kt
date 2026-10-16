@@ -1,3 +1,5 @@
+// Tela de estado vazio ou de erro, compartilhada por todas as features.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.background

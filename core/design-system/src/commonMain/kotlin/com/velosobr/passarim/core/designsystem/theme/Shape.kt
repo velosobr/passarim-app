@@ -1,3 +1,5 @@
+// Formas e espaçamentos do tema, a partir dos tokens.
+
 package com.velosobr.passarim.core.designsystem.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +14,11 @@ val PassarimShapes =
         large = RoundedCornerShape(28.dp),
     )
 
-/** Espaçamento dos tokens: grade de 4dp, margem de tela 16dp, alvo de toque mínimo 48dp. */
+/**
+ * Espaçamento dos tokens: grade de 4dp, margem de tela 16dp, alvo de toque mínimo 48dp.
+ * dp ("density-independent pixel") é a unidade de tamanho que se ajusta à
+ * densidade da tela: 48dp têm o mesmo tamanho físico em qualquer aparelho.
+ */
 object PassarimDimens {
     val unit = 4.dp
     val screenMargin = 16.dp

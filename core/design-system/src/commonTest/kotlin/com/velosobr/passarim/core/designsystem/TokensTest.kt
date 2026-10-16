@@ -1,3 +1,6 @@
+// Testes dos tokens: as cores do código batem com os tokens do passarim-docs
+// e os pares de cor dos selos têm contraste suficiente.
+
 package com.velosobr.passarim.core.designsystem
 
 import androidx.compose.ui.graphics.Color
@@ -14,6 +17,10 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.test.Test
 
+/**
+ * contrast calcula a razão de contraste da WCAG entre duas cores, a partir da
+ * luminância (o brilho percebido): 4.5:1 é o mínimo para texto legível.
+ */
 class TokensTest {
     private fun contrast(
         a: Color,

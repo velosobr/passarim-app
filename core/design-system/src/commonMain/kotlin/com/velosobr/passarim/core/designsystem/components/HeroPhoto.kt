@@ -1,3 +1,5 @@
+// Foto grande do topo do Detalhe e o botão redondo que fica sobre ela.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.background
@@ -21,8 +23,16 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 
+/** Proporção largura:altura da foto do topo. */
 private const val HERO_ASPECT_RATIO = 1.3f
 
+/**
+ * A foto do topo, com o placeholder por baixo enquanto ela carrega (ou se não
+ * houver). [overlay] é um "slot": um bloco @Composable que quem chama passa
+ * para desenhar por cima (os botões de voltar e favoritar). AsyncImage é o
+ * componente do Coil que baixa e mostra a imagem; ContentScale.Crop preenche o
+ * espaço cortando as bordas.
+ */
 @Composable
 fun HeroPhoto(
     imageUrl: String?,
@@ -38,6 +48,7 @@ fun HeroPhoto(
     }
 }
 
+/** Botão redondo e translúcido para ficar legível sobre qualquer foto, com área de toque de 48dp. */
 @Composable
 fun HeroIconButton(
     icon: Painter,

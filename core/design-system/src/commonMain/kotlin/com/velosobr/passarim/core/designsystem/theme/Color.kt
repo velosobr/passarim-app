@@ -1,3 +1,5 @@
+// Esquemas de cores claro e escuro da marca.
+
 package com.velosobr.passarim.core.designsystem.theme
 
 import androidx.compose.material3.darkColorScheme
@@ -7,6 +9,11 @@ import androidx.compose.ui.graphics.Color
 // Gerado a partir de docs/design/tokens/passarim-tokens.json (passarim-docs). Para mudar uma cor,
 // edite o JSON, rode a verificação de contraste lá e atualize este arquivo (veja tokens/TOKENS.md).
 
+/**
+ * Esquema claro do Material 3. Cada papel tem a cor e o "on" (a cor do que
+ * vai por cima): onPrimary é o texto sobre primary, e assim por diante.
+ * Color(0xFF1A6D3C) é a cor em hexadecimal: FF de opacidade e depois RGB.
+ */
 val PassarimLightColors =
     lightColorScheme(
         primary = Color(0xFF1A6D3C),
@@ -46,6 +53,7 @@ val PassarimLightColors =
         scrim = Color(0xFF000000),
     )
 
+/** Esquema escuro do Material 3, com os mesmos papéis. */
 val PassarimDarkColors =
     darkColorScheme(
         primary = Color(0xFF7DDB97),

@@ -1,3 +1,11 @@
+// Barra do topo com o botão de voltar e o título da tela.
+//
+// Em Compose, a interface é feita de funções @Composable que descrevem o que
+// aparece na tela a partir dos parâmetros; quando um parâmetro muda, o
+// Compose chama a função de novo (recomposição) e atualiza só o que mudou.
+// O Modifier é a corrente de ajustes de um elemento (tamanho, espaçamento,
+// cliques, acessibilidade), aplicada na ordem em que é escrita.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.layout.Row
@@ -19,6 +27,11 @@ import com.velosobr.passarim.core.designsystem.resources.ic_arrow_back
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+/**
+ * Botão de voltar (com descrição para o leitor de tela) e o título, marcado
+ * como cabeçalho (heading) para quem navega pela tela com o TalkBack ou o
+ * VoiceOver.
+ */
 @Composable
 fun BackTopBar(
     title: String,
