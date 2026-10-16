@@ -1,3 +1,7 @@
+// Testes do repositório de favoritos com um banco Room de verdade, só que em
+// memória (some no fim do teste). Turbine testa Flows: "test { awaitItem() }"
+// espera o próximo valor emitido.
+
 package com.velosobr.passarim.core.database
 
 import androidx.room.Room
@@ -16,6 +20,10 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
+/**
+ * O relógio é um contador ({ ++now }): cada favorito ganha um momento maior
+ * que o anterior, e a ordem da lista fica previsível.
+ */
 class LocalFavoritesRepositoryTest {
     private val bemTeVi = SpeciesSummary("bem-te-vi", "Bem-te-vi", "Pitangus sulphuratus", "https://media/bem-te-vi.webp")
     private val sabia = SpeciesSummary("sabia-laranjeira", "Sabiá-laranjeira", "Turdus rufiventris", null)
@@ -31,6 +39,7 @@ class LocalFavoritesRepositoryTest {
     private var now = 0L
     private val repository = LocalFavoritesRepository(database.favoriteDao()) { ++now }
 
+    /** Fecha o banco depois de cada teste. */
     @AfterTest
     fun closeDatabase() = database.close()
 
