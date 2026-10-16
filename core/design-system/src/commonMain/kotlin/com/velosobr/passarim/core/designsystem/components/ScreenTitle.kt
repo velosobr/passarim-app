@@ -1,3 +1,5 @@
+// Título grande do topo das telas principais.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.layout.padding
@@ -10,6 +12,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 
+/** O título, com as margens da tela e marcado como cabeçalho para o leitor de tela. */
 @Composable
 fun ScreenTitle(
     text: String,

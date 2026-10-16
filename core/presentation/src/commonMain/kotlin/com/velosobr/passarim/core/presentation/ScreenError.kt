@@ -1,3 +1,5 @@
+// Os tipos de tela de erro, compartilhados por todas as features.
+
 package com.velosobr.passarim.core.presentation
 
 import com.velosobr.passarim.core.domain.DataError
@@ -22,6 +24,7 @@ sealed interface ScreenError {
     data object Generic : ScreenError
 }
 
+/** Escolhe a tela de erro para cada erro de rede. */
 fun DataError.Network.toScreenError(): ScreenError =
     when (this) {
         DataError.Network.NoConnection, DataError.Network.Timeout -> ScreenError.NoConnection

@@ -1,3 +1,5 @@
+// Bloco de um fato do Detalhe (tamanho, dieta...).
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.background
@@ -11,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
+/** Um valor em destaque ([value], como "23 cm") com o rótulo embaixo ([label]). */
 @Composable
 fun FactTile(
     value: String,

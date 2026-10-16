@@ -1,3 +1,5 @@
+// Tipografia do tema: a fonte Manrope e os 15 estilos do Material 3.
+
 package com.velosobr.passarim.core.designsystem.theme
 
 import androidx.compose.material3.Typography

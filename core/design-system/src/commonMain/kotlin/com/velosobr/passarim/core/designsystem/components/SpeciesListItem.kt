@@ -1,3 +1,5 @@
+// Linha de uma espécie na lista (Favoritos).
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.clickable
@@ -30,6 +32,11 @@ import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+/**
+ * Miniatura de 56dp, nome popular, nome científico em itálico e o botão de
+ * favoritar. Modifier.weight(1f) faz a coluna dos nomes ocupar o espaço que
+ * sobra entre a foto e o botão.
+ */
 @Composable
 fun SpeciesListItem(
     name: String,
