@@ -8,10 +8,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.velosobr.passarim.app.App
 
 class MainActivity : ComponentActivity() {
+    private var settingsLoaded = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition { !settingsLoaded }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { App() }
+        setContent { App(onSettingsLoaded = { settingsLoaded = true }) }
     }
 }

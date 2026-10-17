@@ -11,5 +11,6 @@
     <string name="favorite_add">Favoritar %1$s</string>
     <string name="favorite_remove">Desfavoritar %1$s</string>
     <string name="search_clear">Limpar busca</string>
+    <string name="back">Voltar</string>
     <string name="filter_remove">Remover filtro %1$s</string>
 </resources>

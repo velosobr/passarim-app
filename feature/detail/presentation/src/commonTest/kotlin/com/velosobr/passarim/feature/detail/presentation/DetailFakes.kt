@@ -7,6 +7,7 @@ import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.SpeciesSummary
+import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.passarim.feature.detail.domain.Audio
 import com.velosobr.passarim.feature.detail.domain.AudioPlayer
 import com.velosobr.passarim.feature.detail.domain.DetailRepository
@@ -16,6 +17,8 @@ import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.domain.WhereToFind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
 
 const val ARARA_ID = "anodorhynchus-hyacinthinus"
 const val AUDIO_URL = "https://media/arara.aac"
@@ -58,6 +61,8 @@ class FakeFavoritesRepository : FavoritesRepository {
 
     override fun observeIds(): Flow<Set<String>> = ids
 
+    override fun observeAll(): Flow<List<SpeciesSummary>> = flowOf(emptyList())
+
     override suspend fun toggle(summary: SpeciesSummary) {
         toggled += summary
         ids.value = if (summary.id in ids.value) ids.value - summary.id else ids.value + summary.id
@@ -74,6 +79,12 @@ class FakeSettingsRepository(
     private val settings = MutableStateFlow(Settings(autoPlay = autoPlay))
 
     override fun observe(): Flow<Settings> = settings
+
+    override suspend fun setTheme(theme: ThemeMode) = settings.update { it.copy(theme = theme) }
+
+    override suspend fun setDynamicColors(enabled: Boolean) = settings.update { it.copy(dynamicColors = enabled) }
+
+    override suspend fun setAutoPlay(enabled: Boolean) = settings.update { it.copy(autoPlay = enabled) }
 }
 
 class FakeAudioPlayer : AudioPlayer {

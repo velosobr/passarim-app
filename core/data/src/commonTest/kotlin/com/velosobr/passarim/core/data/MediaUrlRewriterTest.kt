@@ -7,7 +7,9 @@ import kotlin.test.Test
 
 class MediaUrlRewriterTest {
     private fun rewriter(override: String?) =
-        MediaUrlRewriter(AppConfig(isDebug = override != null, baseUrl = "http://10.0.2.2:8080", mediaHostOverride = override))
+        MediaUrlRewriter(
+            AppConfig(isDebug = override != null, baseUrl = "http://10.0.2.2:8080", mediaHostOverride = override, versionName = "1.0.0"),
+        )
 
     @Test
     fun `troca so o host de localhost e preserva porta caminho e query`() {

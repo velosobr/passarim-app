@@ -65,7 +65,8 @@ class RemoteDetailRepositoryTest {
         mediaHostOverride: String? = null,
         onRequest: (Url) -> Unit = {},
     ): RemoteDetailRepository {
-        val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = mediaHostOverride)
+        val config =
+            AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = mediaHostOverride, versionName = "1.0.0")
         val engine =
             MockEngine { request ->
                 onRequest(request.url)

@@ -13,8 +13,9 @@ fun MainViewController(
     baseUrl: String,
     isDebug: Boolean,
     mediaHostOverride: String?,
+    versionName: String,
 ): UIViewController {
-    val config = AppConfig(isDebug = isDebug, baseUrl = baseUrl, mediaHostOverride = mediaHostOverride)
+    val config = AppConfig(isDebug = isDebug, baseUrl = baseUrl, mediaHostOverride = mediaHostOverride, versionName = versionName)
     if (!koinStarted) {
         initKoin(config)
         koinStarted = true

@@ -11,5 +11,7 @@ dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.feature.explore.presentation)
     implementation(projects.feature.detail.presentation)
+    implementation(projects.feature.favorites.presentation)
+    implementation(projects.feature.settings.presentation)
     testImplementation(libs.junit4)
 }

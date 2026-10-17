@@ -21,3 +21,12 @@ data object SettingsRoute
 data class DetailRoute(
     val id: String,
 )
+
+@Serializable
+data object StorageRoute
+
+@Serializable
+data object AboutRoute
+
+@Serializable
+data object LicensesRoute

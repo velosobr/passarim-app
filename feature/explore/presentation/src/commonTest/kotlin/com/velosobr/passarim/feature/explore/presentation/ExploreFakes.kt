@@ -13,6 +13,7 @@ import com.velosobr.passarim.feature.explore.domain.SpeciesPage
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 fun bird(id: String) = SpeciesSummary(id, "Ave $id", "Avis $id", thumbnailUrl = null)
 
@@ -74,6 +75,8 @@ class FakeFavoritesRepository : FavoritesRepository {
     val ids = MutableStateFlow<Set<String>>(emptySet())
 
     override fun observeIds(): Flow<Set<String>> = ids
+
+    override fun observeAll(): Flow<List<SpeciesSummary>> = flowOf(emptyList())
 
     override suspend fun toggle(summary: SpeciesSummary) {
         ids.value = if (summary.id in ids.value) ids.value - summary.id else ids.value + summary.id

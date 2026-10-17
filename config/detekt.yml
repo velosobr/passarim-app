@@ -4,8 +4,6 @@ style:
     active: false          # tokens de design (dp, sp, cores) são números por natureza
   MaxLineLength:
     maxLineLength: 140
-  UnusedParameter:
-    active: false          # `dynamicColor` existe desde já e só é usado na 5d
 complexity:
   LongParameterList:
     ignoreDefaultParameters: true

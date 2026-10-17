@@ -1,0 +1,33 @@
+package com.velosobr.passarim.feature.settings.presentation
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
+import com.velosobr.passarim.core.designsystem.components.BackTopBar
+import com.velosobr.passarim.feature.settings.presentation.resources.Res
+import com.velosobr.passarim.feature.settings.presentation.resources.open_source_licenses
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun LicensesRoot(onBack: () -> Unit) {
+    val libraries by produceLibraries { Res.readBytes("files/aboutlibraries.json").decodeToString() }
+    LicensesScreen(libraries = libraries, onBack = onBack)
+}
+
+@Composable
+fun LicensesScreen(
+    libraries: Libs?,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.fillMaxSize().systemBarsPadding()) {
+        BackTopBar(stringResource(Res.string.open_source_licenses), onBack = onBack)
+        LibrariesContainer(libraries, Modifier.fillMaxSize())
+    }
+}

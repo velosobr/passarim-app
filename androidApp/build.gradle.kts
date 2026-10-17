@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("passarim.android-application")
+    id("passarim.licenses")
 }
 
 // Endereço do BFF no debug. Padrão: o emulador Android alcança o computador por 10.0.2.2.
@@ -43,4 +44,12 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.koin.android)
+}
+
+aboutLibraries {
+    export {
+        variant = "release"
+        outputFile = rootProject.file("feature/settings/presentation/src/commonMain/composeResources/files/aboutlibraries.json")
+        prettyPrint = true
+    }
 }

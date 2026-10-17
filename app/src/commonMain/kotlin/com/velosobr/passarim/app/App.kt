@@ -1,44 +1,79 @@
 package com.velosobr.passarim.app
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import com.velosobr.passarim.app.images.passarimImageLoader
+import com.velosobr.passarim.app.navigation.AboutRoute
 import com.velosobr.passarim.app.navigation.DetailRoute
+import com.velosobr.passarim.app.navigation.LicensesRoute
+import com.velosobr.passarim.app.navigation.StorageRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
-import com.velosobr.passarim.core.data.MediaHttpClientQualifier
+import com.velosobr.passarim.app.theme.SystemBarsAppearance
+import com.velosobr.passarim.app.theme.isDark
 import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
+import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.detail.presentation.DetailRoot
-import io.ktor.client.HttpClient
+import com.velosobr.passarim.feature.settings.presentation.AboutRoot
+import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
+import com.velosobr.passarim.feature.settings.presentation.StorageRoot
 import org.koin.compose.koinInject
 
-/**
- * Raiz do app. O `NavHost` raiz tem as abas (`TabsRoute`) e, por cima delas, as telas cheias, como o
- * detalhe (`DetailRoute`). O Coil é configurado aqui uma vez, com o `HttpClient` de mídia.
- */
 @Composable
-fun App() {
-    val mediaClient = koinInject<HttpClient>(MediaHttpClientQualifier)
-    setSingletonImageLoaderFactory { context -> passarimImageLoader(context, mediaClient) }
-    PassarimTheme {
+fun App(onSettingsLoaded: () -> Unit = {}) {
+    val imageLoader = koinInject<ImageLoader>()
+    setSingletonImageLoaderFactory { imageLoader }
+    val settingsRepository = koinInject<SettingsRepository>()
+    val settings by remember(settingsRepository) { settingsRepository.observe() }.collectAsState(initial = null)
+    val loaded = settings ?: return
+    LaunchedEffect(Unit) { onSettingsLoaded() }
+    val darkTheme = loaded.theme.isDark(isSystemInDarkTheme())
+    SystemBarsAppearance(darkTheme)
+    PassarimTheme(darkTheme = darkTheme, dynamicColor = loaded.dynamicColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            val rootNav = rememberNavController()
-            NavHost(rootNav, startDestination = TabsRoute) {
-                composable<TabsRoute> {
-                    TabsScreen(onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) })
-                }
-                composable<DetailRoute> {
-                    DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
-                }
-            }
+            AppNavHost()
+        }
+    }
+}
+
+@Composable
+private fun AppNavHost() {
+    val rootNav = rememberNavController()
+    NavHost(rootNav, startDestination = TabsRoute) {
+        composable<TabsRoute> {
+            TabsScreen(
+                onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) },
+                onOpenStorage = { rootNav.navigate(StorageRoute) },
+                onOpenAbout = { rootNav.navigate(AboutRoute) },
+            )
+        }
+        composable<DetailRoute> {
+            DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+        }
+        composable<StorageRoute> {
+            StorageRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+        }
+        composable<AboutRoute> {
+            AboutRoot(
+                onBack = dropUnlessResumed { rootNav.popBackStack() },
+                onOpenLicenses = { rootNav.navigate(LicensesRoute) },
+            )
+        }
+        composable<LicensesRoute> {
+            LicensesRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
         }
     }
 }

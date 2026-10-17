@@ -9,4 +9,5 @@ data class AppConfig(
     val baseUrl: String,
     /** Só em debug: host alcançável pela plataforma para trocar o `localhost` das URLs de mídia. */
     val mediaHostOverride: String?,
+    val versionName: String,
 )

@@ -9,12 +9,16 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.domain)
             implementation(projects.core.data)
+            implementation(projects.core.database)
             implementation(projects.core.presentation)
             implementation(projects.core.designSystem)
             implementation(projects.feature.explore.data)
             implementation(projects.feature.explore.presentation)
             implementation(projects.feature.detail.data)
             implementation(projects.feature.detail.presentation)
+            implementation(projects.feature.favorites.presentation)
+            implementation(projects.feature.settings.data)
+            implementation(projects.feature.settings.presentation)
             implementation(libs.compose.resources)
             implementation(libs.navigation.compose)
             implementation(libs.koin.core)
@@ -24,6 +28,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
+        }
+        androidMain.dependencies {
+            implementation(libs.koin.android)
         }
         commonTest.dependencies {
             implementation(libs.assertk)

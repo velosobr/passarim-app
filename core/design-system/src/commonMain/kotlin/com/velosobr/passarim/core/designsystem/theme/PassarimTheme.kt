@@ -5,22 +5,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
-/**
- * Tema do Passarim: cores dos tokens (claro/escuro), Manrope, formas e a paleta de conservação.
- *
- * [dynamicColor] já existe como parâmetro, mas fica sem efeito até a 5d ligar o seletor de
- * "Cores dinâmicas" (Android 12+). O selo de conservação nunca usa cores dinâmicas.
- */
 @Composable
 fun PassarimTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    @Suppress("UNUSED_PARAMETER") dynamicColor: Boolean = false,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val conservation = if (darkTheme) DarkConservationPalette else LightConservationPalette
+    val tokens = if (darkTheme) PassarimDarkColors else PassarimLightColors
+    val dynamic = if (dynamicColor) dynamicColorScheme(darkTheme) else null
     CompositionLocalProvider(LocalConservationPalette provides conservation) {
         MaterialTheme(
-            colorScheme = if (darkTheme) PassarimDarkColors else PassarimLightColors,
+            colorScheme = dynamic ?: tokens,
             typography = passarimTypography(),
             shapes = PassarimShapes,
             content = content,
