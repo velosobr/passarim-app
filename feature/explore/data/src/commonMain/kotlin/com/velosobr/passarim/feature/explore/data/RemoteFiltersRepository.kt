@@ -1,5 +1,5 @@
 // As opções de filtro vindas do BFF, guardadas em memória depois da primeira
-// resposta.
+// resposta com sucesso.
 
 package com.velosobr.passarim.feature.explore.data
 

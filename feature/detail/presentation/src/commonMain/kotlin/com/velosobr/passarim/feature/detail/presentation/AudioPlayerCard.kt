@@ -44,7 +44,7 @@ import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
  * Mostra o canto e deixa tocar, pausar e arrastar a posição. Enquanto o
  * dedo arrasta, a barra segue o dedo (dragging) e não o player; ao soltar, o
  * player pula para a posição escolhida. "by remember { mutableStateOf(...) }"
- * cria um estado que sobrevive às recomposições e, ao mudar, redesenha a tela.
+ * cria um estado que sobrevive às recomposições e, ao mudar, recompõe quem o lê.
  */
 @Composable
 fun AudioPlayerCard(

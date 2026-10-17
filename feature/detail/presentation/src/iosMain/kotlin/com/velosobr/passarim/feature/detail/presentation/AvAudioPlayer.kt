@@ -37,16 +37,16 @@ import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
 import platform.darwin.NSObjectProtocol
 
-/** De quanto em quanto tempo a posição é publicada; o tempo do iOS (CMTime) usa escala de milésimos. */
+/** De quanto em quanto tempo a posição é publicada; TIMESCALE 1000 faz o CMTime contar em milésimos de segundo. */
 private const val PROGRESS_INTERVAL_MILLIS = 200L
 private const val MILLIS_PER_SECOND = 1_000.0
 private const val TIMESCALE = 1_000
 
 /**
- * Implementa o AudioPlayer com o AVPlayer. As classes da Apple chegam ao
- * Kotlin pela interoperabilidade com Objective-C, por isso o
- * @OptIn(ExperimentalForeignApi). O estado é publicado a cada 200 ms
- * enquanto toca.
+ * Implementa o AudioPlayer com o AVPlayer. O CMTime e as funções do CoreMedia são
+ * structs e funções em C, e os parâmetros `error` são ponteiros; o Kotlin/Native só
+ * deixa usar esse tipo de API com @OptIn(ExperimentalForeignApi). O estado é
+ * publicado a cada 200 ms enquanto toca ou carrega.
  */
 @OptIn(ExperimentalForeignApi::class)
 class AvAudioPlayer : AudioPlayer {
@@ -108,7 +108,7 @@ class AvAudioPlayer : AudioPlayer {
         _state.value = PlaybackState.Idle
     }
 
-    /** A categoria Playback faz o som tocar mesmo com a chave de silencioso do iPhone ligada. */
+    /** A categoria Playback faz o som tocar mesmo com a chave de silencioso ligada e interrompe o áudio de outros apps. */
     private fun activateSession() {
         val session = AVAudioSession.sharedInstance()
         session.setCategory(AVAudioSessionCategoryPlayback, error = null)

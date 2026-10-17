@@ -29,7 +29,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-/** full é uma resposta com todos os campos; empty, uma com o mínimo do contrato. */
+/** full é uma resposta com todos os campos; empty, uma com os campos opcionais nulos, vazios ou em branco. */
 class RemoteDetailRepositoryTest {
     private val media = "http://localhost:8888/buckets/passarim-media/species/anodorhynchus-hyacinthinus"
 
@@ -82,7 +82,7 @@ class RemoteDetailRepositoryTest {
         return RemoteDetailRepository(createHttpClient(engine, config), MediaUrlRewriter(config))
     }
 
-    /** conservationJson monta uma resposta só com o código de conservação dado. */
+    /** conservationJson é a resposta full com o status de conservação trocado pelo código dado. */
     private fun conservationJson(code: String) =
         full.replace("{\"code\":\"VU\",\"label\":\"Vulnerável\"}", "{\"code\":\"$code\",\"label\":\"x\"}")
 

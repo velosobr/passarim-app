@@ -28,7 +28,8 @@ private const val PROGRESS_INTERVAL_MILLIS = 200L
  * Implementa o AudioPlayer com o ExoPlayer, criado só no primeiro play. O
  * estado é publicado num StateFlow a cada mudança do player e, enquanto toca,
  * a cada 200 ms (para a barra de progresso andar). MainScope é um escopo de
- * coroutines na thread principal, onde o ExoPlayer exige ser usado.
+ * coroutines na thread principal: o ExoPlayer só pode ser usado na thread em que
+ * foi criado, e aqui ele nasce na principal.
  */
 class ExoAudioPlayer(
     private val context: Context,
@@ -108,7 +109,8 @@ class ExoAudioPlayer(
 
     /**
      * Cria o ExoPlayer como player de mídia. O "true" de setAudioAttributes faz
-     * o ExoPlayer cuidar do foco de áudio: pausa se outro app começar a tocar.
+     * o ExoPlayer cuidar do foco de áudio: pausa se outro app começar a tocar, retoma
+     * depois de uma interrupção curta e abaixa o volume num aviso rápido.
      */
     private fun createPlayer(): ExoPlayer =
         ExoPlayer
