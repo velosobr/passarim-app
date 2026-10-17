@@ -1,3 +1,7 @@
+// Build do build-logic: o projeto que contém os "convention plugins", os
+// scripts de configuração reutilizados por todos os módulos (os arquivos
+// passarim.*.gradle.kts). As dependências são os plugins que eles aplicam.
+
 plugins {
     `kotlin-dsl`
 }

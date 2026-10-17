@@ -6,6 +6,7 @@
         <item name="postSplashScreenTheme">@style/Theme.Passarim</item>
     </style>
 
+    <!-- Tema do app depois da splash: claro e sem barra de ação. -->
     <style name="Theme.Passarim" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/splash_background</item>
     </style>

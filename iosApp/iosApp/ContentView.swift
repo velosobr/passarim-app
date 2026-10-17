@@ -1,8 +1,10 @@
+// A tela SwiftUI que hospeda o app Compose.
 import SwiftUI
 import PassarimApp
 
 /// Hospeda a UI em Compose Multiplatform. A configuração vem do xcconfig, via Info.plist.
 struct ComposeView: UIViewControllerRepresentable {
+    /// Cria o controlador do Compose com a configuração lida do Info.plist.
     func makeUIViewController(context: Context) -> UIViewController {
         let info = Bundle.main.infoDictionary
         let baseUrl = info?["BffBaseUrl"] as? String ?? ""
@@ -18,9 +20,11 @@ struct ComposeView: UIViewControllerRepresentable {
         )
     }
 
+    /// Nada a atualizar: o Compose cuida da própria tela.
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
+/// A tela principal: o Compose ocupa tudo, inclusive atrás das barras do sistema.
 struct ContentView: View {
     var body: some View {
         ComposeView()

@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Android: ktlint, detekt, testes de lógica, snapshots e o APK debug.
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,6 +37,8 @@ jobs:
           path: "**/build/reports/tests"
           if-no-files-found: ignore
 
+  # Segurança das dependências: o osv-scanner lê os gradle.lockfile e barra
+  # vulnerabilidade alta ou crítica (scripts/osv-gate.sh).
   security:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +65,7 @@ jobs:
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
           scripts/osv-gate.sh
 
+  # Segredos: o gitleaks procura chaves e senhas no histórico do git.
   secrets:
     runs-on: ubuntu-latest
     steps:
@@ -72,6 +76,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # iOS: compila o framework do app e o projeto Xcode no macOS, sem assinatura.
   ios:
     runs-on: macos-15
     steps:
