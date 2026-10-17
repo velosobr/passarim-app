@@ -31,6 +31,7 @@ import com.velosobr.passarim.feature.detail.presentation.resources.map_attributi
 import com.velosobr.passarim.feature.detail.presentation.resources.map_unavailable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import org.maplibre.compose.camera.CameraFit
 import org.maplibre.compose.camera.CameraPosition
 import org.maplibre.compose.expressions.dsl.asNumber
 import org.maplibre.compose.expressions.dsl.const
@@ -63,9 +64,9 @@ private const val CLUSTER_TOTAL = "total"
 private const val CLUSTER_RADIUS = 25
 
 private val CLUSTER_OPTIONS =
-    GeoJsonOptions(
-        cluster = true,
-        clusterRadius = CLUSTER_RADIUS,
+    GeoJsonOptions {
+        cluster = true
+        clusterRadius = CLUSTER_RADIUS
         clusterProperties =
             mapOf(
                 CLUSTER_TOTAL to
@@ -73,8 +74,8 @@ private val CLUSTER_OPTIONS =
                         mapper = feature["count"].asNumber(),
                         reducer = feature.accumulated().asNumber() + feature[CLUSTER_TOTAL].asNumber(),
                     ),
-            ),
-    )
+            )
+    }
 
 private fun clusterTotal() = feature[CLUSTER_TOTAL].asNumber(feature["count"])
 
@@ -103,7 +104,7 @@ private fun ClusterMap(
     val mapState =
         rememberMapState(
             baseStyle = BaseStyle.Uri(OPENFREEMAP_STYLE_URL),
-            initialCameraPosition = CameraPosition(target = BRAZIL_CENTER, zoom = BRAZIL_ZOOM),
+            initialCameraPosition = CameraPosition(center = BRAZIL_CENTER, zoom = BRAZIL_ZOOM),
         ) {
             val source = rememberGeoJsonSource(GeoJsonData.JsonString(geoJson), CLUSTER_OPTIONS)
             CircleLayer(
@@ -125,11 +126,11 @@ private fun ClusterMap(
             )
         }
     LaunchedEffect(mapState) {
-        if (awaitMapReady(snapshotFlow { mapState.style.loadState })) {
+        if (awaitMapReady(snapshotFlow { mapState.style.loadState.toMapLoad() })) {
             val bounds = mapBounds(clusters)
             mapState.fitCameraToBounds(
                 BoundingBox(west = bounds.west, south = bounds.south, east = bounds.east, north = bounds.north),
-                fitPadding = DpPadding(24.dp, 24.dp, 24.dp, 24.dp),
+                CameraFit(fitPadding = DpPadding(24.dp, 24.dp, 24.dp, 24.dp)),
             )
         } else {
             onUnavailable()

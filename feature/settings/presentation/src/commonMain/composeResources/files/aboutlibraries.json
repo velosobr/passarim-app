@@ -4373,7 +4373,7 @@
         },
         {
             "uniqueId": "org.maplibre.compose:location",
-            "artifactVersion": "0.19.0",
+            "artifactVersion": "0.20.0",
             "name": "MapLibre Compose Location",
             "description": "Multiplatform location and heading providers, usable without Compose.",
             "website": "https://github.com/maplibre/maplibre-compose",
@@ -4396,7 +4396,7 @@
         },
         {
             "uniqueId": "org.maplibre.compose:maplibre-compose",
-            "artifactVersion": "0.19.0",
+            "artifactVersion": "0.20.0",
             "name": "MapLibre Compose",
             "description": "Add interactive vector tile maps to your Compose app",
             "website": "https://github.com/maplibre/maplibre-compose",
@@ -4419,7 +4419,7 @@
         },
         {
             "uniqueId": "org.maplibre.nativeffi:maplibre-native-ffi",
-            "artifactVersion": "0.202609.5",
+            "artifactVersion": "0.202610.0",
             "name": "MapLibre Native FFI Kotlin binding",
             "description": "Low-level Kotlin Multiplatform bindings for the MapLibre Native C API.",
             "website": "https://github.com/maplibre/maplibre-native-ffi",
@@ -4442,7 +4442,7 @@
         },
         {
             "uniqueId": "org.maplibre.nativeffi:maplibre-native-ffi-runtime-opengl",
-            "artifactVersion": "0.202609.5",
+            "artifactVersion": "0.202610.0",
             "name": "MapLibre Native FFI OpenGL runtime",
             "description": "Native OpenGL runtime for the MapLibre Native FFI Kotlin binding.",
             "website": "https://github.com/maplibre/maplibre-native-ffi",
