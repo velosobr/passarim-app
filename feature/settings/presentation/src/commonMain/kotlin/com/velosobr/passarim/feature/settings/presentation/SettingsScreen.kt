@@ -1,3 +1,5 @@
+// A aba Configurações: aparência, reprodução, dados e sobre.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.ScrollState
@@ -53,6 +55,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/** O rótulo traduzível de cada opção de tema. */
 private val ThemeMode.label: StringResource
     get() =
         when (this) {
@@ -61,6 +64,7 @@ private val ThemeMode.label: StringResource
             ThemeMode.DARK -> Res.string.theme_dark
         }
 
+/** A tela sem estado próprio. A opção de cores dinâmicas só aparece onde o sistema tem. */
 @Composable
 fun SettingsScreen(
     state: SettingsState,
@@ -107,6 +111,11 @@ fun SettingsScreen(
     }
 }
 
+/**
+ * As opções de tema como um grupo de botões de rádio. selectableGroup e
+ * Role.RadioButton dizem ao leitor de tela que só uma pode ser escolhida; o
+ * toque vale na linha toda, não só no círculo.
+ */
 @Composable
 private fun ThemeOptions(
     selected: ThemeMode,
@@ -133,6 +142,7 @@ private fun ThemeOptions(
     }
 }
 
+/** Uma linha com chave liga/desliga; o toque vale na linha toda (toggleable). */
 @Composable
 private fun SwitchRow(
     title: String,

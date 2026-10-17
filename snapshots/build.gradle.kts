@@ -1,3 +1,7 @@
+// Build do módulo de snapshots: um módulo Android puro que fotografa as telas
+// e os componentes com o Paparazzi (ADR-0010 e ADR-0017) e compara com as
+// imagens de referência guardadas no repositório.
+
 plugins {
     id("passarim.paparazzi")
 }

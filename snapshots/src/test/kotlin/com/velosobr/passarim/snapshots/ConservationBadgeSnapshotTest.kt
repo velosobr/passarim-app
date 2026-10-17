@@ -1,3 +1,5 @@
+// Snapshot do selo de conservação com todos os status.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.layout.Arrangement

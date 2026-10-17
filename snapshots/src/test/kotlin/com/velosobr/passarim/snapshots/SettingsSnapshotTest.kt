@@ -1,3 +1,5 @@
+// Snapshots das telas de Configurações.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.ScrollState
@@ -11,6 +13,11 @@ import com.velosobr.passarim.feature.settings.presentation.StorageScreen
 import com.velosobr.passarim.feature.settings.presentation.StorageState
 import org.junit.Test
 
+/**
+ * Configurações em várias combinações (com e sem cores dinâmicas, rolada até
+ * o fim), Dados e armazenamento e Sobre. ScrollState(Int.MAX_VALUE) começa a
+ * tela rolada até o fim.
+ */
 class SettingsSnapshotTest(
     dark: Boolean,
     fontScalePercent: Int,

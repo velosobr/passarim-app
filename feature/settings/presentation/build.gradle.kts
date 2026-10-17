@@ -1,3 +1,6 @@
+// Build do feature:settings:presentation: as telas de Configurações, Dados e
+// armazenamento, Sobre e Licenças (com a biblioteca AboutLibraries).
+
 plugins {
     id("passarim.kmp-compose")
 }

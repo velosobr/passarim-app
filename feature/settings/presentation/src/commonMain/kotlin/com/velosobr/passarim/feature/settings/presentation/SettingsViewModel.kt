@@ -1,3 +1,5 @@
+// O ViewModel da aba Configurações.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/** Observa as preferências e grava cada mudança no repositório. */
 class SettingsViewModel(
     private val repository: SettingsRepository,
     dynamicColorsSupported: Boolean,
