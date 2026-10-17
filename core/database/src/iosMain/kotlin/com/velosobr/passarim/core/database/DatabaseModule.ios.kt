@@ -1,3 +1,5 @@
+// Onde o banco fica no iOS: na pasta Documents do app.
+
 package com.velosobr.passarim.core.database
 
 import androidx.room.Room
@@ -8,6 +10,11 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+/**
+ * No iOS, o caminho vem do NSFileManager (a API de arquivos da Apple).
+ * URLForDirectory recebe um ponteiro C no parâmetro error, e as APIs com
+ * ponteiros exigem o @OptIn(ExperimentalForeignApi).
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun Scope.passarimDatabaseBuilder(): RoomDatabase.Builder<PassarimDatabase> {
     val documents =

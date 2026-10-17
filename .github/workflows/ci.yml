@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Android: ktlint, detekt, testes de lógica, snapshots e o APK debug.
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,6 +37,9 @@ jobs:
           path: "**/build/reports/tests"
           if-no-files-found: ignore
 
+  # Segurança das dependências: confere se os gradle.lockfile e a lista de
+  # licenças estão em dia, e o osv-scanner barra vulnerabilidade alta ou
+  # crítica (scripts/osv-gate.sh).
   security:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +66,7 @@ jobs:
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
           scripts/osv-gate.sh
 
+  # Segredos: o gitleaks procura chaves e senhas no histórico do git.
   secrets:
     runs-on: ubuntu-latest
     steps:
@@ -72,6 +77,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # iOS: compila o framework do app e o projeto Xcode no macOS, sem assinatura.
   ios:
     runs-on: macos-15
     steps:
@@ -91,3 +97,16 @@ jobs:
           xcodebuild -project iosApp.xcodeproj -scheme iosApp -configuration Debug \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+  # Nas branches docs/comentarios-*, que só comentam o código, garante que
+  # nenhuma linha de código mudou (scripts/check-comment-only.sh).
+  comentarios:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'docs/comentarios-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # O histórico inteiro é necessário para comparar com a base do PR.
+          fetch-depth: 0
+      - run: bash scripts/check-comment-only_test.sh
+      - run: bash scripts/check-comment-only.sh origin/${{ github.base_ref }}

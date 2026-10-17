@@ -1,3 +1,8 @@
+// Build do módulo app: o app compartilhado entre Android e iOS. É o único
+// módulo que conhece todas as features e as liga (navegação e injeção de
+// dependências). O plugin "passarim.ios-framework" empacota tudo como o
+// framework que o projeto Xcode usa.
+
 plugins {
     id("passarim.kmp-compose")
     id("passarim.serialization")

@@ -1,3 +1,5 @@
+// Um texto da interface que pode ser pronto ou vir dos recursos traduzíveis.
+
 package com.velosobr.passarim.core.presentation
 
 import androidx.compose.runtime.Composable
@@ -7,6 +9,10 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Texto que a UI mostra: ou uma string pronta ([DynamicString]) ou um recurso traduzível
  * ([Resource]). O ViewModel devolve [UiText]; só a UI sabe resolver para `String`.
+ *
+ * O ViewModel não resolve o texto: ele devolve a "receita" (recurso e
+ * argumentos), e a tela a resolve com [asString] no idioma atual, o que mantém
+ * o ViewModel testável sem recursos.
  */
 sealed interface UiText {
     data class DynamicString(
@@ -18,6 +24,11 @@ sealed interface UiText {
         val args: List<Any> = emptyList(),
     ) : UiText
 
+    /**
+     * Resolve o texto. @Composable marca uma função que roda dentro da
+     * composição (a montagem da tela) e por isso pode ler recursos.
+     * "*args.toTypedArray()" espalha a lista como argumentos separados.
+     */
     @Composable
     fun asString(): String =
         when (this) {

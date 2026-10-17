@@ -1,3 +1,5 @@
+// Testes de UiText.
+
 package com.velosobr.passarim.core.presentation
 
 import assertk.assertThat

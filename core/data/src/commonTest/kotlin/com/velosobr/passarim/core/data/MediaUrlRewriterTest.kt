@@ -1,3 +1,5 @@
+// Testes da troca de host das URLs de mídia.
+
 package com.velosobr.passarim.core.data
 
 import assertk.assertThat
@@ -5,7 +7,9 @@ import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.AppConfig
 import kotlin.test.Test
 
+/** Só URLs absolutas de host local mudam, e só o host. */
 class MediaUrlRewriterTest {
+    /** rewriter cria o conversor com o host de override dado (ou nenhum). */
     private fun rewriter(override: String?) =
         MediaUrlRewriter(
             AppConfig(isDebug = override != null, baseUrl = "http://10.0.2.2:8080", mediaHostOverride = override, versionName = "1.0.0"),

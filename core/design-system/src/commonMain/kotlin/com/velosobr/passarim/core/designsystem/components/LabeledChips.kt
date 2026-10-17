@@ -1,3 +1,7 @@
+// Etiquetas de informação (biomas, por exemplo), com e sem título.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.BorderStroke
@@ -13,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/** Um título ([label]) com as etiquetas embaixo. */
 @Composable
 fun LabeledChips(
     label: String,
@@ -25,6 +30,7 @@ fun LabeledChips(
     }
 }
 
+/** As etiquetas lado a lado; FlowRow quebra para a linha de baixo quando falta espaço. */
 @Composable
 fun InfoChips(
     chips: List<String>,
@@ -35,6 +41,7 @@ fun InfoChips(
     }
 }
 
+/** Uma etiqueta com borda, só para leitura (não é clicável). */
 @Composable
 private fun InfoChip(text: String) {
     Surface(

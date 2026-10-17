@@ -1,3 +1,5 @@
+// Testes do cliente de mídia.
+
 package com.velosobr.passarim.core.data
 
 import assertk.assertThat
@@ -11,6 +13,7 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+/** O cliente de mídia é separado do da API: sem URL base e com prazos maiores. */
 class MediaHttpClientTest {
     @Test
     fun `nao herda a URL base do BFF`() =

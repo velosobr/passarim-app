@@ -1,3 +1,7 @@
+// Selo do status de conservação de uma espécie.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.background
@@ -56,6 +60,7 @@ fun ConservationBadge(
     }
 }
 
+/** O rótulo traduzível de cada status. */
 private fun ConservationStatus.label(): StringResource =
     when (this) {
         ConservationStatus.LC -> Res.string.conservation_lc

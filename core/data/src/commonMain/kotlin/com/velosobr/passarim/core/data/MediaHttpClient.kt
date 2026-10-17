@@ -1,3 +1,5 @@
+// O cliente HTTP usado só para baixar fotos.
+
 package com.velosobr.passarim.core.data
 
 import io.ktor.client.HttpClient

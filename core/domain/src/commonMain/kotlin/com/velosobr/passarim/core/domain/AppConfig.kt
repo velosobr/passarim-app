@@ -1,3 +1,5 @@
+// Configuração de execução do app.
+
 package com.velosobr.passarim.core.domain
 
 /**

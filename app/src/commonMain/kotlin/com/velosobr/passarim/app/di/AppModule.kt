@@ -1,3 +1,8 @@
+// Inicialização da injeção de dependências (Koin) com os módulos de todas
+// as camadas e features.
+// Koin: cada "module" declara como criar as peças (single = uma instância só,
+// get() = pedir outra peça ao Koin); startKoin junta todos os módulos.
+
 package com.velosobr.passarim.app.di
 
 import com.velosobr.passarim.app.images.imageLoaderModule
