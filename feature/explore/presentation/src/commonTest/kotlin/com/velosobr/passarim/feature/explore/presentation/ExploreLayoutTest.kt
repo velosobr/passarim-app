@@ -1,3 +1,5 @@
+// Teste do número de colunas da grade por escala de fonte.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import assertk.assertThat

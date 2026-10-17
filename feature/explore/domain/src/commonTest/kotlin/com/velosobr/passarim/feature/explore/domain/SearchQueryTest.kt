@@ -1,3 +1,5 @@
+// Testes da limpeza do texto de busca.
+
 package com.velosobr.passarim.feature.explore.domain
 
 import assertk.assertThat

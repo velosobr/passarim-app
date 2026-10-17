@@ -1,3 +1,10 @@
+// O ViewModel do Explorar.
+//
+// Um ViewModel guarda o estado da tela e sobrevive à rotação. viewModelScope
+// é o escopo das coroutines dele: tudo o que roda ali é cancelado quando a
+// tela sai de vez. MutableStateFlow guarda o estado atual (a tela lê pelo
+// StateFlow, só leitura); Channel entrega cada evento uma vez só.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import androidx.lifecycle.SavedStateHandle
@@ -84,6 +91,10 @@ class ExploreViewModel(
     private var loadJob: Job? = null
     private var retryJob: Job? = null
 
+    // Monta a busca: a primeira emissão sai na hora; as seguintes esperam
+    // SEARCH_DEBOUNCE_MILLIS sem digitação (debounce), para não fazer um pedido
+    // por tecla. combine junta busca, bioma e UF, e distinctUntilChanged evita
+    // recarregar quando nada mudou de fato.
     init {
         val query =
             queryText
@@ -104,6 +115,7 @@ class ExploreViewModel(
         loadFilters()
     }
 
+    /** Trata cada ação da tela. */
     @Suppress("CyclomaticComplexMethod")
     fun onAction(action: ExploreAction) {
         when (action) {
@@ -131,6 +143,7 @@ class ExploreViewModel(
         }
     }
 
+    /** Guarda o texto (também no SavedStateHandle) e o entrega ao debounce. */
     private fun setQuery(text: String) {
         val limited = text.take(MAX_QUERY_LENGTH)
         savedState[KEY_QUERY] = limited
@@ -148,20 +161,24 @@ class ExploreViewModel(
         _state.update { it.copy(biome = biome, state = state, sheet = null) }
     }
 
+    /** Abre o sheet com as escolhas atuais; se os filtros falharam antes, tenta de novo. */
     private fun openSheet() {
         _state.update { it.copy(sheet = FiltersSheetState(biome = it.biome, state = it.state)) }
         if (_state.value.filters == FiltersPhase.Error) loadFilters()
     }
 
+    /** Muda as escolhas do sheet aberto (nada acontece se ele estiver fechado). */
     private fun updateSheet(change: (FiltersSheetState) -> FiltersSheetState) {
         _state.update { s -> s.copy(sheet = s.sheet?.let(change)) }
     }
 
+    /** "Mostrar aves": as escolhas do sheet viram os filtros da lista. */
     private fun applySheet() {
         val sheet = _state.value.sheet ?: return
         setFilters(sheet.biome, sheet.state)
     }
 
+    /** Recomeça a lista do zero para os critérios novos, cancelando o pedido anterior. */
     private fun loadFirstPage(next: Criteria) {
         criteria = next
         loadJob?.cancel()
@@ -192,6 +209,7 @@ class ExploreViewModel(
             }
     }
 
+    /** Pede a próxima página, se houver cursor e nada estiver em andamento. */
     private fun loadMore() {
         val s = _state.value
         val cursor = s.nextCursor
@@ -219,6 +237,10 @@ class ExploreViewModel(
             }
     }
 
+    /**
+     * Mostra a tela de erro. Com RateLimited, o botão de tentar fica desligado
+     * pelos segundos do Retry-After e religa sozinho depois.
+     */
     private fun showError(error: ScreenError) {
         val wait = (error as? ScreenError.RateLimited)?.retryAfterSeconds
         _state.update { it.copy(phase = ExplorePhase.Error(error), retryEnabled = wait == null) }
@@ -231,6 +253,7 @@ class ExploreViewModel(
         }
     }
 
+    /** Carrega as opções de filtro, independente da lista. */
     private fun loadFilters() {
         _state.update { it.copy(filters = FiltersPhase.Loading) }
         viewModelScope.launch {

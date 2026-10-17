@@ -1,3 +1,5 @@
+// Testes do ViewModel do Detalhe com repositórios e player falsos.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.lifecycle.SavedStateHandle
@@ -34,6 +36,7 @@ class DetailViewModelTest {
     private val favorites = FakeFavoritesRepository()
     private val player = FakeAudioPlayer()
 
+    /** viewModel cria o ViewModel com o id e a configuração de reprodução automática dados. */
     private fun viewModel(
         id: String = ARARA_ID,
         autoPlay: Boolean = false,

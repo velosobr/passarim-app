@@ -1,3 +1,5 @@
+// Testes da formatação da licença e da conferência dos links.
+
 package com.velosobr.passarim.feature.detail.domain
 
 import assertk.assertThat

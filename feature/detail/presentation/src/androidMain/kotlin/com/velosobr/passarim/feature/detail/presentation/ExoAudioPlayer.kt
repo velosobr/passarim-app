@@ -1,3 +1,5 @@
+// O player de áudio do Android, sobre o ExoPlayer (Media3).
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import android.content.Context
@@ -19,8 +21,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
+/** De quanto em quanto tempo a posição do canto é publicada enquanto toca. */
 private const val PROGRESS_INTERVAL_MILLIS = 200L
 
+/**
+ * Implementa o AudioPlayer com o ExoPlayer, criado só no primeiro play. O
+ * estado é publicado num StateFlow a cada mudança do player e, enquanto toca,
+ * a cada 200 ms (para a barra de progresso andar). MainScope é um escopo de
+ * coroutines na thread principal: o ExoPlayer só pode ser usado na thread em que
+ * foi criado, e aqui ele nasce na principal.
+ */
 class ExoAudioPlayer(
     private val context: Context,
 ) : AudioPlayer {
@@ -33,6 +43,9 @@ class ExoAudioPlayer(
     private var failed = false
     private var progressJob: Job? = null
 
+    // O ouvinte do ExoPlayer: ao terminar, volta ao começo pausado; ao começar ou
+    // parar de tocar, liga ou desliga a atualização da posição; num erro, marca
+    // a falha.
     private val listener =
         object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -56,6 +69,7 @@ class ExoAudioPlayer(
             }
         }
 
+    /** Toca a URL; só recarrega a mídia se a URL mudou ou se a anterior falhou. */
     override fun play(url: String) {
         val exo = player ?: createPlayer().also { player = it }
         if (url != currentUrl || failed) {
@@ -68,16 +82,19 @@ class ExoAudioPlayer(
         publish()
     }
 
+    /** Pausa e publica o estado. */
     override fun pause() {
         player?.pause()
         publish()
     }
 
+    /** Pula para a posição e publica o estado. */
     override fun seekTo(positionMs: Long) {
         player?.seekTo(positionMs)
         publish()
     }
 
+    /** Para tudo e libera o ExoPlayer (que segura recursos do sistema). */
     override fun release() {
         progressJob?.cancel()
         scope.cancel()
@@ -90,6 +107,11 @@ class ExoAudioPlayer(
         _state.value = PlaybackState.Idle
     }
 
+    /**
+     * Cria o ExoPlayer como player de mídia. O "true" de setAudioAttributes faz
+     * o ExoPlayer cuidar do foco de áudio: pausa se outro app começar a tocar, retoma
+     * depois de uma interrupção curta e abaixa o volume num aviso rápido.
+     */
     private fun createPlayer(): ExoPlayer =
         ExoPlayer
             .Builder(context)
@@ -103,6 +125,7 @@ class ExoAudioPlayer(
             ).build()
             .also { it.addListener(listener) }
 
+    /** Publica a posição em intervalos enquanto toca. */
     private fun startProgress() {
         progressJob?.cancel()
         progressJob =
@@ -114,6 +137,7 @@ class ExoAudioPlayer(
             }
     }
 
+    /** Traduz o estado do ExoPlayer no PlaybackState do app. */
     private fun publish() {
         val exo = player
         _state.value =

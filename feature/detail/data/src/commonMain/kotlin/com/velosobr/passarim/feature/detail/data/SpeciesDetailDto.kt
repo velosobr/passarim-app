@@ -1,7 +1,12 @@
+// Os DTOs da resposta de `GET /v1/species/{id}`, no formato do contrato do BFF.
+// Campos com valor padrão (= null, = emptyList()) podem faltar no JSON sem
+// quebrar a leitura.
+
 package com.velosobr.passarim.feature.detail.data
 
 import kotlinx.serialization.Serializable
 
+/** A espécie completa; os campos que o app não usa (como a fonte de cada fato) ficam de fora. */
 @Serializable
 internal data class SpeciesDetailDto(
     val id: String,
@@ -20,11 +25,13 @@ internal data class SpeciesDetailDto(
     val whereToFind: WhereToFindDto,
 )
 
+/** O status de conservação; o app só lê o código e usa o próprio rótulo. */
 @Serializable
 internal data class ConservationStatusDto(
     val code: String,
 )
 
+/** Crédito de autoria. */
 @Serializable
 internal data class CreditDto(
     val author: String,
@@ -33,17 +40,20 @@ internal data class CreditDto(
     val sourceUrl: String,
 )
 
+/** Uma curiosidade. */
 @Serializable
 internal data class FactDto(
     val text: String,
 )
 
+/** Um chip de bioma: código e rótulo. */
 @Serializable
 internal data class LabelDto(
     val code: String,
     val label: String,
 )
 
+/** Uma foto nos três tamanhos. */
 @Serializable
 internal data class PhotoDto(
     val thumbUrl: String? = null,
@@ -52,6 +62,7 @@ internal data class PhotoDto(
     val credit: CreditDto,
 )
 
+/** O canto. */
 @Serializable
 internal data class AudioDto(
     val url: String,
@@ -59,6 +70,7 @@ internal data class AudioDto(
     val credit: CreditDto,
 )
 
+/** A seção "Onde encontrar". */
 @Serializable
 internal data class WhereToFindDto(
     val states: List<String> = emptyList(),
@@ -66,6 +78,7 @@ internal data class WhereToFindDto(
     val clusters: List<ClusterDto> = emptyList(),
 )
 
+/** Um grupo de avistamentos do mapa. */
 @Serializable
 internal data class ClusterDto(
     val lat: Double,

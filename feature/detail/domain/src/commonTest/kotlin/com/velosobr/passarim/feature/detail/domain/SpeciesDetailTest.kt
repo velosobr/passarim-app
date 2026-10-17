@@ -1,3 +1,5 @@
+// Testes das regras do SpeciesDetail: URLs de foto e o resumo para os favoritos.
+
 package com.velosobr.passarim.feature.detail.domain
 
 import assertk.assertThat
@@ -10,6 +12,7 @@ import kotlin.test.Test
 class SpeciesDetailTest {
     private val credit = Credit("autor", "CC BY", "inaturalist", null)
 
+    /** photo cria uma foto com as URLs dadas. */
     private fun photo(
         thumb: String? = "t",
         medium: String? = "m",

@@ -1,3 +1,5 @@
+// O player de áudio do iOS, sobre o AVPlayer (AVFoundation da Apple).
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import com.velosobr.passarim.feature.detail.domain.AudioPlayer
@@ -35,10 +37,17 @@ import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
 import platform.darwin.NSObjectProtocol
 
+/** De quanto em quanto tempo a posição é publicada; TIMESCALE 1000 faz o CMTime contar em milésimos de segundo. */
 private const val PROGRESS_INTERVAL_MILLIS = 200L
 private const val MILLIS_PER_SECOND = 1_000.0
 private const val TIMESCALE = 1_000
 
+/**
+ * Implementa o AudioPlayer com o AVPlayer. O CMTime e as funções do CoreMedia são
+ * structs e funções em C, e os parâmetros `error` são ponteiros; o Kotlin/Native só
+ * deixa usar esse tipo de API com @OptIn(ExperimentalForeignApi). O estado é
+ * publicado a cada 200 ms enquanto toca ou carrega.
+ */
 @OptIn(ExperimentalForeignApi::class)
 class AvAudioPlayer : AudioPlayer {
     private val _state = MutableStateFlow<PlaybackState>(PlaybackState.Idle)
@@ -50,6 +59,10 @@ class AvAudioPlayer : AudioPlayer {
     private var endObserver: NSObjectProtocol? = null
     private var progressJob: Job? = null
 
+    /**
+     * Ativa a sessão de áudio e toca; só troca o item se a URL mudou ou se a
+     * anterior falhou. Uma URL que o iOS não entende vira erro na hora.
+     */
     override fun play(url: String) {
         activateSession()
         val av = player ?: AVPlayer().also { player = it }
@@ -69,16 +82,19 @@ class AvAudioPlayer : AudioPlayer {
         startProgress()
     }
 
+    /** Pausa e publica o estado. */
     override fun pause() {
         player?.pause()
         publish()
     }
 
+    /** Pula para a posição (CMTime em segundos, na escala de milésimos). */
     override fun seekTo(positionMs: Long) {
         player?.seekToTime(CMTimeMakeWithSeconds(positionMs / MILLIS_PER_SECOND, TIMESCALE))
         publish()
     }
 
+    /** Para tudo, solta o item e remove o observador do fim. */
     override fun release() {
         progressJob?.cancel()
         scope.cancel()
@@ -92,12 +108,14 @@ class AvAudioPlayer : AudioPlayer {
         _state.value = PlaybackState.Idle
     }
 
+    /** A categoria Playback faz o som tocar mesmo com a chave de silencioso ligada e interrompe o áudio de outros apps. */
     private fun activateSession() {
         val session = AVAudioSession.sharedInstance()
         session.setCategory(AVAudioSessionCategoryPlayback, error = null)
         session.setActive(true, error = null)
     }
 
+    /** Quando o canto acaba, volta ao começo pausado (o iOS avisa por notificação). */
     private fun observeEnd(item: AVPlayerItem) {
         removeEndObserver()
         endObserver =
@@ -114,11 +132,13 @@ class AvAudioPlayer : AudioPlayer {
             }
     }
 
+    /** Remove o observador do fim, se houver. */
     private fun removeEndObserver() {
         endObserver?.let { NSNotificationCenter.defaultCenter.removeObserver(it) }
         endObserver = null
     }
 
+    /** Publica a posição em intervalos enquanto toca. */
     private fun startProgress() {
         progressJob?.cancel()
         progressJob =
@@ -130,6 +150,7 @@ class AvAudioPlayer : AudioPlayer {
             }
     }
 
+    /** Traduz o estado do AVPlayer no PlaybackState e para a atualização quando não está tocando. */
     private fun publish() {
         val av = player
         val position = av?.let { (CMTimeGetSeconds(it.currentTime()) * MILLIS_PER_SECOND).toLong().coerceAtLeast(0) } ?: 0

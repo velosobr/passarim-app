@@ -1,3 +1,5 @@
+// Build do feature:detail:data: a busca da espécie no BFF.
+
 plugins {
     id("passarim.kmp-library")
     id("passarim.serialization")

@@ -1,3 +1,7 @@
+// Build do feature:detail:presentation: o ViewModel, as telas, o mapa
+// (MapLibre Compose) e o player. No Android, o player é o ExoPlayer (Media3) e
+// o mapa precisa do runtime OpenGL do MapLibre.
+
 plugins {
     id("passarim.kmp-compose")
 }
