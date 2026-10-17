@@ -42,8 +42,8 @@ import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
 /**
  * O botão de limpar fica desligado enquanto limpa. O aviso "cache limpo" é
- * uma liveRegion: o leitor de tela o anuncia sozinho quando aparece. A linha
- * dos favoritos lembra que eles não são apagados.
+ * uma liveRegion: pede ao leitor de tela que anuncie as mudanças desse trecho
+ * sem precisar focá-lo. A linha dos favoritos lembra que eles não são apagados.
  */
 @Composable
 fun StorageScreen(

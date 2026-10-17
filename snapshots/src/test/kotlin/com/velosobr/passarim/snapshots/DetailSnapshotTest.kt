@@ -30,8 +30,8 @@ import com.velosobr.passarim.feature.detail.presentation.MapAttribution
 import org.junit.Test
 
 /**
- * O Detalhe completo (com créditos abertos e o canto pausado), carregando,
- * não encontrado e com erro. O mapa entra como um desenho simples, porque o
+ * O Detalhe completo (topo, meio e fim, com créditos abertos e o canto pausado),
+ * sem canto, sem foto, carregando, não encontrado e com erro. O mapa entra como um desenho simples, porque o
  * MapLibre não desenha no Paparazzi.
  */
 class DetailSnapshotTest(

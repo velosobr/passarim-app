@@ -11,7 +11,7 @@ import okio.Path.Companion.toPath
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
-/** Nome do arquivo das preferências (o formato do DataStore é protobuf). */
+/** Nome do arquivo das preferências; o DataStore Preferences grava em protobuf e exige a extensão .preferences_pb. */
 internal const val SETTINGS_FILE_NAME = "settings.preferences_pb"
 
 /** Cada plataforma diz onde o arquivo fica. */

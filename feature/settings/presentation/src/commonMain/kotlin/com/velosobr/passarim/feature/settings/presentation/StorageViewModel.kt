@@ -23,6 +23,7 @@ class StorageViewModel(
     private val eventChannel = Channel<StorageEvent>(Channel.BUFFERED)
     val events: Flow<StorageEvent> = eventChannel.receiveAsFlow()
 
+    /** Trata cada ação da tela. */
     fun onAction(action: StorageAction) {
         when (action) {
             StorageAction.ClearCache -> clearCache()
@@ -30,6 +31,7 @@ class StorageViewModel(
         }
     }
 
+    /** Limpa o cache e avisa quando terminar; ignora o toque se já estiver limpando. */
     private fun clearCache() {
         if (_state.value == StorageState.Clearing) return
         _state.value = StorageState.Clearing

@@ -112,9 +112,9 @@ fun SettingsScreen(
 }
 
 /**
- * As opções de tema como um grupo de botões de rádio. selectableGroup e
- * Role.RadioButton dizem ao leitor de tela que só uma pode ser escolhida; o
- * toque vale na linha toda, não só no círculo.
+ * As opções de tema como um grupo de botões de rádio. selectableGroup junta as
+ * opções num grupo para o leitor de tela, e Role.RadioButton com selected diz que
+ * cada uma é uma opção marcável; o toque vale na linha toda, não só no círculo.
  */
 @Composable
 private fun ThemeOptions(
