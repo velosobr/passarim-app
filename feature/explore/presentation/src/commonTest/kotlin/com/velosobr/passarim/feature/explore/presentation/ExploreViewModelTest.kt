@@ -1,3 +1,7 @@
+// Testes do ViewModel do Explorar com repositórios falsos (ExploreFakes.kt).
+// Dispatchers.setMain troca a thread principal por um dispatcher de teste, e
+// advanceTimeBy avança o relógio virtual, para testar o debounce sem esperar.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import androidx.lifecycle.SavedStateHandle
@@ -40,6 +44,7 @@ class ExploreViewModelTest {
     private val filters = FakeFiltersRepository()
     private val favorites = FakeFavoritesRepository()
 
+    /** viewModel cria o ViewModel com os fakes e um SavedStateHandle (vazio por padrão). */
     private fun viewModel(saved: SavedStateHandle = SavedStateHandle()) = ExploreViewModel(repo, filters, favorites, saved)
 
     @BeforeTest

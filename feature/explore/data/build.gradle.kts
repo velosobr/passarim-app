@@ -1,3 +1,6 @@
+// Build do feature:explore:data: a implementação dos contratos com o BFF
+// (Ktor e kotlinx.serialization).
+
 plugins {
     id("passarim.kmp-library")
     id("passarim.serialization")

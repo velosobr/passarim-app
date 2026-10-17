@@ -1,3 +1,6 @@
+// As opções de filtro vindas do BFF, guardadas em memória depois da primeira
+// resposta.
+
 package com.velosobr.passarim.feature.explore.data
 
 import com.velosobr.passarim.core.data.safeCall
@@ -15,12 +18,14 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 
+/** O corpo de `GET /v1/filters`: biomas e UFs com contagem. */
 @Serializable
 internal data class FiltersDto(
     val biomes: List<BiomeDto>,
     val states: List<StateDto>,
 )
 
+/** Um bioma com o rótulo em português. */
 @Serializable
 internal data class BiomeDto(
     val code: String,
@@ -28,12 +33,14 @@ internal data class BiomeDto(
     val speciesCount: Int,
 )
 
+/** Uma UF. */
 @Serializable
 internal data class StateDto(
     val code: String,
     val speciesCount: Int,
 )
 
+/** Converte os DTOs no domínio. */
 internal fun FiltersDto.toDomain() =
     Filters(
         biomes = biomes.map { BiomeFilter(it.code, it.label, it.speciesCount) },
@@ -47,6 +54,8 @@ internal fun FiltersDto.toDomain() =
 class RemoteFiltersRepository(
     private val client: HttpClient,
 ) : FiltersRepository {
+    // O Mutex (trava das coroutines) garante que duas chamadas simultâneas não
+    // façam dois pedidos: a segunda espera a primeira e já encontra o cache.
     private val mutex = Mutex()
     private var cached: Filters? = null
 

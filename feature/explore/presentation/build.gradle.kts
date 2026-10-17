@@ -1,3 +1,7 @@
+// Build do feature:explore:presentation: o ViewModel e as telas do Explorar.
+// lifecycle-viewmodel-savedstate traz o SavedStateHandle, que guarda a busca e
+// os filtros se o sistema matar o app em segundo plano.
+
 plugins {
     id("passarim.kmp-compose")
 }

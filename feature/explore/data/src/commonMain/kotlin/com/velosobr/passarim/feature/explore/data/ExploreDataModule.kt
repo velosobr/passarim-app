@@ -1,3 +1,5 @@
+// Registro dos repositórios do Explorar no Koin.
+
 package com.velosobr.passarim.feature.explore.data
 
 import com.velosobr.passarim.core.domain.FiltersRepository
