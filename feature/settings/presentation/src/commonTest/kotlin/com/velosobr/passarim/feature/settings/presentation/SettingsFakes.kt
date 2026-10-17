@@ -1,3 +1,5 @@
+// Peças falsas dos testes de Configurações.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import com.velosobr.passarim.core.domain.ImageCacheCleaner
@@ -9,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
+/** Preferências falsas num StateFlow, que mudam como as de verdade. */
 class FakeSettingsRepository(
     initial: Settings = Settings(),
 ) : SettingsRepository {
@@ -23,6 +26,7 @@ class FakeSettingsRepository(
     override suspend fun setAutoPlay(enabled: Boolean) = settings.update { it.copy(autoPlay = enabled) }
 }
 
+/** Limpador falso: conta as limpezas e pode segurar a limpeza no gate até o teste liberar. */
 class FakeImageCacheCleaner : ImageCacheCleaner {
     var calls = 0
     var gate: CompletableDeferred<Unit>? = null

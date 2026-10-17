@@ -1,3 +1,5 @@
+// A base de todos os snapshots de tela.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.material3.MaterialTheme

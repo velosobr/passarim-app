@@ -1,3 +1,5 @@
+// O ViewModel de Dados e armazenamento.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+/** Limpa o cache uma vez por toque (um segundo toque durante a limpeza é ignorado). */
 class StorageViewModel(
     private val cleaner: ImageCacheCleaner,
 ) : ViewModel() {

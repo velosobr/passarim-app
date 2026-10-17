@@ -1,3 +1,5 @@
+// Snapshots da tela de Detalhe.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.ScrollState
@@ -27,6 +29,11 @@ import com.velosobr.passarim.feature.detail.presentation.MAP_HEIGHT
 import com.velosobr.passarim.feature.detail.presentation.MapAttribution
 import org.junit.Test
 
+/**
+ * O Detalhe completo (com créditos abertos e o canto pausado), carregando,
+ * não encontrado e com erro. O mapa entra como um desenho simples, porque o
+ * MapLibre não desenha no Paparazzi.
+ */
 class DetailSnapshotTest(
     dark: Boolean,
     fontScalePercent: Int,
@@ -118,8 +125,10 @@ class DetailSnapshotTest(
     fun errorServer() = screen("detail-error-server", DetailState(phase = DetailPhase.Error(ScreenError.ServiceUnavailable)))
 }
 
+/** Rolagem, em pixels, até o meio da página, para fotografar as seções de baixo. */
 private const val MIDDLE_PX = 2_200
 
+/** Um retângulo com a atribuição no lugar do mapa, do mesmo tamanho dele. */
 @Composable
 private fun MapPlaceholder(modifier: Modifier) {
     Box(

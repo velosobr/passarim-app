@@ -1,3 +1,5 @@
+// O ViewModel da tela Sobre.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
@@ -8,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
+/** Guarda a versão e transforma cada ação num evento de navegação. */
 class AboutViewModel(
     versionName: String,
 ) : ViewModel() {

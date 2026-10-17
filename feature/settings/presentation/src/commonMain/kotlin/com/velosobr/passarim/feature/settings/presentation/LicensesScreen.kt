@@ -1,3 +1,5 @@
+// A tela de licenças das bibliotecas usadas no app.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.layout.Column
@@ -14,12 +16,18 @@ import com.velosobr.passarim.feature.settings.presentation.resources.Res
 import com.velosobr.passarim.feature.settings.presentation.resources.open_source_licenses
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Lê o JSON das licenças (exportado pelo plugin AboutLibraries no androidApp e versionado, ADR-0020) dos recursos
+ * e entrega à tela. produceLibraries carrega em segundo plano e devolve null
+ * até terminar.
+ */
 @Composable
 fun LicensesRoot(onBack: () -> Unit) {
     val libraries by produceLibraries { Res.readBytes("files/aboutlibraries.json").decodeToString() }
     LicensesScreen(libraries = libraries, onBack = onBack)
 }
 
+/** A lista de licenças, desenhada pelo LibrariesContainer da AboutLibraries. */
 @Composable
 fun LicensesScreen(
     libraries: Libs?,

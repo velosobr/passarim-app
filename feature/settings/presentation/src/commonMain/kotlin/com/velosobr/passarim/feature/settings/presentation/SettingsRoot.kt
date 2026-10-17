@@ -1,3 +1,5 @@
+// As ligações entre as telas de Configurações e os ViewModels.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.runtime.Composable
@@ -7,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
+/** A aba Configurações: liga a tela ao ViewModel e transforma os eventos em navegação. */
 @Composable
 fun SettingsRoot(
     onOpenStorage: () -> Unit,
@@ -23,6 +26,7 @@ fun SettingsRoot(
     SettingsScreen(state = state, onAction = viewModel::onAction)
 }
 
+/** Dados e armazenamento. */
 @Composable
 fun StorageRoot(
     onBack: () -> Unit,
@@ -37,6 +41,7 @@ fun StorageRoot(
     StorageScreen(state = state, onAction = viewModel::onAction)
 }
 
+/** Sobre: além de navegar, abre a política de privacidade no navegador. */
 @Composable
 fun AboutRoot(
     onBack: () -> Unit,

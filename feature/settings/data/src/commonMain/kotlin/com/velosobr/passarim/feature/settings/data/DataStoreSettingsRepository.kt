@@ -1,3 +1,5 @@
+// As preferências do usuário gravadas com o DataStore.
+
 package com.velosobr.passarim.feature.settings.data
 
 import androidx.datastore.core.DataStore
@@ -12,6 +14,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
+/**
+ * Implementa o SettingsRepository com o DataStore Preferences, que guarda
+ * pares chave/valor num arquivo e avisa por Flow a cada mudança. edit grava
+ * de forma atômica (tudo ou nada). Chaves ausentes (primeira abertura) ficam
+ * com os padrões de Settings().
+ */
 class DataStoreSettingsRepository(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsRepository {
@@ -29,6 +37,7 @@ class DataStoreSettingsRepository(
         dataStore.edit { it[AUTO_PLAY] = enabled }
     }
 
+    /** Converte o que está gravado nas Settings do domínio. */
     private fun Preferences.toSettings(): Settings {
         val defaults = Settings()
         return Settings(
@@ -38,6 +47,7 @@ class DataStoreSettingsRepository(
         )
     }
 
+    /** As chaves das preferências no arquivo; mudar o nome perderia o valor já gravado. */
     private companion object {
         val THEME = stringPreferencesKey("theme")
         val DYNAMIC_COLORS = booleanPreferencesKey("dynamicColors")
