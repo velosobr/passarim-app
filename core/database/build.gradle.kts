@@ -12,8 +12,8 @@ kotlin {
     jvm()
 
     compilerOptions {
-        // expect/actual de classes (o construtor do banco) ainda é "beta" no Kotlin
-        // e precisa desta opção do compilador.
+        // Classes expect/actual (o PassarimDatabaseConstructor) ainda são "beta" no
+        // Kotlin; esta opção confirma o uso e cala o aviso do compilador.
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 

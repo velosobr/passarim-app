@@ -1,4 +1,6 @@
 // Registro do banco no Koin.
+// Koin: "single" cria uma instância só para o app, e get() pede ao Koin uma
+// peça já registrada.
 
 package com.velosobr.passarim.core.database
 

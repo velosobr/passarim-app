@@ -1,4 +1,6 @@
 // Cor dos ícones das barras do sistema no Android.
+// LocalView é um CompositionLocal com a View Android onde o Compose desenha;
+// dela se chega à janela (Window) da Activity.
 
 package com.velosobr.passarim.app.theme
 

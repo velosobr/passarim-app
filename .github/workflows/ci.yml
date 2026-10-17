@@ -37,8 +37,9 @@ jobs:
           path: "**/build/reports/tests"
           if-no-files-found: ignore
 
-  # Segurança das dependências: o osv-scanner lê os gradle.lockfile e barra
-  # vulnerabilidade alta ou crítica (scripts/osv-gate.sh).
+  # Segurança das dependências: confere se os gradle.lockfile e a lista de
+  # licenças estão em dia, e o osv-scanner barra vulnerabilidade alta ou
+  # crítica (scripts/osv-gate.sh).
   security:
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +104,7 @@ jobs:
     if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'docs/comentarios-')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # O histórico inteiro é necessário para comparar com a base do PR.
           fetch-depth: 0

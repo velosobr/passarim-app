@@ -1,4 +1,6 @@
 // Tela de estado vazio ou de erro, compartilhada por todas as features.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
 
 package com.velosobr.passarim.core.designsystem.components
 

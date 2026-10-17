@@ -8,8 +8,9 @@ import com.velosobr.passarim.core.domain.SpeciesSummary
 
 /**
  * Uma linha da tabela "favorites". @Entity diz ao Room que esta classe é uma
- * tabela, e @PrimaryKey marca a chave. Guardamos nome e miniatura (e não só o
- * id) para a lista de favoritos funcionar sem internet; addedAt é o momento
+ * tabela, e @PrimaryKey marca a chave. Guardamos nome e URL da miniatura (e
+ * não só o id) para a lista abrir sem chamar o BFF (a foto vem do cache de
+ * imagens); addedAt é o momento
  * em que a ave foi favoritada, em milissegundos, e ordena a lista.
  */
 @Entity(tableName = "favorites")

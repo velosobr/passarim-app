@@ -24,7 +24,7 @@ rootProject.name = "passarim-app"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 // Os módulos: a casca Android, o app compartilhado, os módulos core, as
-// features (cada uma em domain, data e presentation) e os snapshots.
+// features (divididas em domain, data e presentation conforme precisam) e os snapshots.
 include(":androidApp")
 include(":app")
 include(":core:domain")

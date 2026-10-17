@@ -1,4 +1,6 @@
 // Selo do status de conservação de uma espécie.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
 
 package com.velosobr.passarim.core.designsystem.components
 

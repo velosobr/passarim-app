@@ -10,8 +10,9 @@ import org.jetbrains.compose.resources.stringResource
  * Texto que a UI mostra: ou uma string pronta ([DynamicString]) ou um recurso traduzível
  * ([Resource]). O ViewModel devolve [UiText]; só a UI sabe resolver para `String`.
  *
- * O ViewModel não pode ler recursos (isso exige estar dentro da composição),
- * então ele devolve a "receita" do texto, e a tela a resolve com [asString].
+ * O ViewModel não resolve o texto: ele devolve a "receita" (recurso e
+ * argumentos), e a tela a resolve com [asString] no idioma atual, o que mantém
+ * o ViewModel testável sem recursos.
  */
 sealed interface UiText {
     data class DynamicString(

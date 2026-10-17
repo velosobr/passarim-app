@@ -1,4 +1,5 @@
 // Preferências do usuário e o contrato para lê-las e gravá-las.
+// "enum class" é um tipo com uma lista fechada de valores (aqui, os temas).
 
 package com.velosobr.passarim.core.domain
 

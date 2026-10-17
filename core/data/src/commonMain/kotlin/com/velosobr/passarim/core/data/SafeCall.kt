@@ -1,7 +1,7 @@
 // Chamada segura ao BFF: transforma respostas e falhas em Result.
 //
 // Capturar `Exception` aqui é proposital: qualquer falha de transporte vira um erro tipado do app
-// (o cancelamento de corrotina é sempre relançado antes).
+// (o cancelamento de coroutine é sempre relançado antes).
 @file:Suppress("TooGenericExceptionCaught", "SwallowedException")
 
 package com.velosobr.passarim.core.data
@@ -105,7 +105,8 @@ private fun String.toNetworkError(retryAfterSeconds: Int?): DataError.Network =
 
 /**
  * Status sem problem+json: 404/502/503/504 costumam ser o Traefik sem réplica
- * do BFF no ar, então viram "serviço indisponível".
+ * do BFF no ar, então viram ServiceUnavailable; outro 5xx vira Internal; o
+ * resto, Unknown.
  */
 private fun Int.toNetworkError(): DataError.Network =
     when (this) {

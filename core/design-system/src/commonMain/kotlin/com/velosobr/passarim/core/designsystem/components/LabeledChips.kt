@@ -1,4 +1,6 @@
 // Etiquetas de informação (biomas, por exemplo), com e sem título.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
 
 package com.velosobr.passarim.core.designsystem.components
 

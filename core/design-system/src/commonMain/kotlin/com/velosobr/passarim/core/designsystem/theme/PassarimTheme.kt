@@ -1,4 +1,6 @@
 // O tema do app, que todas as telas usam por fora.
+// CompositionLocalProvider entrega um valor (a paleta dos selos) a todos os
+// componentes de dentro, sem passar por parâmetro.
 
 package com.velosobr.passarim.core.designsystem.theme
 

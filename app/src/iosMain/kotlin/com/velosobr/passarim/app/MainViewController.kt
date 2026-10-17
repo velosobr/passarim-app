@@ -13,8 +13,9 @@ private var koinStarted = false
 /**
  * Ponto de entrada do iOS: o Swift passa a configuração lida do xcconfig/Info.plist.
  * Devolve um UIViewController (a "tela" do UIKit) com o app Compose dentro. O
- * nome começa com maiúscula porque, para o Swift, ele se parece com um tipo;
- * por isso o @Suppress das regras de nome.
+ * nome em maiúscula segue a convenção do modelo de projeto Compose Multiplatform
+ * (a função faz o papel de "fábrica" do controlador); no Swift ela aparece como
+ * MainViewControllerKt.MainViewController. Daí o @Suppress das regras de nome.
  */
 @Suppress("ktlint:standard:function-naming", "FunctionNaming")
 fun MainViewController(

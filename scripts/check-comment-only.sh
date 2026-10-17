@@ -27,8 +27,8 @@ estilo_do_arquivo() {
   case "$(basename "$1")" in
     *.go | *.kt | *.kts | *.swift | *.xcconfig) echo barra ;;
     *.sql) echo sql ;;
-    *.yml | *.yaml | *.sh | *.properties | Dockerfile* | Makefile | .gitignore | .dockerignore) echo cerquilha ;;
-    *.xml) echo xml ;;
+    *.yml | *.yaml | *.sh | *.properties | *.pro | *.toml | Dockerfile* | Makefile | .gitignore | .dockerignore) echo cerquilha ;;
+    *.xml | *.plist) echo xml ;;
     *) return 1 ;;
   esac
 }

@@ -15,8 +15,8 @@ import kotlinx.serialization.json.Json
 
 /**
  * JSON do BFF: campos novos que o app ainda não conhece não quebram a leitura.
- * explicitNulls = false deixa um campo ausente no JSON virar o valor padrão do
- * DTO.
+ * explicitNulls = false: um campo anulável sem valor padrão que falte no JSON
+ * vira null (em vez de erro), e na escrita os campos null são omitidos.
  */
 internal val bffJson =
     Json {
@@ -30,7 +30,8 @@ internal val bffJson =
  *
  * Os plugins do Ktor acrescentam comportamentos ao cliente: ContentNegotiation
  * converte JSON em objetos, HttpTimeout põe prazos (5 s para conectar, 10 s
- * para a resposta), e defaultRequest prefixa toda chamada com a URL do BFF.
+ * para a chamada inteira e 10 s sem receber dados), e defaultRequest completa
+ * os caminhos relativos com a URL do BFF.
  * expectSuccess = false faz um status de erro NÃO virar exceção: quem trata é
  * o safeCall.
  */

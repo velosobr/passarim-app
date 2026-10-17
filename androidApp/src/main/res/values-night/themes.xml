@@ -1,5 +1,5 @@
 <resources>
-    <!-- Tema escuro do Android (sem barra de ação); o Compose desenha o resto. -->
+    <!-- Versão noturna do Theme.Passarim (modo escuro do aparelho), sem barra de ação; o Compose desenha o resto. -->
     <style name="Theme.Passarim" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/splash_background</item>
     </style>

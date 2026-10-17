@@ -1,4 +1,5 @@
 // As abas da barra inferior.
+// "enum class" com propriedades: cada aba carrega a rota, o rótulo e o ícone.
 
 package com.velosobr.passarim.app.tabs
 

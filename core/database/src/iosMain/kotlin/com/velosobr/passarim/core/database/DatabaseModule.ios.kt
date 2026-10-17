@@ -11,9 +11,9 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 /**
- * No iOS, o caminho vem do NSFileManager (a API de arquivos da Apple). As
- * classes do Foundation chegam ao Kotlin pela interoperabilidade com
- * Objective-C, por isso o @OptIn(ExperimentalForeignApi).
+ * No iOS, o caminho vem do NSFileManager (a API de arquivos da Apple).
+ * URLForDirectory recebe um ponteiro C no parâmetro error, e as APIs com
+ * ponteiros exigem o @OptIn(ExperimentalForeignApi).
  */
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun Scope.passarimDatabaseBuilder(): RoomDatabase.Builder<PassarimDatabase> {
