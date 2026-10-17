@@ -55,19 +55,26 @@ class SpeciesMapSupportTest {
     @Test
     fun `estilo carregado deixa o mapa disponivel`() =
         runTest {
-            assertThat(awaitMapReady(flowOf(StyleLoadState.Pending, StyleLoadState.Loading, StyleLoadState.Ready))).isTrue()
+            assertThat(awaitMapReady(flowOf(MapLoad.Loading, MapLoad.Ready))).isTrue()
         }
 
     @Test
     fun `falha no estilo derruba o mapa para a lista de estados`() =
         runTest {
-            assertThat(awaitMapReady(flowOf(StyleLoadState.Loading, StyleLoadState.Failed("404")))).isFalse()
+            assertThat(awaitMapReady(flowOf(MapLoad.Loading, MapLoad.Failed))).isFalse()
         }
 
     @Test
     fun `estilo que nao carrega em 10 segundos derruba o mapa`() =
         runTest {
-            assertThat(awaitMapReady(MutableStateFlow(StyleLoadState.Loading))).isFalse()
+            assertThat(awaitMapReady(MutableStateFlow(MapLoad.Loading))).isFalse()
             assertThat(testScheduler.currentTime).isEqualTo(MAP_LOAD_TIMEOUT_MILLIS)
         }
+
+    @Test
+    fun `estilo pendente ou carregando ainda espera e pronto libera o mapa`() {
+        assertThat(StyleLoadState.Pending.toMapLoad()).isEqualTo(MapLoad.Loading)
+        assertThat(StyleLoadState.Loading.toMapLoad()).isEqualTo(MapLoad.Loading)
+        assertThat(StyleLoadState.Ready.toMapLoad()).isEqualTo(MapLoad.Ready)
+    }
 }
