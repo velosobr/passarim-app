@@ -1,3 +1,5 @@
+// Contrato da lista do Explorar e o tamanho da página.
+
 package com.velosobr.passarim.feature.explore.domain
 
 import com.velosobr.passarim.core.domain.DataError

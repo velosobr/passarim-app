@@ -1,3 +1,5 @@
+// Limpeza do texto de busca antes de ir ao BFF.
+
 package com.velosobr.passarim.feature.explore.domain
 
 /** O BFF recusa `q` com mais de 100 caracteres (400 INVALID_PARAMETER). */

@@ -1,3 +1,6 @@
+// A lista do Explorar vinda do BFF: os DTOs, a conversão para o domínio e o
+// repositório.
+
 package com.velosobr.passarim.feature.explore.data
 
 import com.velosobr.passarim.core.data.MediaUrlRewriter
@@ -22,19 +25,24 @@ internal data class SpeciesSummaryDto(
     val thumbnailUrl: String? = null,
 )
 
+/** Uma página da resposta; nextCursor ausente vira null (última página). */
 @Serializable
 internal data class SpeciesPageDto(
     val items: List<SpeciesSummaryDto>,
     val nextCursor: String? = null,
 )
 
+/** Converte a página no domínio, trocando o host das miniaturas em debug. */
 internal fun SpeciesPageDto.toDomain(rewriter: MediaUrlRewriter) =
     SpeciesPage(
         items = items.map { SpeciesSummary(it.id, it.commonName, it.scientificName, rewriter.rewrite(it.thumbnailUrl)) },
         nextCursor = nextCursor,
     )
 
-/** `GET /v1/species`. Parâmetros vazios ou nulos ficam fora da URL (o BFF recusa `biome=` vazio). */
+/**
+ * `GET /v1/species`. Parâmetros vazios ou nulos ficam fora da URL (o BFF recusa `biome=` vazio).
+ * O `parameter` do Ktor já ignora valores null, por isso só a busca precisa de if.
+ */
 class RemoteExploreRepository(
     private val client: HttpClient,
     private val rewriter: MediaUrlRewriter,

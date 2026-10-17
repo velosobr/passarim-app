@@ -1,3 +1,5 @@
+// O estado da tela Explorar e as fases da lista e dos filtros.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import com.velosobr.passarim.core.domain.Filters
@@ -38,9 +40,11 @@ data class ExploreState(
                     ?.label ?: code
             }
 
+    /** Se há bioma ou UF selecionados. */
     val hasFilters: Boolean get() = biome != null || state != null
 }
 
+/** Em que ponto a lista está: carregando, com itens, vazia ou com erro. */
 sealed interface ExplorePhase {
     data object Loading : ExplorePhase
 

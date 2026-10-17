@@ -1,3 +1,5 @@
+// Repositórios falsos e dados de exemplo para os testes do ViewModel.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import com.velosobr.passarim.core.domain.BiomeFilter
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 
+/** bird cria uma ave de exemplo com o id dado. */
 fun bird(id: String) = SpeciesSummary(id, "Ave $id", "Avis $id", thumbnailUrl = null)
 
 /** Página com os ids `from..<to` (por exemplo `page(0, 20, "c1")`). */
@@ -24,6 +27,7 @@ fun page(
     next: String?,
 ) = SpeciesPage((from until to).map { bird("ave-$it") }, next)
 
+/** ListCall é um pedido recebido pelo repositório falso, para o teste conferir. */
 data class ListCall(
     val query: String,
     val biome: String?,
@@ -54,12 +58,14 @@ class FakeExploreRepository : ExploreRepository {
     }
 }
 
+/** sampleFilters são filtros de exemplo. */
 val sampleFilters =
     Filters(
         biomes = listOf(BiomeFilter("cerrado", "Cerrado", 26), BiomeFilter("pampa", "Pampa", 15)),
         states = listOf(StateFilter("RJ", 23), StateFilter("SP", 29), StateFilter("AC", 3)),
     )
 
+/** Repositório falso de filtros, que responde o resultado configurado e conta as chamadas. */
 class FakeFiltersRepository(
     var next: Result<Filters, DataError.Network> = Result.Success(sampleFilters),
 ) : FiltersRepository {
@@ -71,6 +77,7 @@ class FakeFiltersRepository(
     }
 }
 
+/** Favoritos falsos, em memória. */
 class FakeFavoritesRepository : FavoritesRepository {
     val ids = MutableStateFlow<Set<String>>(emptySet())
 
