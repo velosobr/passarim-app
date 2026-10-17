@@ -12,8 +12,9 @@ import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
- * Liga a tela ao ViewModel: avisa quando ela vai para segundo plano
- * (LifecycleEventEffect com ON_PAUSE), para o canto parar, e transforma os
+ * Liga a tela ao ViewModel: avisa quando ela sai de primeiro plano
+ * (LifecycleEventEffect com ON_PAUSE: app em segundo plano ou outra tela por
+ * cima), para o canto parar, e transforma os
  * eventos em navegação e em abertura de links (LocalUriHandler abre a URL no
  * navegador do sistema).
  */

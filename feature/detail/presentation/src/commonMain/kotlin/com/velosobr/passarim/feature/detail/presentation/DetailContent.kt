@@ -191,7 +191,7 @@ private fun WhereToFindSection(
     }
 }
 
-/** A foto do topo com os botões de voltar e de favoritar por cima, abaixo da barra de status. */
+/** A foto do topo, que vai até atrás da barra de status, com os botões de voltar e de favoritar por cima, logo abaixo dela. */
 @Composable
 private fun Hero(
     detail: SpeciesDetail,
@@ -282,7 +282,7 @@ private fun Section(
     }
 }
 
-/** O botão que abre e fecha a lista completa de créditos (fotos numeradas, canto e texto). */
+/** O botão que abre e fecha a lista completa de créditos (fotos, numeradas quando há mais de uma, canto e texto). */
 @Composable
 private fun Credits(
     detail: SpeciesDetail,

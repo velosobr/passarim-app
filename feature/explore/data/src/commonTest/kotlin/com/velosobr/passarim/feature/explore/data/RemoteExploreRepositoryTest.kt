@@ -33,7 +33,10 @@ class RemoteExploreRepositoryTest {
         ],"nextCursor":"c2"}
         """.trimIndent()
 
-    /** repo cria o repositório com um "servidor" que responde [handler]. */
+    /**
+     * repo cria o repositório com um "servidor" que sempre responde [page];
+     * [onRequest] recebe a URL de cada pedido e [mediaHostOverride] liga a troca de host.
+     */
     private fun repo(
         mediaHostOverride: String? = null,
         onRequest: (Url) -> Unit = {},

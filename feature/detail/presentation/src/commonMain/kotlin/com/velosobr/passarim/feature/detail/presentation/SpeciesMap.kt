@@ -71,7 +71,7 @@ private const val BRAZIL_ZOOM = 2.5
 
 /**
  * Agrupamento feito pelo próprio MapLibre: pontos a menos de CLUSTER_RADIUS
- * pixels viram um círculo só, e a propriedade "total" soma as contagens dos
+ * (em pixels do tile de 512, perto de dp na tela) viram um círculo só, e a propriedade "total" soma as contagens dos
  * pontos de dentro.
  */
 private const val CLUSTER_TOTAL = "total"

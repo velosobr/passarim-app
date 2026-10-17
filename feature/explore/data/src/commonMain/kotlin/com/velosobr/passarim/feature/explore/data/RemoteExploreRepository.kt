@@ -40,8 +40,8 @@ internal fun SpeciesPageDto.toDomain(rewriter: MediaUrlRewriter) =
     )
 
 /**
- * `GET /v1/species`. Parâmetros vazios ou nulos ficam fora da URL (o BFF recusa `biome=` vazio).
- * O `parameter` do Ktor já ignora valores null, por isso só a busca precisa de if.
+ * `GET /v1/species`. Parâmetros nulos ficam fora da URL: o `parameter` do Ktor ignora null (o BFF recusa `biome=` vazio).
+ * A busca nunca é nula, por isso é a única que precisa do if para ficar fora quando está em branco.
  */
 class RemoteExploreRepository(
     private val client: HttpClient,

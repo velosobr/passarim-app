@@ -29,7 +29,7 @@ sealed interface DetailAction {
         val url: String,
     ) : DetailAction
 
-    /** A tela foi para segundo plano: o canto para. */
+    /** A tela saiu de primeiro plano (app em segundo plano ou outra tela por cima): o canto para. */
     data object ScreenPaused : DetailAction
 }
 

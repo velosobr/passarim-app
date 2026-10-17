@@ -21,7 +21,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-/** ok responde os filtros e down um 503, para os testes do cache. */
+/** A leitura do JSON e o cache em memória; ok responde os filtros e down um 503. */
 class RemoteFiltersRepositoryTest {
     private val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null, versionName = "1.0.0")
 
