@@ -1,3 +1,5 @@
+// Snapshots dos componentes do design system.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +34,7 @@ import com.velosobr.passarim.core.designsystem.resources.ic_wifi_off
 import org.jetbrains.compose.resources.painterResource
 import org.junit.Test
 
+/** Cards, busca, chips e outros componentes, em todos os temas e escalas de fonte. */
 class ComponentsSnapshotTest(
     dark: Boolean,
     fontScalePercent: Int,

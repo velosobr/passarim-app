@@ -1,3 +1,5 @@
+// Snapshots da tela Explorar.
+
 package com.velosobr.passarim.snapshots
 
 import com.velosobr.passarim.core.domain.BiomeFilter

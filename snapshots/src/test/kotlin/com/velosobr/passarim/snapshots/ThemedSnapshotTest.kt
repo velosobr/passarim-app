@@ -1,3 +1,5 @@
+// A base dos snapshots de telas e componentes, em claro e escuro e três escalas de fonte.
+
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.material3.MaterialTheme
