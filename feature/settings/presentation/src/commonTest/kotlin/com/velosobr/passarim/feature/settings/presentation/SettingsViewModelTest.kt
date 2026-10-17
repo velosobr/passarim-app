@@ -1,3 +1,5 @@
+// Testes do ViewModel da aba Configurações.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import app.cash.turbine.test
@@ -21,6 +23,7 @@ import kotlin.test.Test
 class SettingsViewModelTest {
     private val repository = FakeSettingsRepository(Settings(theme = ThemeMode.DARK))
 
+    /** viewModel cria o ViewModel com ou sem suporte a cores dinâmicas. */
     private fun viewModel(dynamicColorsSupported: Boolean = true) =
         SettingsViewModel(repository, dynamicColorsSupported = dynamicColorsSupported, versionName = "1.0.0")
 

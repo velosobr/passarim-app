@@ -1,3 +1,5 @@
+// Testes do ViewModel da tela Sobre.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import app.cash.turbine.test

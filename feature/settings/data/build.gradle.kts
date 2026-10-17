@@ -1,3 +1,6 @@
+// Build do feature:settings:data: as preferências no DataStore e a limpeza
+// do cache de imagens do Coil.
+
 plugins {
     id("passarim.kmp-library")
 }

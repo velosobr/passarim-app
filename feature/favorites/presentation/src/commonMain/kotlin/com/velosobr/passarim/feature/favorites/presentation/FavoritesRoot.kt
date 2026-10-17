@@ -1,3 +1,5 @@
+// A ligação entre a aba Favoritos e o ViewModel.
+
 package com.velosobr.passarim.feature.favorites.presentation
 
 import androidx.compose.runtime.Composable
@@ -6,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
+/** Liga a tela ao ViewModel e transforma os eventos em navegação, que fica a cargo do app. */
 @Composable
 fun FavoritesRoot(
     onOpenDetail: (String) -> Unit,

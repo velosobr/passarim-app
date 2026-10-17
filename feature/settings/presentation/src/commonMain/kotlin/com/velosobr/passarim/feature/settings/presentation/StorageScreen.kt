@@ -1,3 +1,5 @@
+// A tela Dados e armazenamento: limpar o cache de imagens.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +40,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/**
+ * O botão de limpar fica desligado enquanto limpa. O aviso "cache limpo" é
+ * uma liveRegion: pede ao leitor de tela que anuncie as mudanças desse trecho
+ * sem precisar focá-lo. A linha dos favoritos lembra que eles não são apagados.
+ */
 @Composable
 fun StorageScreen(
     state: StorageState,

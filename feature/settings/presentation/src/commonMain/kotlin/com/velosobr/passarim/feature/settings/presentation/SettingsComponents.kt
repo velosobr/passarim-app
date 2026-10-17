@@ -1,3 +1,5 @@
+// Peças visuais compartilhadas pelas telas de Configurações.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.layout.Arrangement
@@ -24,8 +26,10 @@ import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
+/** Onde o texto das linhas começa (depois do ícone), para as opções de tema se alinharem a ele. */
 internal val RowTextStart = 72.dp
 
+/** Título de uma seção, marcado como cabeçalho para o leitor de tela. */
 @Composable
 internal fun SectionHeader(text: String) {
     Text(
@@ -39,6 +43,7 @@ internal fun SectionHeader(text: String) {
     )
 }
 
+/** Uma linha de configuração: ícone, título, subtítulo e um slot à direita (chave, seta). */
 @Composable
 internal fun SettingsRow(
     title: String,
@@ -68,6 +73,7 @@ internal fun SettingsRow(
     }
 }
 
+/** A seta "›" das linhas que abrem outra tela. */
 @Composable
 internal fun Chevron() {
     Icon(vectorResource(Res.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -1,3 +1,6 @@
+// A tela Sobre: nome e versão do app, créditos das fontes de dados e os
+// links para a política de privacidade e as licenças.
+
 package com.velosobr.passarim.feature.settings.presentation
 
 import androidx.compose.foundation.ScrollState
@@ -49,6 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/** Os créditos das fontes: o que veio de onde (cantos, textos, espécies e mapa). */
 private val credits =
     listOf(
         Res.string.credit_songs to Res.string.credit_songs_source,
@@ -57,6 +61,7 @@ private val credits =
         Res.string.credit_map to Res.string.credit_map_source,
     )
 
+/** A tela Sobre, sem estado próprio. systemBarsPadding afasta o conteúdo das barras do sistema. */
 @Composable
 fun AboutScreen(
     state: AboutState,
@@ -100,6 +105,7 @@ fun AboutScreen(
     }
 }
 
+/** O ícone, o nome e a versão do app. */
 @Composable
 private fun AppHeader(versionName: String) {
     Column(
@@ -128,6 +134,7 @@ private fun AppHeader(versionName: String) {
     }
 }
 
+/** Uma linha de crédito: o que é e de onde vem. */
 @Composable
 private fun CreditRow(
     title: StringResource,

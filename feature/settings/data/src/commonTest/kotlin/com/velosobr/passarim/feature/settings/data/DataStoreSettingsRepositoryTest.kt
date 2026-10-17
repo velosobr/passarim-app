@@ -1,3 +1,6 @@
+// Testes do repositório de preferências com um DataStore de verdade, num
+// arquivo temporário apagado depois de cada teste.
+
 package com.velosobr.passarim.feature.settings.data
 
 import androidx.datastore.core.DataStore
@@ -24,6 +27,7 @@ class DataStoreSettingsRepositoryTest {
     @AfterTest
     fun deleteFile() = FileSystem.SYSTEM.delete(file)
 
+    /** dataStore cria o DataStore no arquivo temporário, preso ao escopo do teste. */
     private fun CoroutineScope.dataStore(): DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath(scope = this) { file }
 
     @Test

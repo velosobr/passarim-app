@@ -1,3 +1,5 @@
+// O ViewModel da aba Favoritos.
+
 package com.velosobr.passarim.feature.favorites.presentation
 
 import androidx.lifecycle.ViewModel
@@ -12,6 +14,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * Observa os favoritos do banco e os transforma no estado da tela. stateIn
+ * converte o Flow num StateFlow com valor inicial (Loading); Eagerly começa a
+ * coletar já, mesmo antes de a tela observar.
+ */
 class FavoritesViewModel(
     private val favorites: FavoritesRepository,
 ) : ViewModel() {
@@ -24,6 +31,7 @@ class FavoritesViewModel(
     private val eventChannel = Channel<FavoritesEvent>(Channel.BUFFERED)
     val events: Flow<FavoritesEvent> = eventChannel.receiveAsFlow()
 
+    /** Trata cada ação da tela. */
     fun onAction(action: FavoritesAction) {
         when (action) {
             is FavoritesAction.OpenDetail -> eventChannel.trySend(FavoritesEvent.NavigateToDetail(action.id))

@@ -1,3 +1,5 @@
+// Snapshots da aba Favoritos.
+
 package com.velosobr.passarim.snapshots
 
 import com.velosobr.passarim.core.domain.SpeciesSummary
@@ -5,6 +7,7 @@ import com.velosobr.passarim.feature.favorites.presentation.FavoritesScreen
 import com.velosobr.passarim.feature.favorites.presentation.FavoritesState
 import org.junit.Test
 
+/** A lista e o estado vazio. */
 class FavoritesSnapshotTest(
     dark: Boolean,
     fontScalePercent: Int,
