@@ -25,7 +25,11 @@ fun passarimImageLoader(
         .crossfade(true)
         .build()
 
-/** O contexto que o Coil exige em cada plataforma. */
+/**
+ * O contexto que o Coil exige em cada plataforma (expect: cada uma dá o seu
+ * actual). "Scope." faz dela uma extensão do escopo do Koin, para usar
+ * androidContext() no Android.
+ */
 internal expect fun Scope.platformContext(): PlatformContext
 
 /** Registro do ImageLoader no Koin, uma instância só para o app. */

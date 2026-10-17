@@ -1,5 +1,7 @@
 // Debug: fala HTTP com o docker compose local (o simulador alcança o computador por localhost).
 PASSARIM_DEBUG = YES
+// Em xcconfig, "//" abre comentário: o $() vazio no meio de "http:/$()/" impede
+// que o resto da URL seja cortado.
 BFF_BASE_URL = http:/$()/localhost:8080
 
 // Para um aparelho físico, crie Config/Local.xcconfig (fora do git) com, por exemplo:

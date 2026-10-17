@@ -24,7 +24,7 @@ O código é todo comentado para estudo. Uma ordem que vai da raiz até as telas
 1. `app` (`App.kt`, `di/AppModule.kt`, `tabs/TabsScreen.kt`): como o app sobe, liga o Koin e navega entre as abas.
 2. `core:domain`: os tipos e contratos compartilhados (`Result`, `DataError`, repositórios).
 3. `core:data` e `core:database`: a rede (Ktor e `safeCall`) e o banco local (Room).
-4. As features, na ordem `explore`, `detail`, `favorites` e `settings`: cada uma em `domain`, `data` e `presentation` (ViewModel e telas).
+4. As features, na ordem `explore`, `detail`, `favorites` e `settings`: explore e detail têm `domain`, `data` e `presentation`; settings tem `data` e `presentation`; favorites, só `presentation` (ViewModel e telas).
 5. `core:presentation` e `core:design-system`: o que todas as telas usam (textos, erros, tema e componentes).
 6. `androidApp`, `iosApp` e `build-logic`: as cascas de cada plataforma e os plugins de build.
 7. Os testes de cada módulo (`commonTest`, `jvmTest`) e os snapshots (`snapshots`) mostram o comportamento esperado.

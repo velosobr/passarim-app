@@ -1,4 +1,6 @@
 // Cores dinâmicas no Android (Material You).
+// LocalContext é um CompositionLocal com o Context Android, necessário para
+// ler as cores do sistema.
 
 package com.velosobr.passarim.core.designsystem.theme
 

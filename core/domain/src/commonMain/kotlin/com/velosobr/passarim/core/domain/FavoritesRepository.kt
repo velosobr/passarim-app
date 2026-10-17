@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Favoritos guardados no aparelho, que funcionam sem internet.
  *
- * Flow é um fluxo de valores ao longo do tempo: quem observa recebe o valor
- * atual e, depois, cada mudança. Funções "suspend" podem pausar sem travar a
+ * Flow é um fluxo de valores ao longo do tempo. Aqui, o Room emite a lista
+ * atual assim que alguém começa a observar e de novo a cada mudança. Funções "suspend" podem pausar sem travar a
  * tela (rodam numa coroutine) e só podem ser chamadas de dentro de outra
  * função suspend ou de uma coroutine.
  */

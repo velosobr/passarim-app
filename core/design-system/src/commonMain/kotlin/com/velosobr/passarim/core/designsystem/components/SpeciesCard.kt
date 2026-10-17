@@ -1,4 +1,6 @@
 // Card de uma espécie na grade do Explorar.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
 
 package com.velosobr.passarim.core.designsystem.components
 

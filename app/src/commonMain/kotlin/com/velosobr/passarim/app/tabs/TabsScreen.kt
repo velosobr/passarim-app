@@ -1,4 +1,7 @@
 // A tela com a barra inferior e a navegação dentro de cada aba.
+// "by" lê o State como valor comum; currentBackStackEntryAsState recompõe a
+// barra quando a aba muda. Scaffold é o esqueleto do Material com espaço para
+// a barra inferior.
 
 package com.velosobr.passarim.app.tabs
 

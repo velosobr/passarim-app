@@ -5,8 +5,8 @@
     <!-- Internet para falar com o BFF e baixar as fotos e os cantos. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- allowBackup=false: nada do app (favoritos, configurações) vai para o backup do Android. -->
-    <!-- O tema inicial é o da splash; ao fechar a splash, o Android aplica o postSplashScreenTheme. -->
+    <!-- allowBackup=false: favoritos e configurações não vão para o backup na nuvem (no Android 12+, a transferência entre aparelhos ainda pode copiá-los). -->
+    <!-- O tema inicial é o da splash; o installSplashScreen() da MainActivity troca para o postSplashScreenTheme logo no onCreate, e a splash continua desenhada por cima até sair. -->
     <application
         android:name=".PassarimApplication"
         android:allowBackup="false"

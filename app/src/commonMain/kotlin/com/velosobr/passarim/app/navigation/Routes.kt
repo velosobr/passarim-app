@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object TabsRoute
 
-/** Camada 2 (dentro do scaffold): um grafo por aba, cada um com a sua pilha. */
+/** A aba Explorar. As três abas são destinos do NavHost interno (TabsScreen), cada um com o estado guardado ao trocar de aba. */
 @Serializable
 data object ExploreRoute
 

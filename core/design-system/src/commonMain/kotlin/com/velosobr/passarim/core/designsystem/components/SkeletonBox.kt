@@ -1,5 +1,7 @@
 // Bloco de carregamento (skeleton), usado para desenhar o "esqueleto" da tela
 // enquanto os dados chegam.
+// @Composable: função que desenha interface; Modifier ajusta tamanho, espaço,
+// cliques e acessibilidade (veja BackTopBar.kt).
 
 package com.velosobr.passarim.core.designsystem.components
 

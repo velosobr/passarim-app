@@ -1,5 +1,5 @@
-// Testes dos tokens: as cores do código batem com os tokens do passarim-docs
-// e os pares de cor dos selos têm contraste suficiente.
+// Testes dos tokens: algumas cores conferidas contra os valores do
+// passarim-tokens.json (copiados aqui) e o contraste mínimo dos selos.
 
 package com.velosobr.passarim.core.designsystem
 

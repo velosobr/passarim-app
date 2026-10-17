@@ -6,8 +6,8 @@ plugins {
 }
 
 kotlin {
-    // Alvo JVM a mais: o Room gera código para o alvo JVM do core:database, que
-    // depende deste módulo, então o domínio também precisa existir para a JVM.
+    // Alvo JVM a mais: o core:database tem alvo JVM (para os testes do banco) e
+    // depende deste módulo, então o domínio também precisa compilar para a JVM.
     jvm()
 
     sourceSets {

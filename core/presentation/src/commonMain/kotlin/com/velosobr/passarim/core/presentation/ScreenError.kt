@@ -1,4 +1,6 @@
 // Os tipos de tela de erro, compartilhados por todas as features.
+// "sealed": as únicas implementações são as declaradas aqui, então um "when"
+// cobre todas as telas de erro sem "else".
 
 package com.velosobr.passarim.core.presentation
 

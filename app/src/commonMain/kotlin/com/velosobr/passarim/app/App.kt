@@ -43,6 +43,9 @@ import org.koin.compose.koinInject
  * koinInject pega uma peça do Koin dentro de uma função @Composable.
  * collectAsState transforma o Flow das configurações num estado que, ao
  * mudar, recompõe a tela; remember guarda o Flow entre recomposições.
+ * LaunchedEffect(Unit) roda o bloco uma vez quando a função entra na
+ * composição. setSingletonImageLoaderFactory entrega o ImageLoader do Koin a
+ * todo AsyncImage do app.
  */
 @Composable
 fun App(onSettingsLoaded: () -> Unit = {}) {
@@ -64,8 +67,9 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
 /**
  * Navegação de primeiro nível: as abas e as telas que abrem por cima delas.
  * Cada rota é uma classe @Serializable (Routes.kt), e os argumentos (o id da
- * espécie) vão nela. dropUnlessResumed ignora o toque em "voltar" quando a
- * tela já está saindo, o que evita voltar duas vezes com toques rápidos. Os
+ * espécie) vão nela. dropUnlessResumed só executa o "voltar" com a tela em
+ * RESUMED; durante uma transição (entrando ou saindo) o toque é ignorado, o
+ * que evita voltar duas vezes com toques rápidos. Os
  * blocos de rota só ligam as telas: os efeitos ficam dentro delas.
  */
 @Composable
