@@ -8,7 +8,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-/** Na pasta Documents do app, achada pelo NSFileManager. */
+/** Na pasta Documents do app, achada pelo NSFileManager (o ponteiro de error é API em C, por isso o @OptIn). */
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun Scope.settingsFilePath(): String {
     val documents =

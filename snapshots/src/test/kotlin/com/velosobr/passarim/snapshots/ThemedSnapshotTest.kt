@@ -1,4 +1,4 @@
-// A base de todos os snapshots de tela.
+// A base dos snapshots de telas e componentes, em claro e escuro e três escalas de fonte.
 
 package com.velosobr.passarim.snapshots
 

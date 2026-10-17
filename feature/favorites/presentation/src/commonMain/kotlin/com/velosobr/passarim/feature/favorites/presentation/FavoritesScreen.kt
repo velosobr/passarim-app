@@ -55,7 +55,8 @@ fun FavoritesScreen(
 
 /**
  * A lista: título e subtítulo rolam junto com as aves. LazyColumn só cria as
- * linhas visíveis, e animateItem anima a saída da linha desfavoritada.
+ * linhas visíveis, e animateItem anima a entrada, a saída (a linha
+ * desfavoritada) e o deslizar das outras.
  */
 @Composable
 private fun FavoritesList(

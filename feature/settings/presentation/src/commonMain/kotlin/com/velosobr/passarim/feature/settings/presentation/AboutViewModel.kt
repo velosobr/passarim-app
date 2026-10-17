@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
-/** Guarda a versão e transforma cada ação num evento de navegação. */
+/** Guarda a versão e transforma cada ação num evento (voltar, abrir a política no navegador ou ir às licenças). */
 class AboutViewModel(
     versionName: String,
 ) : ViewModel() {
@@ -19,6 +19,7 @@ class AboutViewModel(
     private val eventChannel = Channel<AboutEvent>(Channel.BUFFERED)
     val events: Flow<AboutEvent> = eventChannel.receiveAsFlow()
 
+    /** Trata cada ação da tela. */
     fun onAction(action: AboutAction) {
         val event =
             when (action) {

@@ -31,6 +31,7 @@ class SettingsViewModel(
     private val eventChannel = Channel<SettingsEvent>(Channel.BUFFERED)
     val events: Flow<SettingsEvent> = eventChannel.receiveAsFlow()
 
+    /** Trata cada ação da tela. */
     fun onAction(action: SettingsAction) {
         when (action) {
             is SettingsAction.SelectTheme -> viewModelScope.launch { repository.setTheme(action.theme) }
