@@ -1,3 +1,5 @@
+// Testes do repositório de filtros: a leitura do JSON e o cache em memória.
+
 package com.velosobr.passarim.feature.explore.data
 
 import assertk.assertThat
@@ -19,6 +21,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+/** A leitura do JSON e o cache em memória; ok responde os filtros e down um 503. */
 class RemoteFiltersRepositoryTest {
     private val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null, versionName = "1.0.0")
 

@@ -1,3 +1,5 @@
+// O conteúdo do Detalhe de uma espécie, seção por seção.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.foundation.ScrollState
@@ -78,6 +80,14 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/**
+ * A página rolável do Detalhe: foto do topo, cabeçalho, fatos, biomas,
+ * dieta, canto, descrição, curiosidades, galeria, "Onde encontrar" e
+ * créditos. Seções sem dado não aparecem. [mapContent] é um slot para o mapa,
+ * para os snapshots trocarem o MapLibre por um desenho simples.
+ * Quando a página rola, uma faixa da cor do fundo cobre a barra de status,
+ * para o texto não passar por baixo do relógio.
+ */
 @Composable
 internal fun DetailContent(
     detail: SpeciesDetail,
@@ -136,6 +146,7 @@ internal fun DetailContent(
     }
 }
 
+/** A seção de dieta. */
 @Composable
 private fun Diet(diet: String) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -148,6 +159,7 @@ private fun Diet(diet: String) {
     }
 }
 
+/** A seção do canto, com o player. */
 @Composable
 private fun Song(
     audio: Audio,
@@ -166,6 +178,7 @@ private fun Song(
     }
 }
 
+/** "Onde encontrar": o mapa e as UFs; some se não houver nenhum dos dois. */
 @Composable
 private fun WhereToFindSection(
     where: WhereToFind,
@@ -178,6 +191,7 @@ private fun WhereToFindSection(
     }
 }
 
+/** A foto do topo, que vai até atrás da barra de status, com os botões de voltar e de favoritar por cima, logo abaixo dela. */
 @Composable
 private fun Hero(
     detail: SpeciesDetail,
@@ -202,6 +216,7 @@ private fun Hero(
     }
 }
 
+/** Crédito da foto, nome popular, nome científico em itálico, selo de conservação e família. */
 @Composable
 private fun Header(
     detail: SpeciesDetail,
@@ -228,6 +243,11 @@ private fun Header(
     }
 }
 
+/**
+ * Os blocos de fatos (tamanho, número de biomas e de UFs), lado a lado ou
+ * empilhados com fonte grande. pluralStringResource escolhe "1 bioma" ou
+ * "3 biomas" conforme o número.
+ */
 @Composable
 private fun Facts(detail: SpeciesDetail) {
     val tiles =
@@ -250,6 +270,7 @@ private fun Facts(detail: SpeciesDetail) {
     }
 }
 
+/** Uma seção com título e conteúdo. */
 @Composable
 private fun Section(
     title: String,
@@ -261,6 +282,7 @@ private fun Section(
     }
 }
 
+/** O botão que abre e fecha a lista completa de créditos (fotos, numeradas quando há mais de uma, canto e texto). */
 @Composable
 private fun Credits(
     detail: SpeciesDetail,
@@ -288,6 +310,7 @@ private fun Credits(
     }
 }
 
+/** Uma linha de crédito, com o link para o original quando ele é seguro (https). */
 @Composable
 private fun CreditEntry(
     text: String,
@@ -307,6 +330,7 @@ private fun CreditEntry(
     }
 }
 
+/** Monta a função que escreve "autor · licença", com os textos traduzidos de "desconhecido". */
 @Composable
 private fun rememberCreditFormatter(): (Credit) -> String {
     val unknownAuthor = stringResource(Res.string.credit_unknown_author)

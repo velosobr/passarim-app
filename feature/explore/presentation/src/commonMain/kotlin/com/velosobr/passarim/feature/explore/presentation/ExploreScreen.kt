@@ -1,3 +1,6 @@
+// A tela Explorar: busca, chips de filtro, grade de espécies e os estados de
+// carregando, vazio e erro.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import androidx.compose.foundation.layout.Arrangement
@@ -78,6 +81,7 @@ import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 /** A partir desta escala de fonte, a grade passa a 1 coluna: empilhar, nunca cortar o texto. */
 const val SINGLE_COLUMN_FONT_SCALE = 1.5f
 
+/** Quantas colunas a grade tem para a escala de fonte do aparelho. */
 fun exploreGridColumns(fontScale: Float): Int = if (fontScale >= SINGLE_COLUMN_FONT_SCALE) 1 else 2
 
 /**
@@ -118,6 +122,7 @@ fun ExploreScreen(
     }
 }
 
+/** Os chips de bioma e UF: sem seleção abrem o sheet; selecionados mostram o X que limpa. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FilterChips(
@@ -145,6 +150,13 @@ private fun FilterChips(
     }
 }
 
+/**
+ * A grade de espécies, com rodapé de "carregando mais" ou de erro.
+ * LazyVerticalGrid só cria os itens visíveis; o key = id deixa o Compose
+ * reaproveitar cada card certo quando a lista muda. snapshotFlow transforma a
+ * leitura do estado da grade num Flow, e rememberUpdatedState dá ao efeito o
+ * tamanho atual da lista sem reiniciá-lo.
+ */
 @Composable
 private fun SpeciesGrid(
     state: ExploreState,
@@ -212,6 +224,7 @@ private fun LoadMoreFooter(
     }
 }
 
+/** O "esqueleto" do carregamento: quatro cards cinzas, sem rolagem. */
 @Composable
 private fun SkeletonGrid(columns: Int) {
     LazyVerticalGrid(
@@ -232,6 +245,7 @@ private fun SkeletonGrid(columns: Int) {
     }
 }
 
+/** Nenhuma ave encontrada: o texto cita a busca (se houver) e oferece limpar os filtros. */
 @Composable
 private fun EmptyState(
     state: ExploreState,
@@ -261,12 +275,14 @@ private fun EmptyState(
     }
 }
 
+/** Ícone, título e texto de cada tela de erro. */
 private class ErrorCopy(
     val icon: DrawableResource,
     val title: StringResource,
     val body: StringResource,
 )
 
+/** Escolhe os textos e o ícone de cada tipo de erro. */
 private fun ScreenError.copy(): ErrorCopy =
     when (this) {
         ScreenError.NoConnection ->
@@ -279,6 +295,10 @@ private fun ScreenError.copy(): ErrorCopy =
             ErrorCopy(DesignRes.drawable.ic_cloud_off, Res.string.error_generic_title, Res.string.error_generic_body)
     }
 
+/**
+ * Tela de erro com "Tentar novamente" (desligado durante o Retry-After) e,
+ * sem conexão, o atalho para os favoritos, que funcionam offline.
+ */
 @Composable
 private fun ErrorState(
     error: ScreenError,

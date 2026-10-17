@@ -1,3 +1,5 @@
+// O conteúdo do sheet de filtros do Explorar.
+
 package com.velosobr.passarim.feature.explore.presentation
 
 import androidx.compose.foundation.layout.Arrangement
@@ -94,6 +96,7 @@ fun FiltersSheet(
     }
 }
 
+/** Um título com os chips do grupo embaixo, quebrando em linhas. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Group(

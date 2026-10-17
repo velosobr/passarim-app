@@ -1,3 +1,5 @@
+// Testes do repositório da lista com o MockEngine do Ktor no lugar do BFF.
+
 package com.velosobr.passarim.feature.explore.data
 
 import assertk.assertThat
@@ -19,6 +21,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+/** Os parâmetros chegam certos na URL e a resposta vira a página do domínio. */
 class RemoteExploreRepositoryTest {
     private val page =
         """
@@ -30,6 +33,10 @@ class RemoteExploreRepositoryTest {
         ],"nextCursor":"c2"}
         """.trimIndent()
 
+    /**
+     * repo cria o repositório com um "servidor" que sempre responde [page];
+     * [onRequest] recebe a URL de cada pedido e [mediaHostOverride] liga a troca de host.
+     */
     private fun repo(
         mediaHostOverride: String? = null,
         onRequest: (Url) -> Unit = {},
