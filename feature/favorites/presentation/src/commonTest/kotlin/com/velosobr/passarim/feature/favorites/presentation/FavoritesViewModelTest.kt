@@ -1,3 +1,5 @@
+// Testes do ViewModel dos Favoritos com um repositório falso em memória.
+
 package com.velosobr.passarim.feature.favorites.presentation
 
 import app.cash.turbine.test
@@ -20,9 +22,14 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+// Duas aves de exemplo.
 private val arara = SpeciesSummary("anodorhynchus-hyacinthinus", "Arara-azul-grande", "Anodorhynchus hyacinthinus", null)
 private val tucano = SpeciesSummary("ramphastos-toco", "Tucano-toco", "Ramphastos toco", "https://media/tucano.webp")
 
+/**
+ * Favoritos falsos num StateFlow. Começar com null simula o banco ainda sem
+ * resposta (filterNotNull só deixa passar a lista quando ela chega).
+ */
 private class FakeFavoritesRepository(
     initial: List<SpeciesSummary>?,
 ) : FavoritesRepository {
