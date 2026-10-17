@@ -1,3 +1,5 @@
+// Testes das contas do mapa: enquadramento, GeoJSON e espera pelo estilo.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import assertk.assertThat

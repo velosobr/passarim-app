@@ -1,3 +1,5 @@
+// A ligação entre a tela de Detalhe e o ViewModel.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.runtime.Composable
@@ -9,6 +11,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
+/**
+ * Liga a tela ao ViewModel: avisa quando ela vai para segundo plano
+ * (LifecycleEventEffect com ON_PAUSE), para o canto parar, e transforma os
+ * eventos em navegação e em abertura de links (LocalUriHandler abre a URL no
+ * navegador do sistema).
+ */
 @Composable
 fun DetailRoot(
     onBack: () -> Unit,

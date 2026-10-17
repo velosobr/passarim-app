@@ -1,3 +1,5 @@
+// Testes do layout dos fatos e da formatação de tempo e crédito.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import assertk.assertThat

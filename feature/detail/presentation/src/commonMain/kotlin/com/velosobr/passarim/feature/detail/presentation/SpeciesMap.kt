@@ -1,3 +1,6 @@
+// O mapa "Onde encontrar" com o MapLibre: os avistamentos agrupados em
+// círculos com a contagem, sobre o mapa do OpenFreeMap.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.foundation.background
@@ -54,12 +57,24 @@ import org.maplibre.spatialk.geojson.BoundingBox
 import org.maplibre.spatialk.geojson.Position
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/** O estilo do mapa (cores, ruas, rótulos) do OpenFreeMap, um serviço de mapas aberto e gratuito. */
 const val OPENFREEMAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty"
+
+/** A fonte dos números nos círculos; precisa existir no servidor de fontes do estilo. */
 private const val OPENFREEMAP_BOLD_FONT = "Noto Sans Bold"
+
+/** A altura fixa do mapa. */
 val MAP_HEIGHT = 200.dp
+
+/** A câmera começa no centro do Brasil, longe, antes de enquadrar os pontos. */
 private val BRAZIL_CENTER = Position(longitude = -52.0, latitude = -14.0)
 private const val BRAZIL_ZOOM = 2.5
 
+/**
+ * Agrupamento feito pelo próprio MapLibre: pontos a menos de CLUSTER_RADIUS
+ * pixels viram um círculo só, e a propriedade "total" soma as contagens dos
+ * pontos de dentro.
+ */
 private const val CLUSTER_TOTAL = "total"
 private const val CLUSTER_RADIUS = 25
 
@@ -77,8 +92,13 @@ private val CLUSTER_OPTIONS =
             )
     }
 
+/** O número do círculo: o total do grupo ou, num ponto solto, a contagem dele. */
 private fun clusterTotal() = feature[CLUSTER_TOTAL].asNumber(feature["count"])
 
+/**
+ * O mapa, ou um aviso no lugar se ele não carregar. rememberSaveable guarda
+ * o "não disponível" até numa rotação, para não tentar carregar de novo.
+ */
 @Composable
 fun SpeciesMap(
     clusters: List<Cluster>,
@@ -92,6 +112,12 @@ fun SpeciesMap(
     }
 }
 
+/**
+ * Monta o mapa com a fonte GeoJSON, a camada de círculos e a de números.
+ * Quando o estilo carrega, a câmera enquadra os pontos; se não carregar no
+ * prazo, avisa [onUnavailable]. O mapa é só para ver: sem gestos
+ * (MapInteractions.None).
+ */
 @Composable
 private fun ClusterMap(
     clusters: List<Cluster>,
@@ -142,6 +168,7 @@ private fun ClusterMap(
     }
 }
 
+/** O crédito do mapa (OpenFreeMap, OpenMapTiles e OpenStreetMap), que as licenças exigem. */
 @Composable
 fun MapAttribution(modifier: Modifier = Modifier) {
     Text(
@@ -156,6 +183,7 @@ fun MapAttribution(modifier: Modifier = Modifier) {
     )
 }
 
+/** O aviso que fica no lugar do mapa quando ele não carrega. */
 @Composable
 private fun MapUnavailable(modifier: Modifier) {
     Row(

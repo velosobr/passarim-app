@@ -1,3 +1,5 @@
+// O Detalhe vindo do BFF.
+
 package com.velosobr.passarim.feature.detail.data
 
 import com.velosobr.passarim.core.data.MediaUrlRewriter
@@ -11,6 +13,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.http.encodeURLPathPart
 
+/**
+ * `GET /v1/species/{id}`. encodeURLPathPart escapa o id para ele não mudar o
+ * caminho da URL (um "/" no id viraria outro trecho do caminho).
+ */
 class RemoteDetailRepository(
     private val client: HttpClient,
     private val rewriter: MediaUrlRewriter,
