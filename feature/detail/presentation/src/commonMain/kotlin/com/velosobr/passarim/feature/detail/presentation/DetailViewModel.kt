@@ -1,3 +1,5 @@
+// O ViewModel do Detalhe.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.lifecycle.SavedStateHandle
@@ -31,8 +33,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/** Nome do argumento da rota com o id da espécie, lido do SavedStateHandle. */
 const val KEY_SPECIES_ID = "id"
 
+/**
+ * Carrega a espécie, acompanha o favorito e o player, e trata as ações da
+ * tela. Ao carregar, se a espécie já é favorita, atualiza o resumo guardado;
+ * se a configuração pede, toca o canto sozinho.
+ */
 class DetailViewModel(
     savedState: SavedStateHandle,
     private val repository: DetailRepository,
@@ -59,6 +67,7 @@ class DetailViewModel(
         if (isValidSpeciesId(id)) load() else _state.update { it.copy(phase = DetailPhase.NotFound) }
     }
 
+    /** Trata cada ação da tela. Um link de crédito só é aberto se for seguro (https). */
     fun onAction(action: DetailAction) {
         when (action) {
             DetailAction.Back -> eventChannel.trySend(DetailEvent.NavigateBack)
@@ -72,10 +81,12 @@ class DetailViewModel(
         }
     }
 
+    /** onCleared roda quando o ViewModel sai de vez: o player é liberado. */
     override fun onCleared() {
         player.release()
     }
 
+    /** Busca a espécie; "não encontrado" tem tela própria, os outros erros viram a tela de erro. */
     private fun load() {
         retryJob?.cancel()
         _state.update { it.copy(phase = DetailPhase.Loading, retryEnabled = true) }
@@ -96,6 +107,7 @@ class DetailViewModel(
         }
     }
 
+    /** Mostra o erro; com RateLimited, o botão de tentar fica desligado pelo Retry-After. */
     private fun showError(error: ScreenError) {
         val wait = (error as? ScreenError.RateLimited)?.retryAfterSeconds
         _state.update { it.copy(phase = DetailPhase.Error(error), retryEnabled = wait == null) }
@@ -108,10 +120,12 @@ class DetailViewModel(
         }
     }
 
+    /** Toca ou pausa o canto, se a espécie tiver um. */
     private fun togglePlay() {
         val audio = detail?.audio ?: return
         if (isPlaying()) player.pause() else player.play(audio.url)
     }
 
+    /** Se o canto está tocando ou carregando para tocar. */
     private fun isPlaying(): Boolean = _state.value.player.let { it is PlaybackState.Playing || it == PlaybackState.Loading }
 }

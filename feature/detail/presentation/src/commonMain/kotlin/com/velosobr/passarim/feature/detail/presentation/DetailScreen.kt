@@ -1,3 +1,6 @@
+// A tela de Detalhe: escolhe o que mostrar em cada fase (carregando,
+// conteúdo, não encontrada ou erro).
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.foundation.ScrollState
@@ -54,6 +57,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/**
+ * A tela sem estado próprio: tudo vem de [state] e cada interação vira uma
+ * [DetailAction]. [mapContent] tem o mapa de verdade como padrão; os snapshots
+ * passam outro.
+ */
 @Composable
 fun DetailScreen(
     state: DetailState,
@@ -96,6 +104,7 @@ fun DetailScreen(
     }
 }
 
+/** O "esqueleto" do carregamento, já com o botão de voltar funcionando. */
 @Composable
 private fun DetailSkeleton(onBack: () -> Unit) {
     Column(Modifier.fillMaxSize()) {
@@ -123,6 +132,7 @@ private fun DetailSkeleton(onBack: () -> Unit) {
     }
 }
 
+/** Página das telas de estado (não encontrada, erro), com o botão de voltar no topo. */
 @Composable
 private fun StatePage(
     onBack: () -> Unit,
@@ -138,12 +148,14 @@ private fun StatePage(
     }
 }
 
+/** Ícone, título e texto de cada tela de erro. */
 private class ErrorCopy(
     val icon: DrawableResource,
     val title: StringResource,
     val body: StringResource,
 )
 
+/** Escolhe os textos e o ícone de cada tipo de erro. */
 private fun ScreenError.copy(): ErrorCopy =
     when (this) {
         ScreenError.NoConnection ->

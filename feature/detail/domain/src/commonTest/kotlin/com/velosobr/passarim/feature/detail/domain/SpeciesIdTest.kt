@@ -1,3 +1,5 @@
+// Testes do formato do id de espécie.
+
 package com.velosobr.passarim.feature.detail.domain
 
 import assertk.assertThat

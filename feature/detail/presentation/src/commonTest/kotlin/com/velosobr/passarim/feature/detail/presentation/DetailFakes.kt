@@ -1,3 +1,5 @@
+// Peças falsas e dados de exemplo dos testes do Detalhe.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import com.velosobr.passarim.core.domain.Credit
@@ -23,8 +25,10 @@ import kotlinx.coroutines.flow.update
 const val ARARA_ID = "anodorhynchus-hyacinthinus"
 const val AUDIO_URL = "https://media/arara.aac"
 
+/** credit é um crédito de exemplo, com link seguro. */
 val credit = Credit("autor", "CC BY", "inaturalist", "https://www.inaturalist.org/observations/1")
 
+/** arara é uma espécie de exemplo com todos os campos. */
 val arara =
     SpeciesDetail(
         id = ARARA_ID,
@@ -43,6 +47,7 @@ val arara =
         whereToFind = WhereToFind(emptyList(), emptyList(), emptyList()),
     )
 
+/** Repositório falso: devolve o resultado configurado e guarda os ids pedidos. */
 class FakeDetailRepository(
     var next: Result<SpeciesDetail, DataError.Network> = Result.Success(arara),
 ) : DetailRepository {
@@ -54,6 +59,7 @@ class FakeDetailRepository(
     }
 }
 
+/** Favoritos falsos: os ids num StateFlow e as listas do que foi alternado e atualizado. */
 class FakeFavoritesRepository : FavoritesRepository {
     val ids = MutableStateFlow<Set<String>>(emptySet())
     val toggled = mutableListOf<SpeciesSummary>()
@@ -73,6 +79,7 @@ class FakeFavoritesRepository : FavoritesRepository {
     }
 }
 
+/** Configurações falsas, com a reprodução automática escolhida pelo teste. */
 class FakeSettingsRepository(
     autoPlay: Boolean = false,
 ) : SettingsRepository {
@@ -87,6 +94,7 @@ class FakeSettingsRepository(
     override suspend fun setAutoPlay(enabled: Boolean) = settings.update { it.copy(autoPlay = enabled) }
 }
 
+/** Player falso: anota cada chamada (play, pause, seek, release) e o estado é controlado pelo teste. */
 class FakeAudioPlayer : AudioPlayer {
     override val state = MutableStateFlow<PlaybackState>(PlaybackState.Idle)
     val calls = mutableListOf<String>()

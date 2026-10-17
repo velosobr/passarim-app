@@ -1,3 +1,6 @@
+// O cartão do player do canto: botão de tocar, barra de progresso, tempos e
+// crédito.
+
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.foundation.background
@@ -37,6 +40,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/**
+ * Mostra o canto e deixa tocar, pausar e arrastar a posição. Enquanto o
+ * dedo arrasta, a barra segue o dedo (dragging) e não o player; ao soltar, o
+ * player pula para a posição escolhida. "by remember { mutableStateOf(...) }"
+ * cria um estado que sobrevive às recomposições e, ao mudar, redesenha a tela.
+ */
 @Composable
 fun AudioPlayerCard(
     durationMs: Long,
@@ -91,6 +100,7 @@ fun AudioPlayerCard(
     }
 }
 
+/** O botão redondo: spinner enquanto carrega, pausa enquanto toca, play no resto. */
 @Composable
 private fun PlayButton(
     playback: PlaybackState,

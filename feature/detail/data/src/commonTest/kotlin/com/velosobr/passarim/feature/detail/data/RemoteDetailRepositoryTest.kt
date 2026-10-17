@@ -1,3 +1,5 @@
+// Testes do repositório do Detalhe com o MockEngine do Ktor no lugar do BFF.
+
 package com.velosobr.passarim.feature.detail.data
 
 import assertk.assertThat
@@ -27,6 +29,7 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
+/** full é uma resposta com todos os campos; empty, uma com o mínimo do contrato. */
 class RemoteDetailRepositoryTest {
     private val media = "http://localhost:8888/buckets/passarim-media/species/anodorhynchus-hyacinthinus"
 
@@ -58,6 +61,10 @@ class RemoteDetailRepositoryTest {
          "audio":null,"whereToFind":{"states":[],"biomes":[],"clusters":[]}}
         """.trimIndent()
 
+    /**
+     * repo cria o repositório com um "servidor" que responde [body] com o status e o
+     * tipo dados; [mediaHostOverride] liga a troca de host.
+     */
     private fun repo(
         body: String = full,
         status: HttpStatusCode = HttpStatusCode.OK,
@@ -75,6 +82,7 @@ class RemoteDetailRepositoryTest {
         return RemoteDetailRepository(createHttpClient(engine, config), MediaUrlRewriter(config))
     }
 
+    /** conservationJson monta uma resposta só com o código de conservação dado. */
     private fun conservationJson(code: String) =
         full.replace("{\"code\":\"VU\",\"label\":\"Vulnerável\"}", "{\"code\":\"$code\",\"label\":\"x\"}")
 
