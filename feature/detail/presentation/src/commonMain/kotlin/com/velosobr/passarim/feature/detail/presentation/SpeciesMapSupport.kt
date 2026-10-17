@@ -42,10 +42,19 @@ fun clustersGeoJson(clusters: List<Cluster>): String =
             """"properties":{"count":${it.count}}}"""
     }
 
+enum class MapLoad { Loading, Ready, Failed }
+
+fun StyleLoadState.toMapLoad(): MapLoad =
+    when {
+        this == StyleLoadState.Ready -> MapLoad.Ready
+        this is StyleLoadState.Failed -> MapLoad.Failed
+        else -> MapLoad.Loading
+    }
+
 suspend fun awaitMapReady(
-    loadStates: Flow<StyleLoadState>,
+    loadStates: Flow<MapLoad>,
     timeoutMillis: Long = MAP_LOAD_TIMEOUT_MILLIS,
 ): Boolean =
     withTimeoutOrNull(timeoutMillis) {
-        loadStates.first { it == StyleLoadState.Ready || it is StyleLoadState.Failed } == StyleLoadState.Ready
+        loadStates.first { it != MapLoad.Loading } == MapLoad.Ready
     } ?: false
