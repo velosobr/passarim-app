@@ -1,3 +1,5 @@
+// A tela da aba Favoritos: a lista ou o estado vazio.
+
 package com.velosobr.passarim.feature.favorites.presentation
 
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -34,6 +36,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
 
+/**
+ * A tela sem estado próprio. Enquanto o banco não responde, mostra só o título.
+ */
 @Composable
 fun FavoritesScreen(
     state: FavoritesState,
@@ -48,6 +53,10 @@ fun FavoritesScreen(
     }
 }
 
+/**
+ * A lista: título e subtítulo rolam junto com as aves. LazyColumn só cria as
+ * linhas visíveis, e animateItem anima a saída da linha desfavoritada.
+ */
 @Composable
 private fun FavoritesList(
     state: FavoritesState.Content,
@@ -81,6 +90,11 @@ private fun FavoritesList(
     }
 }
 
+/**
+ * Nenhum favorito: o convite para explorar, centralizado. BoxWithConstraints
+ * dá a altura disponível (maxHeight), usada para centralizar o conteúdo e
+ * ainda permitir rolagem com fonte grande.
+ */
 @Composable
 private fun EmptyFavorites(
     onAction: (FavoritesAction) -> Unit,

@@ -1,3 +1,6 @@
+// Build do feature:favorites:presentation: a aba Favoritos. Não tem módulos de
+// domain e data próprios: usa o FavoritesRepository do core (Room).
+
 plugins {
     id("passarim.kmp-compose")
 }
