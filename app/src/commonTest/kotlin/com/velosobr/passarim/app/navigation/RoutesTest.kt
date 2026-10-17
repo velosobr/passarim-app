@@ -1,3 +1,6 @@
+// Teste das rotas: o nome do argumento do Detalhe é o que o ViewModel lê do
+// SavedStateHandle.
+
 package com.velosobr.passarim.app.navigation
 
 import assertk.assertThat

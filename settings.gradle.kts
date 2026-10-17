@@ -1,3 +1,6 @@
+// Configuração do projeto: de onde vêm os plugins (incluindo o build-logic
+// local), os repositórios de dependências e a lista de módulos.
+
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -16,8 +19,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "passarim-app"
 
+// Gera os acessores "projects.core.domain" usados nas dependências entre
+// módulos, no lugar de project(":core:domain").
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+// Os módulos: a casca Android, o app compartilhado, os módulos core, as
+// features (divididas em domain, data e presentation conforme precisam) e os snapshots.
 include(":androidApp")
 include(":app")
 include(":core:domain")

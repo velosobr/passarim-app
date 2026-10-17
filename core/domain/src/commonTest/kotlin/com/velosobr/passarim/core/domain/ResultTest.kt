@@ -1,3 +1,6 @@
+// Testes do Result e das funções de apoio. assertk é a biblioteca de
+// asserções: assertThat(valor).isEqualTo(esperado).
+
 package com.velosobr.passarim.core.domain
 
 import assertk.assertThat

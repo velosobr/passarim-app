@@ -1,3 +1,7 @@
+// Build do app Android: a "casca" que empacota o módulo app (o app
+// compartilhado) num APK/AAB, com o ícone, a splash e a configuração por
+// build type (debug e release).
+
 import java.util.Properties
 
 plugins {
@@ -28,11 +32,13 @@ android {
             buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
         release {
-            // R8 ligado desde já; as regras de keep completas chegam na 5e.
+            // R8 encolhe e ofusca o código do release (tira o que não é usado).
+            // TODO: completar as regras de keep do R8 antes de publicar.
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Endereço reservado e inválido: o release nunca fala com o ambiente local. O valor real chega na etapa 6.
+            // Endereço reservado e inválido: o release nunca fala com o ambiente local.
+            // TODO: trocar pelo endereço real do BFF no deploy.
             buildConfigField("String", "BASE_URL", "\"https://api.passarim.invalid\"")
         }
     }
@@ -46,6 +52,8 @@ dependencies {
     implementation(libs.koin.android)
 }
 
+// Exporta a lista de licenças das bibliotecas do release para o JSON que a
+// tela de Licenças lê (ADR-0020).
 aboutLibraries {
     export {
         variant = "release"

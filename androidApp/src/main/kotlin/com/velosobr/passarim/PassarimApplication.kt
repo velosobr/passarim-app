@@ -1,3 +1,5 @@
+// A classe Application: o primeiro código do app que roda no Android.
+
 package com.velosobr.passarim
 
 import android.app.Application
@@ -6,6 +8,7 @@ import com.velosobr.passarim.core.domain.AppConfig
 import org.koin.android.ext.koin.androidContext
 import java.net.URI
 
+/** Inicia o Koin uma vez, com a configuração do build e o Context do Android. */
 class PassarimApplication : Application() {
     override fun onCreate() {
         super.onCreate()

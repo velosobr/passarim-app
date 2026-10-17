@@ -1,3 +1,7 @@
+// O tema do app, que todas as telas usam por fora.
+// CompositionLocalProvider entrega um valor (a paleta dos selos) a todos os
+// componentes de dentro, sem passar por parâmetro.
+
 package com.velosobr.passarim.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -5,6 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
+/**
+ * Aplica as cores (dinâmicas, se pedidas e disponíveis, senão as da marca), a
+ * tipografia, as formas e a paleta dos selos. Tudo o que fica dentro de
+ * [content] lê esses valores pelo MaterialTheme e pelo LocalConservationPalette.
+ */
 @Composable
 fun PassarimTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

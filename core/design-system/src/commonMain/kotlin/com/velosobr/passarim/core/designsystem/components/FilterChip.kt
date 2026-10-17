@@ -1,3 +1,7 @@
+// Chip de filtro do Explorar, sobre o FilterChip do Material 3. O import com
+// "as MaterialFilterChip" dá outro nome ao componente do Material, para não
+// colidir com o nome deste.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.clickable

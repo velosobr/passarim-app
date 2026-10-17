@@ -1,3 +1,5 @@
+// Teste de migração do banco, a base para as migrações futuras.
+
 package com.velosobr.passarim.core.database
 
 import androidx.room.testing.MigrationTestHelper
@@ -9,6 +11,11 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.test.Test
 
+/**
+ * O MigrationTestHelper cria o banco a partir do esquema exportado
+ * (schemas/), e não do código atual. Assim, quando houver a versão 2, o teste
+ * cria a 1, aplica a migração e confere que os dados sobreviveram.
+ */
 class PassarimDatabaseMigrationTest {
     private val databaseFile = Files.createTempDirectory("passarim-db").resolve("passarim.db")
 

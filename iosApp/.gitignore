@@ -1,3 +1,5 @@
+# Ignorados no iOS: a configuração local de cada máquina, o projeto Xcode
+# (gerado pelo XcodeGen a partir do project.yml) e a saída do build.
 Local.xcconfig
 *.xcodeproj
 build/

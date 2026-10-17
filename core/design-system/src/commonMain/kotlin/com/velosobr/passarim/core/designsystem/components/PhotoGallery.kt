@@ -1,3 +1,5 @@
+// Galeria de fotos em linha, com rolagem horizontal.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.horizontalScroll
@@ -18,6 +20,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
+/**
+ * As fotos em miniaturas quadradas de 112dp, cada uma com o crédito embaixo.
+ * rememberScrollState guarda a posição da rolagem entre recomposições.
+ */
 @Composable
 fun PhotoGallery(
     photos: List<GalleryPhoto>,

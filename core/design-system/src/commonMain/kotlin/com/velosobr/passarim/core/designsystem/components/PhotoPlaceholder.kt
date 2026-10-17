@@ -1,3 +1,5 @@
+// O desenho que aparece no lugar de uma foto que ainda não carregou ou não existe.
+
 package com.velosobr.passarim.core.designsystem.components
 
 import androidx.compose.foundation.background
@@ -21,6 +23,11 @@ import com.velosobr.passarim.core.designsystem.resources.photo_placeholder
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+/**
+ * Fundo em degradê com o ícone de passarinho e, se [showLabel], o aviso "foto
+ * ilustrativa". "internal" deixa o componente visível só dentro deste módulo:
+ * as features usam os componentes de foto, e não o placeholder sozinho.
+ */
 @Composable
 internal fun PhotoPlaceholder(
     modifier: Modifier = Modifier,

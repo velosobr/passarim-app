@@ -1,3 +1,5 @@
+// Cores dos selos de conservação, por tema.
+
 package com.velosobr.passarim.core.designsystem.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -14,9 +16,11 @@ data class ConservationColor(
 data class ConservationPalette(
     private val colors: Map<ConservationStatus, ConservationColor>,
 ) {
+    /** "operator fun get" deixa escrever palette[status] em vez de palette.get(status). */
     operator fun get(status: ConservationStatus): ConservationColor = colors.getValue(status)
 }
 
+/** As cores dos selos no tema claro. */
 val LightConservationPalette =
     ConservationPalette(
         mapOf(
@@ -31,6 +35,7 @@ val LightConservationPalette =
         ),
     )
 
+/** As cores dos selos no tema escuro. */
 val DarkConservationPalette =
     ConservationPalette(
         mapOf(
@@ -45,4 +50,9 @@ val DarkConservationPalette =
         ),
     )
 
+/**
+ * A paleta disponível para qualquer componente dentro do tema, sem passar por
+ * parâmetro. Um CompositionLocal é um valor que "desce" pela árvore de
+ * componentes; static, porque a paleta muda raramente (só ao trocar de tema).
+ */
 val LocalConservationPalette = staticCompositionLocalOf { LightConservationPalette }

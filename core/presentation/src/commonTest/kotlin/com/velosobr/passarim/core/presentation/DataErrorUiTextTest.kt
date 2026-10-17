@@ -1,3 +1,5 @@
+// Testes de DataErrorUiText.
+
 package com.velosobr.passarim.core.presentation
 
 import assertk.assertThat
@@ -12,6 +14,7 @@ import com.velosobr.passarim.core.presentation.resources.error_service_unavailab
 import kotlin.test.Test
 
 class DataErrorUiTextTest {
+    /** id pega o recurso de texto escolhido para o erro. */
     private fun DataError.Network.id() = (toUiText() as UiText.Resource).id
 
     @Test
