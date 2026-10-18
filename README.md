@@ -2,7 +2,7 @@
 
 Guia de aves do Brasil para Android e iOS, em **Kotlin Multiplatform** com **Compose Multiplatform**: todo o código de produto fica em `commonMain`; Android e iOS só têm uma casca fina. O app fala com o BFF do [`passarim-bff`](https://github.com/velosobr/passarim-bff), que roda localmente no `docker compose` do [`passarim-docs`](https://github.com/velosobr/passarim-docs).
 
-> Estado: **etapa 5d (Favoritos e Configurações)**. O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros, paginação e favoritos. Tocar numa ave abre o Detalhe: foto, selo de conservação, fatos, canto com player, curiosidades, galeria, mapa "Onde encontrar" e créditos. Os favoritos ficam no aparelho (Room) e abrem sem internet. Configurações traz tema (Sistema, Claro, Escuro), cores dinâmicas (Android 12+), "Tocar canto ao abrir ave" (DataStore), Dados e armazenamento (limpar o cache de imagens), Sobre e as licenças de código aberto. A 5e fecha o app (specs em `passarim-docs/docs/superpowers/specs/`).
+> Estado: **etapa 5d (Favoritos e Configurações)** mergeada; a 5e virou a guinada Passarim/Kids (PRD e specs em `passarim-docs/docs/superpowers/specs/`). O app abre com splash e as abas Explorar · Favoritos · Configurações. Explorar lista as aves do BFF em grade, com busca, filtros, paginação e favoritos. Tocar numa ave abre o Detalhe: foto, selo de conservação, fatos, canto com player, curiosidades, galeria, mapa "Onde encontrar" e créditos. Os favoritos ficam no aparelho (Room) e abrem sem internet. Configurações traz tema (Sistema, Claro, Escuro), cores dinâmicas (Android 12+), "Tocar canto ao abrir ave" (DataStore), Dados e armazenamento (limpar o cache de imagens), Sobre e as licenças de código aberto.
 
 ## Requisitos
 
@@ -101,7 +101,19 @@ Regras: `presentation → domain ← data`; features nunca dependem entre si; s�
 
 ## Rodando contra o backend local
 
-1. No `passarim-docs`: `cp .env.example .env` e `docker compose up -d` (o Traefik publica o BFF em `localhost:8080`).
+O jeito curto: os scripts de [`passarim-docs/env.scripts`](https://github.com/velosobr/passarim-docs/tree/main/env.scripts) sobem o back-end e abrem o app.
+
+```bash
+../passarim-docs/env.scripts/init-all          # back-end + app no emulador Android
+../passarim-docs/env.scripts/init-all --ios    # back-end + app no simulador iOS
+../passarim-docs/env.scripts/front-end-init    # só o app (back-end já no ar)
+../passarim-docs/env.scripts/status            # o que está no ar
+../passarim-docs/env.scripts/down-all          # derruba tudo, mantendo os dados
+```
+
+À mão, os passos são estes:
+
+1. No `passarim-docs`: `cp .env.example .env` e `docker compose up -d --wait` (o Traefik publica o BFF na porta `HOST_PORT_TRAEFIK_HTTP` do `.env`, `8080` por padrão; se trocar, ajuste `bff.baseUrl` no `local.properties`).
 2. Escolha o caso:
 
 | Caso | Como |
@@ -147,4 +159,4 @@ HTTPS apenas fora do debug · nenhum segredo no app · R8 no release (regras de 
 
 ## Convenções
 
-Commits no formato `<tipo>: mensagem` em português, numa branch por fatia, com PR para a `main`. Identificadores em inglês. O código não leva comentários explicativos (o plano de cada fatia, no `passarim-docs`, conta a história); só fatos externos ao repositório, como o contrato do BFF ou um limite de biblioteca. Cada decisão técnica relevante vira um ADR no `passarim-docs`.
+Commits no formato `<tipo>: mensagem` em português, numa branch por fatia, com PR para a `main`. Identificadores em inglês. O código é comentado em português, de forma didática, para um dev iniciante (frente 0 da guinada): cada arquivo começa dizendo o papel dele, e classes e funções não triviais explicam o que fazem e por quê. Cada decisão técnica relevante vira um ADR no `passarim-docs`.
