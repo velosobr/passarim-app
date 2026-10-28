@@ -57,7 +57,7 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
     LaunchedEffect(Unit) { onSettingsLoaded() }
     val darkTheme = loaded.theme.isDark(isSystemInDarkTheme())
     SystemBarsAppearance(darkTheme)
-    PiuTheme(darkTheme = darkTheme, dynamicColor = loaded.dynamicColors) {
+    PiuTheme(themeMode = loaded.theme, dynamicColor = loaded.dynamicColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             AppNavHost()
         }
