@@ -26,10 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.BackTopBar
-import com.velosobr.passarim.core.designsystem.resources.ic_bird
-import com.velosobr.passarim.core.designsystem.resources.ic_info
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
 import com.velosobr.passarim.feature.settings.presentation.resources.about_title
 import com.velosobr.passarim.feature.settings.presentation.resources.app_name
@@ -47,10 +43,14 @@ import com.velosobr.passarim.feature.settings.presentation.resources.open_source
 import com.velosobr.passarim.feature.settings.presentation.resources.privacy_policy
 import com.velosobr.passarim.feature.settings.presentation.resources.privacy_policy_body
 import com.velosobr.passarim.feature.settings.presentation.resources.version
+import com.velosobr.piuds.components.PiuBackTopBar
+import com.velosobr.piuds.resources.ic_bird
+import com.velosobr.piuds.resources.ic_info
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /** Os créditos das fontes: o que veio de onde (cantos, textos, espécies e mapa). */
 private val credits =
@@ -76,19 +76,19 @@ fun AboutScreen(
             .verticalScroll(scrollState)
             .padding(bottom = 16.dp),
     ) {
-        BackTopBar(stringResource(Res.string.about_title), onBack = { onAction(AboutAction.Back) })
+        PiuBackTopBar(stringResource(Res.string.about_title), onBack = { onAction(AboutAction.Back) })
         AppHeader(state.versionName)
         Text(
             stringResource(Res.string.credits_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = PassarimDimens.screenMargin).padding(top = 24.dp).semantics { heading() },
+            modifier = Modifier.padding(horizontal = PiuDimens.screenMargin).padding(top = 24.dp).semantics { heading() },
         )
         Text(
             stringResource(Res.string.credits_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = PassarimDimens.screenMargin, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = PiuDimens.screenMargin, vertical = 8.dp),
         )
         credits.forEach { (title, source) -> CreditRow(title, source) }
         SettingsRow(
@@ -141,7 +141,7 @@ private fun CreditRow(
     source: StringResource,
 ) {
     Column(
-        Modifier.fillMaxWidth().padding(horizontal = PassarimDimens.screenMargin, vertical = 10.dp),
+        Modifier.fillMaxWidth().padding(horizontal = PiuDimens.screenMargin, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(stringResource(title), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)

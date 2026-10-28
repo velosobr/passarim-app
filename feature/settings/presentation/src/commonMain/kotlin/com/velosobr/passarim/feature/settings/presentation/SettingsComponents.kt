@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.resources.Res
-import com.velosobr.passarim.core.designsystem.resources.ic_chevron_right
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
+import com.velosobr.piuds.resources.Res
+import com.velosobr.piuds.resources.ic_chevron_right
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -38,7 +38,7 @@ internal fun SectionHeader(text: String) {
         color = MaterialTheme.colorScheme.primary,
         modifier =
             Modifier
-                .padding(start = PassarimDimens.screenMargin, top = 24.dp, end = PassarimDimens.screenMargin, bottom = 8.dp)
+                .padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin, bottom = 8.dp)
                 .semantics { heading() },
     )
 }
@@ -56,7 +56,7 @@ internal fun SettingsRow(
         modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .padding(horizontal = PassarimDimens.screenMargin, vertical = 12.dp),
+            .padding(horizontal = PiuDimens.screenMargin, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {

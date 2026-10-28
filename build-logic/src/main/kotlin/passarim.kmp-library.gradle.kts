@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
     android {
-        // ":core:design-system" -> "com.velosobr.passarim.core.designsystem"
+        // ":core:domain" -> "com.velosobr.passarim.core.domain"
         namespace = "com.velosobr.passarim" + project.path.replace(":", ".").replace("-", "")
         compileSdk = 37
         minSdk = 26

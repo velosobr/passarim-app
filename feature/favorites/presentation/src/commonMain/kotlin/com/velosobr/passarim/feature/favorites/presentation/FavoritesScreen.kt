@@ -21,20 +21,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.ScreenTitle
-import com.velosobr.passarim.core.designsystem.components.SpeciesListItem
-import com.velosobr.passarim.core.designsystem.components.StateScreen
-import com.velosobr.passarim.core.designsystem.resources.ic_favorites
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.feature.favorites.presentation.resources.Res
 import com.velosobr.passarim.feature.favorites.presentation.resources.empty_body
 import com.velosobr.passarim.feature.favorites.presentation.resources.empty_title
 import com.velosobr.passarim.feature.favorites.presentation.resources.explore_birds
 import com.velosobr.passarim.feature.favorites.presentation.resources.favorites_subtitle
 import com.velosobr.passarim.feature.favorites.presentation.resources.favorites_title
+import com.velosobr.piuds.components.PiuScreenTitle
+import com.velosobr.piuds.components.PiuSpeciesListItem
+import com.velosobr.piuds.components.PiuStateScreen
+import com.velosobr.piuds.resources.ic_favorites
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /**
  * A tela sem estado próprio. Enquanto o banco não responde, mostra só o título.
@@ -47,7 +47,7 @@ fun FavoritesScreen(
     listState: LazyListState = rememberLazyListState(),
 ) {
     when (state) {
-        FavoritesState.Loading -> ScreenTitle(stringResource(Res.string.favorites_title), modifier)
+        FavoritesState.Loading -> PiuScreenTitle(stringResource(Res.string.favorites_title), modifier)
         FavoritesState.Empty -> EmptyFavorites(onAction, modifier)
         is FavoritesState.Content -> FavoritesList(state, onAction, listState, modifier)
     }
@@ -68,17 +68,17 @@ private fun FavoritesList(
     LazyColumn(modifier.fillMaxSize(), state = listState, contentPadding = PaddingValues(bottom = 16.dp)) {
         item {
             Column {
-                ScreenTitle(stringResource(Res.string.favorites_title))
+                PiuScreenTitle(stringResource(Res.string.favorites_title))
                 Text(
                     stringResource(Res.string.favorites_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = PassarimDimens.screenMargin, end = PassarimDimens.screenMargin, bottom = 16.dp),
+                    modifier = Modifier.padding(start = PiuDimens.screenMargin, end = PiuDimens.screenMargin, bottom = 16.dp),
                 )
             }
         }
         items(state.items, key = { it.id }) { summary ->
-            SpeciesListItem(
+            PiuSpeciesListItem(
                 name = summary.commonName,
                 scientificName = summary.scientificName,
                 imageUrl = summary.thumbnailUrl,
@@ -102,9 +102,9 @@ private fun EmptyFavorites(
     modifier: Modifier,
 ) {
     Column(modifier.fillMaxSize()) {
-        ScreenTitle(stringResource(Res.string.favorites_title))
+        PiuScreenTitle(stringResource(Res.string.favorites_title))
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            StateScreen(
+            PiuStateScreen(
                 icon = painterResource(DesignRes.drawable.ic_favorites),
                 title = stringResource(Res.string.empty_title),
                 body = stringResource(Res.string.empty_body),

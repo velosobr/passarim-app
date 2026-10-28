@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.resources.NightMode
-import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
+import com.velosobr.piuds.theme.PiuTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.setResourceReaderAndroidContext
 import org.junit.Before
@@ -49,7 +49,7 @@ abstract class ThemedSnapshotTest(
         content: @Composable () -> Unit,
     ) {
         paparazzi.snapshot("$name-${if (dark) "dark" else "light"}-${fontScalePercent / 100f}x") {
-            PassarimTheme(darkTheme = dark) {
+            PiuTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.background, content = content)
             }
         }

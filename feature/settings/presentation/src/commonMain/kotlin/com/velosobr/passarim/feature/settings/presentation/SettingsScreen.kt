@@ -25,12 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.ScreenTitle
-import com.velosobr.passarim.core.designsystem.resources.ic_info
-import com.velosobr.passarim.core.designsystem.resources.ic_palette
-import com.velosobr.passarim.core.designsystem.resources.ic_storage
-import com.velosobr.passarim.core.designsystem.resources.ic_theme
-import com.velosobr.passarim.core.designsystem.resources.ic_volume
 import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
 import com.velosobr.passarim.feature.settings.presentation.resources.about_row
@@ -50,10 +44,16 @@ import com.velosobr.passarim.feature.settings.presentation.resources.theme
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_dark
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_light
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_system
+import com.velosobr.piuds.components.PiuScreenTitle
+import com.velosobr.piuds.resources.ic_info
+import com.velosobr.piuds.resources.ic_palette
+import com.velosobr.piuds.resources.ic_storage
+import com.velosobr.piuds.resources.ic_theme
+import com.velosobr.piuds.resources.ic_volume
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /** O rótulo traduzível de cada opção de tema. */
 private val ThemeMode.label: StringResource
@@ -73,7 +73,7 @@ fun SettingsScreen(
     scrollState: ScrollState = rememberScrollState(),
 ) {
     Column(modifier.fillMaxSize().verticalScroll(scrollState).padding(bottom = 16.dp)) {
-        ScreenTitle(stringResource(Res.string.settings_title))
+        PiuScreenTitle(stringResource(Res.string.settings_title))
         SectionHeader(stringResource(Res.string.section_appearance))
         SettingsRow(title = stringResource(Res.string.theme), icon = DesignRes.drawable.ic_theme)
         ThemeOptions(state.settings.theme, onAction)

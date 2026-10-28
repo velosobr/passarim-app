@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.resources.NightMode
-import com.velosobr.passarim.core.designsystem.components.ConservationBadge
-import com.velosobr.passarim.core.designsystem.theme.PassarimTheme
 import com.velosobr.passarim.core.domain.ConservationStatus
+import com.velosobr.piuds.components.PiuConservationBadge
+import com.velosobr.piuds.theme.PiuTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.setResourceReaderAndroidContext
 import org.junit.Before
@@ -50,10 +50,10 @@ class ConservationBadgeSnapshotTest(
     fun allStatuses() {
         val name = "${if (dark) "dark" else "light"}-${fontScalePercent / 100f}x"
         paparazzi.snapshot(name) {
-            PassarimTheme(darkTheme = dark) {
+            PiuTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ConservationStatus.entries.forEach { ConservationBadge(it) }
+                        ConservationStatus.entries.forEach { PiuConservationBadge(it) }
                     }
                 }
             }

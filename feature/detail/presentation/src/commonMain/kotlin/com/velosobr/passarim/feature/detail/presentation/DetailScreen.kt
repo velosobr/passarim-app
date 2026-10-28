@@ -25,15 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.HeroIconButton
-import com.velosobr.passarim.core.designsystem.components.SkeletonBox
-import com.velosobr.passarim.core.designsystem.components.StateScreen
-import com.velosobr.passarim.core.designsystem.components.StateTone
-import com.velosobr.passarim.core.designsystem.resources.ic_arrow_back
-import com.velosobr.passarim.core.designsystem.resources.ic_bird
-import com.velosobr.passarim.core.designsystem.resources.ic_cloud_off
-import com.velosobr.passarim.core.designsystem.resources.ic_wifi_off
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.detail.domain.Cluster
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
@@ -50,12 +41,21 @@ import com.velosobr.passarim.feature.detail.presentation.resources.not_found_act
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_body
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_title
 import com.velosobr.passarim.feature.detail.presentation.resources.retry
+import com.velosobr.piuds.components.PiuHeroIconButton
+import com.velosobr.piuds.components.PiuSkeletonBox
+import com.velosobr.piuds.components.PiuStateScreen
+import com.velosobr.piuds.components.StateTone
+import com.velosobr.piuds.resources.ic_arrow_back
+import com.velosobr.piuds.resources.ic_bird
+import com.velosobr.piuds.resources.ic_cloud_off
+import com.velosobr.piuds.resources.ic_wifi_off
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /**
  * A tela sem estado próprio: tudo vem de [state] e cada interação vira uma
@@ -74,12 +74,12 @@ fun DetailScreen(
         is DetailPhase.Content -> DetailContent(phase.detail, state, onAction, mapContent, scrollState)
         DetailPhase.NotFound ->
             StatePage(onBack = { onAction(DetailAction.Back) }) {
-                StateScreen(
+                PiuStateScreen(
                     icon = painterResource(DesignRes.drawable.ic_bird),
                     title = stringResource(Res.string.not_found_title),
                     body = stringResource(Res.string.not_found_body),
                 ) {
-                    Button(onClick = { onAction(DetailAction.Back) }, modifier = Modifier.height(PassarimDimens.touchTarget)) {
+                    Button(onClick = { onAction(DetailAction.Back) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
                         Text(stringResource(Res.string.not_found_action))
                     }
                 }
@@ -87,7 +87,7 @@ fun DetailScreen(
         is DetailPhase.Error -> {
             val copy = phase.error.copy()
             StatePage(onBack = { onAction(DetailAction.Back) }) {
-                StateScreen(
+                PiuStateScreen(
                     icon = painterResource(copy.icon),
                     title = stringResource(copy.title),
                     body = stringResource(copy.body),
@@ -96,7 +96,7 @@ fun DetailScreen(
                     Button(
                         onClick = { onAction(DetailAction.Retry) },
                         enabled = state.retryEnabled,
-                        modifier = Modifier.height(PassarimDimens.touchTarget),
+                        modifier = Modifier.height(PiuDimens.touchTarget),
                     ) { Text(stringResource(Res.string.retry)) }
                 }
             }
@@ -109,8 +109,8 @@ fun DetailScreen(
 private fun DetailSkeleton(onBack: () -> Unit) {
     Column(Modifier.fillMaxSize()) {
         Box {
-            SkeletonBox(Modifier.fillMaxWidth().height(300.dp), shape = RectangleShape)
-            HeroIconButton(
+            PiuSkeletonBox(Modifier.fillMaxWidth().height(300.dp), shape = RectangleShape)
+            PiuHeroIconButton(
                 painterResource(DesignRes.drawable.ic_arrow_back),
                 contentDescription = stringResource(Res.string.back),
                 onClick = onBack,
@@ -118,16 +118,16 @@ private fun DetailSkeleton(onBack: () -> Unit) {
             )
         }
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SkeletonBox(Modifier.width(250.dp).height(32.dp))
-            SkeletonBox(Modifier.width(180.dp).height(18.dp))
-            SkeletonBox(Modifier.width(125.dp).height(24.dp))
+            PiuSkeletonBox(Modifier.width(250.dp).height(32.dp))
+            PiuSkeletonBox(Modifier.width(180.dp).height(18.dp))
+            PiuSkeletonBox(Modifier.width(125.dp).height(24.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                repeat(3) { SkeletonBox(Modifier.weight(1f).height(64.dp)) }
+                repeat(3) { PiuSkeletonBox(Modifier.weight(1f).height(64.dp)) }
             }
-            SkeletonBox(Modifier.fillMaxWidth().height(72.dp))
-            SkeletonBox(Modifier.fillMaxWidth().height(14.dp))
-            SkeletonBox(Modifier.fillMaxWidth().height(14.dp))
-            SkeletonBox(Modifier.width(285.dp).height(14.dp))
+            PiuSkeletonBox(Modifier.fillMaxWidth().height(72.dp))
+            PiuSkeletonBox(Modifier.fillMaxWidth().height(14.dp))
+            PiuSkeletonBox(Modifier.fillMaxWidth().height(14.dp))
+            PiuSkeletonBox(Modifier.width(285.dp).height(14.dp))
         }
     }
 }

@@ -12,7 +12,7 @@ android {
 
 dependencies {
     // Cada feature/*/presentation entra aqui, com `implementation` (os recursos precisam virar assets).
-    implementation(projects.core.designSystem)
+    implementation(projects.core.piuDs)
     implementation(projects.feature.explore.presentation)
     implementation(projects.feature.detail.presentation)
     implementation(projects.feature.favorites.presentation)

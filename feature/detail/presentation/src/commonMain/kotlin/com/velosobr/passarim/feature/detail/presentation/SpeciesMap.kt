@@ -27,11 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.velosobr.passarim.core.designsystem.resources.ic_map
 import com.velosobr.passarim.feature.detail.domain.Cluster
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
 import com.velosobr.passarim.feature.detail.presentation.resources.map_attribution
 import com.velosobr.passarim.feature.detail.presentation.resources.map_unavailable
+import com.velosobr.piuds.resources.ic_map
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.maplibre.compose.camera.CameraFit
@@ -55,7 +55,7 @@ import org.maplibre.compose.style.BaseStyle
 import org.maplibre.compose.util.DpPadding
 import org.maplibre.spatialk.geojson.BoundingBox
 import org.maplibre.spatialk.geojson.Position
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /** O estilo do mapa (cores, ruas, rótulos) do OpenFreeMap, um serviço de mapas aberto e gratuito. */
 const val OPENFREEMAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty"

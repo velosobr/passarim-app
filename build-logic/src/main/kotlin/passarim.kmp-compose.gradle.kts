@@ -14,6 +14,6 @@ kotlin {
 
 compose.resources {
     publicResClass = true
-    // ":core:design-system" -> "com.velosobr.passarim.core.designsystem.resources"
+    // ":core:domain" -> "com.velosobr.passarim.core.domain.resources"
     packageOfResClass = "com.velosobr.passarim" + project.path.replace(":", ".").replace("-", "") + ".resources"
 }

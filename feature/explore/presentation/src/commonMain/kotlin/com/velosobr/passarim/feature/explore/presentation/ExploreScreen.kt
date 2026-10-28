@@ -41,16 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.FilterChip
-import com.velosobr.passarim.core.designsystem.components.SearchField
-import com.velosobr.passarim.core.designsystem.components.SkeletonBox
-import com.velosobr.passarim.core.designsystem.components.SpeciesCard
-import com.velosobr.passarim.core.designsystem.components.StateScreen
-import com.velosobr.passarim.core.designsystem.components.StateTone
-import com.velosobr.passarim.core.designsystem.resources.ic_cloud_off
-import com.velosobr.passarim.core.designsystem.resources.ic_search
-import com.velosobr.passarim.core.designsystem.resources.ic_wifi_off
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
 import com.velosobr.passarim.feature.explore.presentation.resources.clear_filters
@@ -71,12 +61,22 @@ import com.velosobr.passarim.feature.explore.presentation.resources.load_more_er
 import com.velosobr.passarim.feature.explore.presentation.resources.retry
 import com.velosobr.passarim.feature.explore.presentation.resources.search_placeholder
 import com.velosobr.passarim.feature.explore.presentation.resources.see_favorites
+import com.velosobr.piuds.components.PiuFilterChip
+import com.velosobr.piuds.components.PiuSearchField
+import com.velosobr.piuds.components.PiuSkeletonBox
+import com.velosobr.piuds.components.PiuSpeciesCard
+import com.velosobr.piuds.components.PiuStateScreen
+import com.velosobr.piuds.components.StateTone
+import com.velosobr.piuds.resources.ic_cloud_off
+import com.velosobr.piuds.resources.ic_search
+import com.velosobr.piuds.resources.ic_wifi_off
+import com.velosobr.piuds.theme.PiuDimens
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /** A partir desta escala de fonte, a grade passa a 1 coluna: empilhar, nunca cortar o texto. */
 const val SINGLE_COLUMN_FONT_SCALE = 1.5f
@@ -97,7 +97,7 @@ fun ExploreScreen(
 ) {
     val columns = exploreGridColumns(LocalDensity.current.fontScale)
     Column(modifier.fillMaxSize()) {
-        SearchField(
+        PiuSearchField(
             value = state.query,
             onValueChange = { onAction(ExploreAction.QueryChange(it)) },
             placeholder = stringResource(Res.string.search_placeholder),
@@ -137,15 +137,15 @@ private fun FilterChips(
         val open = { onAction(ExploreAction.OpenFilters) }
         val biome = state.biomeLabel
         if (biome == null) {
-            FilterChip(stringResource(Res.string.filter_biome), selected = false, onClick = open, showDropdown = true)
+            PiuFilterChip(stringResource(Res.string.filter_biome), selected = false, onClick = open, showDropdown = true)
         } else {
-            FilterChip(biome, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearBiome) })
+            PiuFilterChip(biome, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearBiome) })
         }
         val uf = state.state
         if (uf == null) {
-            FilterChip(stringResource(Res.string.filter_state), selected = false, onClick = open, showDropdown = true)
+            PiuFilterChip(stringResource(Res.string.filter_state), selected = false, onClick = open, showDropdown = true)
         } else {
-            FilterChip(uf, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearState) })
+            PiuFilterChip(uf, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearState) })
         }
     }
 }
@@ -186,7 +186,7 @@ private fun SpeciesGrid(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(state.items, key = { it.id }, contentType = { "species" }) { bird ->
-            SpeciesCard(
+            PiuSpeciesCard(
                 name = bird.commonName,
                 scientificName = bird.scientificName,
                 imageUrl = bird.thumbnailUrl,
@@ -237,9 +237,9 @@ private fun SkeletonGrid(columns: Int) {
     ) {
         items(4) { index ->
             Column {
-                SkeletonBox(Modifier.fillMaxWidth().aspectRatio(4f / 5f), shape = MaterialTheme.shapes.small)
-                SkeletonBox(Modifier.padding(top = 10.dp).fillMaxWidth(0.7f - index * 0.05f).height(14.dp))
-                SkeletonBox(Modifier.padding(top = 6.dp).fillMaxWidth(0.5f - index * 0.03f).height(12.dp))
+                PiuSkeletonBox(Modifier.fillMaxWidth().aspectRatio(4f / 5f), shape = MaterialTheme.shapes.small)
+                PiuSkeletonBox(Modifier.padding(top = 10.dp).fillMaxWidth(0.7f - index * 0.05f).height(14.dp))
+                PiuSkeletonBox(Modifier.padding(top = 6.dp).fillMaxWidth(0.5f - index * 0.03f).height(12.dp))
             }
         }
     }
@@ -253,7 +253,7 @@ private fun EmptyState(
 ) {
     val query = state.query.trim()
     CenteredState {
-        StateScreen(
+        PiuStateScreen(
             icon = painterResource(DesignRes.drawable.ic_search),
             title = stringResource(Res.string.empty_title),
             body =
@@ -266,7 +266,7 @@ private fun EmptyState(
             if (state.hasFilters) {
                 FilledTonalButton(
                     onClick = { onAction(ExploreAction.ClearFilters) },
-                    modifier = Modifier.height(PassarimDimens.touchTarget),
+                    modifier = Modifier.height(PiuDimens.touchTarget),
                 ) {
                     Text(stringResource(Res.string.clear_filters))
                 }
@@ -307,7 +307,7 @@ private fun ErrorState(
 ) {
     val copy = error.copy()
     CenteredState {
-        StateScreen(
+        PiuStateScreen(
             icon = painterResource(copy.icon),
             title = stringResource(copy.title),
             body = stringResource(copy.body),
@@ -316,10 +316,10 @@ private fun ErrorState(
             Button(
                 onClick = { onAction(ExploreAction.Retry) },
                 enabled = retryEnabled,
-                modifier = Modifier.height(PassarimDimens.touchTarget),
+                modifier = Modifier.height(PiuDimens.touchTarget),
             ) { Text(stringResource(Res.string.retry)) }
             if (error == ScreenError.NoConnection) {
-                TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PassarimDimens.touchTarget)) {
+                TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
                     Text(stringResource(Res.string.see_favorites))
                 }
             }

@@ -16,7 +16,7 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.database)
             implementation(projects.core.presentation)
-            implementation(projects.core.designSystem)
+            implementation(projects.core.piuDs)
             implementation(projects.feature.explore.data)
             implementation(projects.feature.explore.presentation)
             implementation(projects.feature.detail.data)
