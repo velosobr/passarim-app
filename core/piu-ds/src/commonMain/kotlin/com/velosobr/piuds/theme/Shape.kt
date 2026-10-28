@@ -25,3 +25,20 @@ object PiuDimens {
     val screenMargin = 16.dp
     val touchTarget = 48.dp
 }
+
+/**
+ * Formas do Piu Kids (bloco "kids.shape" dos tokens): mais redondas que as do
+ * adulto. extraLarge (38dp) é o raio da barra de navegação Kids.
+ */
+val PiuKidsShapes =
+    Shapes(
+        small = RoundedCornerShape(16.dp),
+        medium = RoundedCornerShape(24.dp),
+        large = RoundedCornerShape(28.dp),
+        extraLarge = RoundedCornerShape(38.dp),
+    )
+
+/** Espaçamentos do Kids: o alvo de toque é maior (56dp) porque o dedo da criança é menos preciso. */
+object PiuKidsDimens {
+    val touchTarget = 56.dp
+}
