@@ -1,0 +1,9 @@
+{
+  "uniqueId": "font:fredoka",
+  "artifactVersion": "variável",
+  "name": "Fredoka",
+  "description": "Fonte dos títulos do Passarim Kids, embutida no app.",
+  "website": "https://fonts.google.com/specimen/Fredoka",
+  "developers": [{ "name": "Milena Brandão" }, { "name": "Hafontia" }],
+  "licenses": ["OFL-1.1"]
+}

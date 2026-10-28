@@ -1,0 +1,9 @@
+{
+  "uniqueId": "font:manrope",
+  "artifactVersion": "variável",
+  "name": "Manrope",
+  "description": "Fonte dos textos do Passarim (adulto), embutida no app.",
+  "website": "https://fonts.google.com/specimen/Manrope",
+  "developers": [{ "name": "Mikhail Sharanda" }],
+  "licenses": ["OFL-1.1"]
+}
