@@ -25,13 +25,13 @@ import com.velosobr.passarim.app.navigation.StorageRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
 import com.velosobr.passarim.app.theme.SystemBarsAppearance
-import com.velosobr.passarim.app.theme.isDark
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.detail.presentation.DetailRoot
 import com.velosobr.passarim.feature.settings.presentation.AboutRoot
 import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
 import com.velosobr.passarim.feature.settings.presentation.StorageRoot
 import com.velosobr.piuds.theme.PiuTheme
+import com.velosobr.piuds.theme.isDark
 import org.koin.compose.koinInject
 
 /**

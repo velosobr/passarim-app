@@ -1,6 +1,6 @@
 // Testes da decisão do tema escuro.
 
-package com.velosobr.passarim.app.theme
+package com.velosobr.piuds.theme
 
 import assertk.assertThat
 import assertk.assertions.isFalse
