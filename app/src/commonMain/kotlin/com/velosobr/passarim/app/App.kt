@@ -56,6 +56,8 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
     val loaded = settings ?: return
     LaunchedEffect(Unit) { onSettingsLoaded() }
     val darkTheme = loaded.theme.isDark(isSystemInDarkTheme())
+    // TODO(frente-D): com a jornada ligada, as barras do sistema devem seguir o PiuTheme.isDark (o Kids é
+    // sempre claro); hoje elas seguem só a preferência do adulto.
     SystemBarsAppearance(darkTheme)
     PiuTheme(themeMode = loaded.theme, dynamicColor = loaded.dynamicColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

@@ -33,6 +33,7 @@ fun PiuTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
+    // isSystemInDarkTheme() diz se o aparelho está no modo escuro (o "Sistema" das Configurações).
     val choice = resolvePiuScheme(journey, themeMode, isSystemInDarkTheme(), dynamicColor)
     // Testes e snapshots fixam o valor; sem isso, vale a preferência do sistema.
     val reduceMotion = rememberReduceMotion(LocalPiuReduceMotion.current)
@@ -65,7 +66,9 @@ private fun brandColors(dark: Boolean) = if (dark) PiuDarkColors else PiuLightCo
 /**
  * O que o Material não tem, lido de dentro do tema: PiuTheme.tokens,
  * PiuTheme.reduceMotion e PiuTheme.isDark. Cores, tipografia e formas
- * continuam no MaterialTheme.
+ * continuam no MaterialTheme. "@ReadOnlyComposable" avisa o Compose que o
+ * getter só lê valores da composição (não desenha nada), o que o deixa mais
+ * barato de chamar.
  */
 object PiuTheme {
     val tokens: PiuTokens

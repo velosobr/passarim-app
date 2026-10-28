@@ -28,6 +28,12 @@ internal expect fun systemReduceMotionReader(): () -> Boolean
  * pode ligar "remover animações" nos ajustes e voltar, e o app precisa
  * perceber sem reiniciar. Com [override], o sistema nem é lido e o efeito de
  * ciclo de vida não é registrado (os snapshots não têm ciclo de vida real).
+ *
+ * remember guarda o valor entre recomposições (e o recria quando uma das
+ * chaves muda); mutableStateOf faz o Compose redesenhar quem lê o valor
+ * quando ele muda. LifecycleResumeEffect roda o bloco a cada ON_RESUME (a
+ * tela voltou a ficar visível e ativa); onPauseOrDispose é o que fazer na
+ * pausa (aqui, nada).
  */
 @Composable
 internal fun rememberReduceMotion(override: Boolean?): Boolean {

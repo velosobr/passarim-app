@@ -1,5 +1,8 @@
 // "Reduzir animações" no Android: a opção "Remover animações" das
 // configurações de acessibilidade grava 0 na escala de duração das animações.
+// Settings.Global são as configurações globais do aparelho, lidas pelo
+// ContentResolver (o "porteiro" que o Android usa para dar acesso a dados de
+// outros apps e do sistema).
 
 package com.velosobr.piuds.theme
 

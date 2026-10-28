@@ -1,5 +1,8 @@
-// Testes dos tokens: algumas cores conferidas contra os valores do
-// passarim-tokens.json (copiados aqui) e o contraste mínimo dos selos.
+// Testes dos tokens: as cores do Piu e do Kids, os gradientes de bioma e de
+// mundo, a tipografia (títulos em 800 no Piu, a tabela do Kids) e as sombras
+// sólidas, conferidos contra os valores do passarim-tokens.json 2.0.0
+// (copiados aqui), mais o contraste mínimo dos selos, do Kids e do texto
+// sobre as duas pontas de cada gradiente.
 
 package com.velosobr.piuds
 
