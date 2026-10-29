@@ -50,6 +50,15 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.koin.android)
+    // "constraints" não acrescenta dependência: só diz qual versão usar se
+    // alguém a trouxer. O media3 (player do canto) traz o Guava 33.3.1, que tem
+    // a GHSA-xxph-c9ww-hj94 (CVSS 8.2, alocação de memória sem limite ao
+    // desserializar); a 33.7.2 corrige.
+    constraints {
+        implementation(libs.guava) {
+            because("GHSA-xxph-c9ww-hj94 no Guava até 33.7.1")
+        }
+    }
 }
 
 // Exporta a lista de licenças das bibliotecas do release para o JSON que a
