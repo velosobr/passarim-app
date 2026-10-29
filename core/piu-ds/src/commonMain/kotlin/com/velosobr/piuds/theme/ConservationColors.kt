@@ -2,7 +2,6 @@
 
 package com.velosobr.piuds.theme
 
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.velosobr.passarim.core.domain.ConservationStatus
 
@@ -49,10 +48,3 @@ val DarkConservationPalette =
             ConservationStatus.DD to ConservationColor(background = Color(0xFF22405E), content = Color(0xFFD3E4F5)),
         ),
     )
-
-/**
- * A paleta disponível para qualquer componente dentro do tema, sem passar por
- * parâmetro. Um CompositionLocal é um valor que "desce" pela árvore de
- * componentes; static, porque a paleta muda raramente (só ao trocar de tema).
- */
-val LocalConservationPalette = staticCompositionLocalOf { LightConservationPalette }

@@ -25,13 +25,13 @@ import com.velosobr.passarim.app.navigation.StorageRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
 import com.velosobr.passarim.app.theme.SystemBarsAppearance
-import com.velosobr.passarim.app.theme.isDark
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.feature.detail.presentation.DetailRoot
 import com.velosobr.passarim.feature.settings.presentation.AboutRoot
 import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
 import com.velosobr.passarim.feature.settings.presentation.StorageRoot
 import com.velosobr.piuds.theme.PiuTheme
+import com.velosobr.piuds.theme.isDark
 import org.koin.compose.koinInject
 
 /**
@@ -56,8 +56,10 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
     val loaded = settings ?: return
     LaunchedEffect(Unit) { onSettingsLoaded() }
     val darkTheme = loaded.theme.isDark(isSystemInDarkTheme())
+    // TODO(frente-D): com a jornada ligada, as barras do sistema devem seguir o PiuTheme.isDark (o Kids é
+    // sempre claro); hoje elas seguem só a preferência do adulto.
     SystemBarsAppearance(darkTheme)
-    PiuTheme(darkTheme = darkTheme, dynamicColor = loaded.dynamicColors) {
+    PiuTheme(themeMode = loaded.theme, dynamicColor = loaded.dynamicColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             AppNavHost()
         }

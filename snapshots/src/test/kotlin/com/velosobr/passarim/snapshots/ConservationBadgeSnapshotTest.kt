@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.resources.NightMode
 import com.velosobr.passarim.core.domain.ConservationStatus
+import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.piuds.components.PiuConservationBadge
+import com.velosobr.piuds.theme.LocalPiuReduceMotion
 import com.velosobr.piuds.theme.PiuTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.setResourceReaderAndroidContext
@@ -50,10 +53,13 @@ class ConservationBadgeSnapshotTest(
     fun allStatuses() {
         val name = "${if (dark) "dark" else "light"}-${fontScalePercent / 100f}x"
         paparazzi.snapshot(name) {
-            PiuTheme(darkTheme = dark) {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        ConservationStatus.entries.forEach { PiuConservationBadge(it) }
+            // Fixa "reduzir animações" para o snapshot não depender do sistema.
+            CompositionLocalProvider(LocalPiuReduceMotion provides false) {
+                PiuTheme(themeMode = if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
+                    Surface(color = MaterialTheme.colorScheme.background) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            ConservationStatus.entries.forEach { PiuConservationBadge(it) }
+                        }
                     }
                 }
             }

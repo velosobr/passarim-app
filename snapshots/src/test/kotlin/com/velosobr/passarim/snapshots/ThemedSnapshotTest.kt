@@ -5,9 +5,12 @@ package com.velosobr.passarim.snapshots
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.resources.NightMode
+import com.velosobr.passarim.core.domain.ThemeMode
+import com.velosobr.piuds.theme.LocalPiuReduceMotion
 import com.velosobr.piuds.theme.PiuTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.setResourceReaderAndroidContext
@@ -49,8 +52,11 @@ abstract class ThemedSnapshotTest(
         content: @Composable () -> Unit,
     ) {
         paparazzi.snapshot("$name-${if (dark) "dark" else "light"}-${fontScalePercent / 100f}x") {
-            PiuTheme(darkTheme = dark) {
-                Surface(color = MaterialTheme.colorScheme.background, content = content)
+            // Fixa "reduzir animações" para o snapshot não depender do sistema.
+            CompositionLocalProvider(LocalPiuReduceMotion provides false) {
+                PiuTheme(themeMode = if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
+                    Surface(color = MaterialTheme.colorScheme.background, content = content)
+                }
             }
         }
     }

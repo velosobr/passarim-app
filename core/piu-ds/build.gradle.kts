@@ -22,6 +22,8 @@ kotlin {
             api(libs.compose.ui)
             api(libs.compose.resources)
             implementation(libs.coil.compose)
+            // Para reler a preferência "reduzir animações" quando a pessoa volta ao app.
+            implementation(libs.lifecycle.runtime.compose)
         }
         commonTest.dependencies {
             implementation(libs.assertk)

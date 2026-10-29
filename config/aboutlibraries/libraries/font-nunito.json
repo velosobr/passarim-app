@@ -1,0 +1,9 @@
+{
+  "uniqueId": "font:nunito",
+  "artifactVersion": "variável",
+  "name": "Nunito",
+  "description": "Fonte dos textos do Passarim Kids, embutida no app.",
+  "website": "https://fonts.google.com/specimen/Nunito",
+  "developers": [{ "name": "Vernon Adams" }, { "name": "Cyreal" }, { "name": "Jacques Le Bailly" }],
+  "licenses": ["OFL-1.1"]
+}

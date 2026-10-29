@@ -64,6 +64,11 @@ dependencies {
 // Exporta a lista de licenças das bibliotecas do release para o JSON que a
 // tela de Licenças lê (ADR-0020).
 aboutLibraries {
+    // Fontes embutidas (Manrope, Fredoka e Nunito) não são dependências do
+    // Gradle: entram por definições em JSON nesta pasta.
+    collect {
+        configPath = rootProject.file("config/aboutlibraries")
+    }
     export {
         variant = "release"
         outputFile = rootProject.file("feature/settings/presentation/src/commonMain/composeResources/files/aboutlibraries.json")

@@ -30,7 +30,7 @@ import com.velosobr.piuds.resources.conservation_ex
 import com.velosobr.piuds.resources.conservation_lc
 import com.velosobr.piuds.resources.conservation_nt
 import com.velosobr.piuds.resources.conservation_vu
-import com.velosobr.piuds.theme.LocalConservationPalette
+import com.velosobr.piuds.theme.PiuTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -40,7 +40,7 @@ fun PiuConservationBadge(
     status: ConservationStatus,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalConservationPalette.current[status]
+    val colors = PiuTheme.tokens.conservation[status]
     Row(
         modifier =
             modifier
