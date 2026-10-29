@@ -21,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.FilterChip
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
 import com.velosobr.passarim.feature.explore.presentation.resources.filter_biome
 import com.velosobr.passarim.feature.explore.presentation.resources.filter_count
@@ -33,6 +31,8 @@ import com.velosobr.passarim.feature.explore.presentation.resources.sheet_clear
 import com.velosobr.passarim.feature.explore.presentation.resources.sheet_error
 import com.velosobr.passarim.feature.explore.presentation.resources.sheet_show_all_states
 import com.velosobr.passarim.feature.explore.presentation.resources.sheet_title
+import com.velosobr.piuds.components.PiuFilterChip
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -66,7 +66,7 @@ fun FiltersSheet(
             is FiltersPhase.Loaded -> {
                 Group(stringResource(Res.string.filter_biome)) {
                     filters.filters.biomes.forEach { biome ->
-                        FilterChip(
+                        PiuFilterChip(
                             label = stringResource(Res.string.filter_count, biome.label, biome.speciesCount),
                             selected = biome.code == sheet.biome,
                             onClick = { onAction(ExploreAction.SheetBiome(biome.code)) },
@@ -75,7 +75,7 @@ fun FiltersSheet(
                 }
                 Group(stringResource(Res.string.filter_state)) {
                     visibleStates(filters.filters.states, sheet.showAllStates).forEach { uf ->
-                        FilterChip(
+                        PiuFilterChip(
                             label = stringResource(Res.string.filter_count, uf.code, uf.speciesCount),
                             selected = uf.code == sheet.state,
                             onClick = { onAction(ExploreAction.SheetState(uf.code)) },
@@ -105,7 +105,7 @@ private fun Group(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(title, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(PassarimDimens.unit)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(PiuDimens.unit)) {
             chips()
         }
     }

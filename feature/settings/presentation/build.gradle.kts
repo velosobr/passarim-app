@@ -10,7 +10,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.domain)
             api(projects.core.presentation)
-            implementation(projects.core.designSystem)
+            implementation(projects.core.piuDs)
             implementation(libs.compose.resources)
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)

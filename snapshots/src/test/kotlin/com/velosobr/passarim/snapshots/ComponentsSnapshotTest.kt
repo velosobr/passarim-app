@@ -14,23 +14,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.CreditCaption
-import com.velosobr.passarim.core.designsystem.components.FactTile
-import com.velosobr.passarim.core.designsystem.components.FilterChip
-import com.velosobr.passarim.core.designsystem.components.GalleryPhoto
-import com.velosobr.passarim.core.designsystem.components.HeroIconButton
-import com.velosobr.passarim.core.designsystem.components.HeroPhoto
-import com.velosobr.passarim.core.designsystem.components.LabeledChips
-import com.velosobr.passarim.core.designsystem.components.PhotoGallery
-import com.velosobr.passarim.core.designsystem.components.SearchField
-import com.velosobr.passarim.core.designsystem.components.SkeletonBox
-import com.velosobr.passarim.core.designsystem.components.SpeciesCard
-import com.velosobr.passarim.core.designsystem.components.StateScreen
-import com.velosobr.passarim.core.designsystem.components.StateTone
-import com.velosobr.passarim.core.designsystem.resources.Res
-import com.velosobr.passarim.core.designsystem.resources.ic_arrow_back
-import com.velosobr.passarim.core.designsystem.resources.ic_favorite_filled
-import com.velosobr.passarim.core.designsystem.resources.ic_wifi_off
+import com.velosobr.piuds.components.GalleryPhoto
+import com.velosobr.piuds.components.PiuCreditCaption
+import com.velosobr.piuds.components.PiuFactTile
+import com.velosobr.piuds.components.PiuFilterChip
+import com.velosobr.piuds.components.PiuHeroIconButton
+import com.velosobr.piuds.components.PiuHeroPhoto
+import com.velosobr.piuds.components.PiuLabeledChips
+import com.velosobr.piuds.components.PiuPhotoGallery
+import com.velosobr.piuds.components.PiuSearchField
+import com.velosobr.piuds.components.PiuSkeletonBox
+import com.velosobr.piuds.components.PiuSpeciesCard
+import com.velosobr.piuds.components.PiuStateScreen
+import com.velosobr.piuds.components.StateTone
+import com.velosobr.piuds.resources.Res
+import com.velosobr.piuds.resources.ic_arrow_back
+import com.velosobr.piuds.resources.ic_favorite_filled
+import com.velosobr.piuds.resources.ic_wifi_off
 import org.jetbrains.compose.resources.painterResource
 import org.junit.Test
 
@@ -43,7 +43,7 @@ class ComponentsSnapshotTest(
     fun speciesCards() =
         snap("species-cards") {
             Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SpeciesCard(
+                PiuSpeciesCard(
                     name = "Arara-azul-grande",
                     scientificName = "Anodorhynchus hyacinthinus",
                     imageUrl = null,
@@ -52,7 +52,7 @@ class ComponentsSnapshotTest(
                     onClick = {},
                     modifier = Modifier.weight(1f),
                 )
-                SpeciesCard(
+                PiuSpeciesCard(
                     name = "Bem-te-vi",
                     scientificName = "Pitangus sulphuratus",
                     imageUrl = null,
@@ -68,15 +68,15 @@ class ComponentsSnapshotTest(
     fun searchAndChips() =
         snap("search-and-chips") {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SearchField(value = "", onValueChange = {}, placeholder = "Buscar aves", modifier = Modifier.fillMaxWidth())
-                SearchField(value = "azul", onValueChange = {}, placeholder = "Buscar aves", modifier = Modifier.fillMaxWidth())
+                PiuSearchField(value = "", onValueChange = {}, placeholder = "Buscar aves", modifier = Modifier.fillMaxWidth())
+                PiuSearchField(value = "azul", onValueChange = {}, placeholder = "Buscar aves", modifier = Modifier.fillMaxWidth())
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(label = "Bioma", selected = false, onClick = {}, showDropdown = true)
-                    FilterChip(label = "Pampa", selected = true, onClick = {}, onClear = {})
+                    PiuFilterChip(label = "Bioma", selected = false, onClick = {}, showDropdown = true)
+                    PiuFilterChip(label = "Pampa", selected = true, onClick = {}, onClear = {})
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(label = "Cerrado · 26", selected = true, onClick = {})
-                    FilterChip(label = "Mata Atlântica · 29", selected = false, onClick = {})
+                    PiuFilterChip(label = "Cerrado · 26", selected = true, onClick = {})
+                    PiuFilterChip(label = "Mata Atlântica · 29", selected = false, onClick = {})
                 }
             }
         }
@@ -85,7 +85,7 @@ class ComponentsSnapshotTest(
     fun stateScreenAndSkeleton() =
         snap("state-and-skeleton") {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                StateScreen(
+                PiuStateScreen(
                     icon = painterResource(Res.drawable.ic_wifi_off),
                     title = "Sem conexão",
                     body = "Verifique sua internet e tente de novo.",
@@ -93,7 +93,7 @@ class ComponentsSnapshotTest(
                 ) {
                     Button(onClick = {}) { Text("Tentar novamente") }
                 }
-                SkeletonBox(Modifier.width(160.dp).height(14.dp))
+                PiuSkeletonBox(Modifier.width(160.dp).height(14.dp))
             }
         }
 
@@ -101,17 +101,21 @@ class ComponentsSnapshotTest(
     fun detailComponents() =
         snap("detail-components") {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                HeroPhoto(imageUrl = null) {
+                PiuHeroPhoto(imageUrl = null) {
                     Row(Modifier.fillMaxWidth().statusBarsPadding().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        HeroIconButton(painterResource(Res.drawable.ic_arrow_back), contentDescription = "Voltar", onClick = {})
-                        HeroIconButton(painterResource(Res.drawable.ic_favorite_filled), contentDescription = "Desfavoritar", onClick = {})
+                        PiuHeroIconButton(painterResource(Res.drawable.ic_arrow_back), contentDescription = "Voltar", onClick = {})
+                        PiuHeroIconButton(
+                            painterResource(Res.drawable.ic_favorite_filled),
+                            contentDescription = "Desfavoritar",
+                            onClick = {},
+                        )
                     }
                 }
                 Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    FactTile(value = "100 cm", label = "Tamanho")
-                    LabeledChips(label = "Bioma", chips = listOf("Pantanal", "Cerrado", "Amazônia"))
-                    CreditCaption("Texto: Equipe Passarim · CC BY 4.0")
-                    PhotoGallery(
+                    PiuFactTile(value = "100 cm", label = "Tamanho")
+                    PiuLabeledChips(label = "Bioma", chips = listOf("Pantanal", "Cerrado", "Amazônia"))
+                    PiuCreditCaption("Texto: Equipe Passarim · CC BY 4.0")
+                    PiuPhotoGallery(
                         photos =
                             listOf(
                                 GalleryPhoto(null, "Paul Donahue · CC BY-NC"),

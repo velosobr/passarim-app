@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.produceLibraries
-import com.velosobr.passarim.core.designsystem.components.BackTopBar
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
 import com.velosobr.passarim.feature.settings.presentation.resources.open_source_licenses
+import com.velosobr.piuds.components.PiuBackTopBar
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -35,7 +35,7 @@ fun LicensesScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().systemBarsPadding()) {
-        BackTopBar(stringResource(Res.string.open_source_licenses), onBack = onBack)
+        PiuBackTopBar(stringResource(Res.string.open_source_licenses), onBack = onBack)
         LibrariesContainer(libraries, Modifier.fillMaxSize())
     }
 }

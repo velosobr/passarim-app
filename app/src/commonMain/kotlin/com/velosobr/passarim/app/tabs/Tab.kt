@@ -10,12 +10,12 @@ import com.velosobr.passarim.app.resources.Res
 import com.velosobr.passarim.app.resources.tab_explore
 import com.velosobr.passarim.app.resources.tab_favorites
 import com.velosobr.passarim.app.resources.tab_settings
-import com.velosobr.passarim.core.designsystem.resources.ic_explore
-import com.velosobr.passarim.core.designsystem.resources.ic_favorites
-import com.velosobr.passarim.core.designsystem.resources.ic_settings
+import com.velosobr.piuds.resources.ic_explore
+import com.velosobr.piuds.resources.ic_favorites
+import com.velosobr.piuds.resources.ic_settings
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /** As três abas do app, na ordem do design: Explorar · Favoritos · Configurações. */
 enum class Tab(

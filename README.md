@@ -25,7 +25,7 @@ O código é todo comentado para estudo. Uma ordem que vai da raiz até as telas
 2. `core:domain`: os tipos e contratos compartilhados (`Result`, `DataError`, repositórios).
 3. `core:data` e `core:database`: a rede (Ktor e `safeCall`) e o banco local (Room).
 4. As features, na ordem `explore`, `detail`, `favorites` e `settings`: explore e detail têm `domain`, `data` e `presentation`; settings tem `data` e `presentation`; favorites, só `presentation` (ViewModel e telas).
-5. `core:presentation` e `core:design-system`: o que todas as telas usam (textos, erros, tema e componentes).
+5. `core:presentation` e `core:piu-ds` (o PiuDS, o design system): o que todas as telas usam (textos, erros, tema e componentes).
 6. `androidApp`, `iosApp` e `build-logic`: as cascas de cada plataforma e os plugins de build.
 7. Os testes de cada módulo (`commonTest`, `jvmTest`) e os snapshots (`snapshots`) mostram o comportamento esperado.
 
@@ -38,7 +38,7 @@ graph TD
     app --> core-domain
     app --> core-data
     app --> core-presentation
-    app --> core-design-system
+    app --> core-piu-ds
     app --> explore-data
     app --> explore-presentation
     app --> detail-data
@@ -49,26 +49,26 @@ graph TD
     app --> core-database
     explore-presentation --> explore-domain
     explore-presentation --> core-presentation
-    explore-presentation --> core-design-system
+    explore-presentation --> core-piu-ds
     explore-data --> explore-domain
     explore-data --> core-data
     explore-domain --> core-domain
     detail-presentation --> detail-domain
     detail-presentation --> core-presentation
-    detail-presentation --> core-design-system
+    detail-presentation --> core-piu-ds
     detail-data --> detail-domain
     detail-data --> core-data
     detail-domain --> core-domain
     favorites-presentation --> core-presentation
-    favorites-presentation --> core-design-system
+    favorites-presentation --> core-piu-ds
     settings-presentation --> core-presentation
-    settings-presentation --> core-design-system
+    settings-presentation --> core-piu-ds
     settings-data --> core-domain
     core-data --> core-domain
     core-presentation --> core-domain
-    core-design-system --> core-domain
+    core-piu-ds --> core-domain
     core-database --> core-domain
-    snapshots --> core-design-system
+    snapshots --> core-piu-ds
     snapshots --> explore-presentation
     snapshots --> detail-presentation
     snapshots --> favorites-presentation
@@ -83,7 +83,7 @@ graph TD
 | `core:domain` | `Result`, `DataError`, `AppConfig`, `Settings`, modelos e interfaces de repositório e do limpador de cache; alvo `jvm()` só para os testes do banco |
 | `core:data` | Ktor (`safeCall`), o cliente da API e o de mídia, `MediaUrlRewriter` |
 | `core:presentation` | `UiText`, `ObserveAsEvents`, mensagens de erro, `ScreenError` |
-| `core:design-system` | Tema (tokens, Manrope), componentes genéricos (card e item de lista de espécie, busca, chip, estados, skeleton, hero, fatos, chips rotulados, crédito, galeria, título de tela, barra com voltar), cores dinâmicas |
+| `core:piu-ds` | PiuDS: tema (tokens, Manrope), componentes genéricos (card e item de lista de espécie, busca, chip, estados, skeleton, hero, fatos, chips rotulados, crédito, galeria, título de tela, barra com voltar), cores dinâmicas |
 | `feature:explore:domain` | `ExploreRepository`, `SpeciesPage`, limpeza da busca |
 | `feature:explore:data` | `GET /v1/species` e `GET /v1/filters` (DTOs e mappers) |
 | `feature:explore:presentation` | `ExploreViewModel` (MVI), tela, sheet de filtros |
@@ -151,7 +151,7 @@ scripts/osv-gate.sh                     # vulnerabilidades altas/críticas nas d
 
 ## Design
 
-Cores, tipografia e formas vêm de `passarim-docs/docs/design/tokens/passarim-tokens.json`. **Mudanças de cor começam lá** (com a verificação de contraste) e depois são refletidas em `core/design-system/.../theme/Color.kt`. A fonte é a Manrope (variável, licença OFL em `LICENSES/Manrope-OFL.txt`). Os ícones vêm de `design/icon/` (cópia dos SVGs do `passarim-docs`); `scripts/render-ios-icons.sh` gera os PNGs do iOS (requer o Chrome).
+Cores, tipografia e formas vêm de `passarim-docs/docs/design/tokens/passarim-tokens.json`. **Mudanças de cor começam lá** (com a verificação de contraste) e depois são refletidas em `core/piu-ds/.../theme/Color.kt`. A fonte é a Manrope (variável, licença OFL em `LICENSES/Manrope-OFL.txt`). Os ícones vêm de `design/icon/` (cópia dos SVGs do `passarim-docs`); `scripts/render-ios-icons.sh` gera os PNGs do iOS (requer o Chrome).
 
 ## Segurança
 

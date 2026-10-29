@@ -2,8 +2,8 @@
 
 package com.velosobr.passarim.feature.settings.presentation
 
-import com.velosobr.passarim.core.designsystem.theme.isDynamicColorSupported
 import com.velosobr.passarim.core.domain.AppConfig
+import com.velosobr.piuds.theme.isDynamicColorSupported
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module

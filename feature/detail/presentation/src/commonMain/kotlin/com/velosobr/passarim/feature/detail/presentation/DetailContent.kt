@@ -29,21 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.ConservationBadge
-import com.velosobr.passarim.core.designsystem.components.CreditCaption
-import com.velosobr.passarim.core.designsystem.components.FactTile
-import com.velosobr.passarim.core.designsystem.components.GalleryPhoto
-import com.velosobr.passarim.core.designsystem.components.HeroIconButton
-import com.velosobr.passarim.core.designsystem.components.HeroPhoto
-import com.velosobr.passarim.core.designsystem.components.InfoChips
-import com.velosobr.passarim.core.designsystem.components.LabeledChips
-import com.velosobr.passarim.core.designsystem.components.PhotoGallery
-import com.velosobr.passarim.core.designsystem.resources.favorite_add
-import com.velosobr.passarim.core.designsystem.resources.favorite_remove
-import com.velosobr.passarim.core.designsystem.resources.ic_arrow_back
-import com.velosobr.passarim.core.designsystem.resources.ic_favorite_filled
-import com.velosobr.passarim.core.designsystem.resources.ic_favorites
-import com.velosobr.passarim.core.designsystem.theme.PassarimDimens
 import com.velosobr.passarim.core.domain.Credit
 import com.velosobr.passarim.feature.detail.domain.Audio
 import com.velosobr.passarim.feature.detail.domain.Cluster
@@ -75,10 +60,25 @@ import com.velosobr.passarim.feature.detail.presentation.resources.section_facts
 import com.velosobr.passarim.feature.detail.presentation.resources.section_gallery
 import com.velosobr.passarim.feature.detail.presentation.resources.section_song
 import com.velosobr.passarim.feature.detail.presentation.resources.section_where
+import com.velosobr.piuds.components.GalleryPhoto
+import com.velosobr.piuds.components.PiuConservationBadge
+import com.velosobr.piuds.components.PiuCreditCaption
+import com.velosobr.piuds.components.PiuFactTile
+import com.velosobr.piuds.components.PiuHeroIconButton
+import com.velosobr.piuds.components.PiuHeroPhoto
+import com.velosobr.piuds.components.PiuInfoChips
+import com.velosobr.piuds.components.PiuLabeledChips
+import com.velosobr.piuds.components.PiuPhotoGallery
+import com.velosobr.piuds.resources.favorite_add
+import com.velosobr.piuds.resources.favorite_remove
+import com.velosobr.piuds.resources.ic_arrow_back
+import com.velosobr.piuds.resources.ic_favorite_filled
+import com.velosobr.piuds.resources.ic_favorites
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /**
  * A página rolável do Detalhe: foto do topo, cabeçalho, fatos, biomas,
@@ -101,7 +101,7 @@ internal fun DetailContent(
         Column(Modifier.fillMaxSize().verticalScroll(scrollState).navigationBarsPadding()) {
             Hero(detail, state.isFavorite, onAction)
             Column(
-                Modifier.padding(horizontal = PassarimDimens.screenMargin, vertical = 16.dp),
+                Modifier.padding(horizontal = PiuDimens.screenMargin, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 Header(
@@ -112,13 +112,13 @@ internal fun DetailContent(
                         ?.let { stringResource(Res.string.credit_photo, credit(it)) },
                 )
                 Facts(detail)
-                if (detail.biomes.isNotEmpty()) LabeledChips(stringResource(Res.string.section_biome), detail.biomes.map { it.label })
+                if (detail.biomes.isNotEmpty()) PiuLabeledChips(stringResource(Res.string.section_biome), detail.biomes.map { it.label })
                 detail.diet?.let { Diet(it) }
                 detail.audio?.let { Song(it, state.player, credit, onAction) }
                 if (detail.description.isNotBlank()) {
                     Section(stringResource(Res.string.section_about)) {
                         Text(detail.description, style = MaterialTheme.typography.bodyMedium)
-                        CreditCaption(stringResource(Res.string.credit_text, credit(detail.descriptionCredit)))
+                        PiuCreditCaption(stringResource(Res.string.credit_text, credit(detail.descriptionCredit)))
                     }
                 }
                 if (detail.facts.isNotEmpty()) {
@@ -133,7 +133,7 @@ internal fun DetailContent(
                 }
                 if (detail.photos.size > 1) {
                     Section(stringResource(Res.string.section_gallery)) {
-                        PhotoGallery(detail.photos.drop(1).map { GalleryPhoto(it.galleryUrl, credit(it.credit)) })
+                        PiuPhotoGallery(detail.photos.drop(1).map { GalleryPhoto(it.galleryUrl, credit(it.credit)) })
                     }
                 }
                 WhereToFindSection(detail.whereToFind, mapContent)
@@ -187,7 +187,7 @@ private fun WhereToFindSection(
     if (where.clusters.isEmpty() && where.states.isEmpty()) return
     Section(stringResource(Res.string.section_where)) {
         mapContent(where.clusters, Modifier)
-        if (where.states.isNotEmpty()) InfoChips(where.states)
+        if (where.states.isNotEmpty()) PiuInfoChips(where.states)
     }
 }
 
@@ -198,14 +198,14 @@ private fun Hero(
     isFavorite: Boolean,
     onAction: (DetailAction) -> Unit,
 ) {
-    HeroPhoto(imageUrl = detail.photos.firstOrNull()?.heroUrl) {
+    PiuHeroPhoto(imageUrl = detail.photos.firstOrNull()?.heroUrl) {
         Row(Modifier.fillMaxWidth().statusBarsPadding().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            HeroIconButton(
+            PiuHeroIconButton(
                 painterResource(DesignRes.drawable.ic_arrow_back),
                 contentDescription = stringResource(Res.string.back),
                 onClick = { onAction(DetailAction.Back) },
             )
-            HeroIconButton(
+            PiuHeroIconButton(
                 painterResource(if (isFavorite) DesignRes.drawable.ic_favorite_filled else DesignRes.drawable.ic_favorites),
                 contentDescription =
                     stringResource(if (isFavorite) DesignRes.string.favorite_remove else DesignRes.string.favorite_add, detail.commonName),
@@ -223,7 +223,7 @@ private fun Header(
     photoCredit: String?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        photoCredit?.let { CreditCaption(it) }
+        photoCredit?.let { PiuCreditCaption(it) }
         Text(detail.commonName, style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
         Text(
             detail.scientificName,
@@ -232,7 +232,7 @@ private fun Header(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            detail.conservation?.let { ConservationBadge(it, Modifier.align(Alignment.CenterVertically)) }
+            detail.conservation?.let { PiuConservationBadge(it, Modifier.align(Alignment.CenterVertically)) }
             Text(
                 stringResource(Res.string.family, detail.family),
                 style = MaterialTheme.typography.bodyMedium,
@@ -261,11 +261,11 @@ private fun Facts(detail: SpeciesDetail) {
     if (tiles.isEmpty()) return
     if (factsInSingleColumn(LocalDensity.current.fontScale)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            tiles.forEach { (value, label) -> FactTile(value, label, Modifier.fillMaxWidth()) }
+            tiles.forEach { (value, label) -> PiuFactTile(value, label, Modifier.fillMaxWidth()) }
         }
     } else {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            tiles.forEach { (value, label) -> FactTile(value, label, Modifier.weight(1f)) }
+            tiles.forEach { (value, label) -> PiuFactTile(value, label, Modifier.weight(1f)) }
         }
     }
 }
@@ -291,7 +291,7 @@ private fun Credits(
     onAction: (DetailAction) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        TextButton(onClick = { onAction(DetailAction.ToggleCredits) }, modifier = Modifier.heightIn(min = PassarimDimens.touchTarget)) {
+        TextButton(onClick = { onAction(DetailAction.ToggleCredits) }, modifier = Modifier.heightIn(min = PiuDimens.touchTarget)) {
             Text(stringResource(Res.string.credits_toggle))
         }
         if (!expanded) return@Column
@@ -322,7 +322,7 @@ private fun CreditEntry(
         if (url != null && isSafeLink(url)) {
             TextButton(
                 onClick = { onAction(DetailAction.OpenCredit(url)) },
-                modifier = Modifier.heightIn(min = PassarimDimens.touchTarget),
+                modifier = Modifier.heightIn(min = PiuDimens.touchTarget),
             ) {
                 Text(stringResource(Res.string.credit_open_source))
             }

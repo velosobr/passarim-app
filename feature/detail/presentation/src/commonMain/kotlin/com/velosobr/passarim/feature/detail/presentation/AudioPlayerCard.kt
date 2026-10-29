@@ -27,18 +27,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.designsystem.components.CreditCaption
-import com.velosobr.passarim.core.designsystem.resources.ic_pause
-import com.velosobr.passarim.core.designsystem.resources.ic_play
 import com.velosobr.passarim.feature.detail.domain.PlaybackState
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
 import com.velosobr.passarim.feature.detail.presentation.resources.audio_error
 import com.velosobr.passarim.feature.detail.presentation.resources.audio_pause
 import com.velosobr.passarim.feature.detail.presentation.resources.audio_play
 import com.velosobr.passarim.feature.detail.presentation.resources.audio_progress
+import com.velosobr.piuds.components.PiuCreditCaption
+import com.velosobr.piuds.resources.ic_pause
+import com.velosobr.piuds.resources.ic_play
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import com.velosobr.passarim.core.designsystem.resources.Res as DesignRes
+import com.velosobr.piuds.resources.Res as DesignRes
 
 /**
  * Mostra o canto e deixa tocar, pausar e arrastar a posição. Enquanto o
@@ -95,7 +95,7 @@ fun AudioPlayerCard(
                     color = MaterialTheme.colorScheme.error,
                 )
             }
-            CreditCaption(credit)
+            PiuCreditCaption(credit)
         }
     }
 }

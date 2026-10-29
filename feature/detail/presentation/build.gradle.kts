@@ -11,7 +11,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.feature.detail.domain)
             api(projects.core.presentation)
-            implementation(projects.core.designSystem)
+            implementation(projects.core.piuDs)
             implementation(libs.compose.resources)
             implementation(libs.lifecycle.viewmodel.savedstate)
             implementation(libs.koin.core)
