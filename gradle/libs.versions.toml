@@ -1,4 +1,5 @@
 [versions]
+guava = "33.7.2-android"
 agp = "9.4.1"
 kotlin = "2.4.21"
 compose = "1.12.1"
@@ -28,6 +29,9 @@ junit4 = "4.13.2"
 aboutlibraries = "15.3.0"
 
 [libraries]
+# Guava não é usado direto: entra pelo media3 (player do canto). A versão é
+# forçada por segurança (ver androidApp/build.gradle.kts).
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 # plugins usados pelo build-logic
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
