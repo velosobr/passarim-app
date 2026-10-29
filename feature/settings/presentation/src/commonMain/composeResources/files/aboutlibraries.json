@@ -4510,7 +4510,7 @@
         },
         {
             "uniqueId": "org.maplibre.nativeffi:maplibre-native-ffi-runtime-opengl",
-            "artifactVersion": "0.202610.0",
+            "artifactVersion": "0.202610.2",
             "name": "MapLibre Native FFI OpenGL runtime",
             "description": "Native OpenGL runtime for the MapLibre Native FFI Kotlin binding.",
             "website": "https://github.com/maplibre/maplibre-native-ffi",
