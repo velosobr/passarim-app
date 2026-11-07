@@ -19,6 +19,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -49,7 +50,11 @@ class PiuCommonSemanticsTest {
         runComposeUiTest {
             var opened = 0
             setContent { PiuTheme { PiuCreditCaption("Foto: Fulano", onOpenSource = { opened++ }) } }
-            onNodeWithText("Foto: Fulano").assert(hasRole(Role.Button)).assertHasClickAction().performClick()
+            onNodeWithText("Foto: Fulano")
+                .assert(hasRole(Role.Button))
+                .assertHasClickAction()
+                .assertHeightIsAtLeast(48.dp)
+                .performClick()
             assertThat(opened).isEqualTo(1)
         }
 

@@ -7,6 +7,8 @@ package com.velosobr.piuds.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import com.velosobr.piuds.theme.PiuDimens
 
 /**
  * Mostra o crédito de uma foto ou de um canto, como as licenças CC exigem.
@@ -36,8 +39,18 @@ fun PiuCreditCaption(
         style = MaterialTheme.typography.labelSmall,
         color = if (link != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
         textDecoration = if (link != null) TextDecoration.Underline else null,
-        // Role.Button faz o leitor de tela anunciar que o crédito pode ser tocado.
-        modifier = if (link != null) modifier.clickable(role = Role.Button, onClick = link) else modifier,
+        // Role.Button faz o leitor de tela anunciar que o crédito pode ser tocado. Com link, a área de
+        // toque tem a altura mínima de 48 dp (a letra pequena sozinha tem uns 16), e
+        // wrapContentHeight centraliza o texto nessa altura.
+        modifier =
+            if (link != null) {
+                modifier
+                    .clickable(role = Role.Button, onClick = link)
+                    .defaultMinSize(minHeight = PiuDimens.touchTarget)
+                    .wrapContentHeight()
+            } else {
+                modifier
+            },
     )
 }
 
