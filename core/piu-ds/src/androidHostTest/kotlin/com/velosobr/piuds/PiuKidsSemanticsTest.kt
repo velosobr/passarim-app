@@ -15,6 +15,9 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -25,7 +28,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.Journey
+import com.velosobr.piuds.components.PiuNavItem
+import com.velosobr.piuds.components.kids.PiuKidsNavBar
 import com.velosobr.piuds.components.kids.PiuMissingSticker
+import com.velosobr.piuds.components.kids.PiuPipo
 import com.velosobr.piuds.components.kids.PiuPipoBalloon
 import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
@@ -87,5 +93,21 @@ class PiuKidsSemanticsTest {
             onNodeWithText("Qual ave vamos conhecer hoje?").assertExists()
             // Nenhum nó com descrição: o desenho do Pipo não é anunciado.
             onAllNodes(hasAnyContentDescription(), useUnmergedTree = true).assertCountEquals(0)
+        }
+
+    @Test
+    fun `itens da barra do Kids sao abas de 56 dp sempre com o rotulo`() =
+        runComposeUiTest {
+            var chosen = -1
+            val items = listOf(PiuNavItem(PiuPipo, "Explorar"), PiuNavItem(PiuPipo, "Álbum"))
+            setContent { Kids { PiuKidsNavBar(items, selected = 0, onSelect = { chosen = it }) } }
+            onNodeWithText("Explorar").assert(hasRole(Role.Tab)).assertIsSelected().assertHeightIsAtLeast(56.dp)
+            onNodeWithText("Álbum")
+                .assert(hasRole(Role.Tab))
+                .assertIsNotSelected()
+                .assertHeightIsAtLeast(56.dp)
+                .assertWidthIsAtLeast(56.dp)
+                .performClick()
+            assertThat(chosen).isEqualTo(1)
         }
 }

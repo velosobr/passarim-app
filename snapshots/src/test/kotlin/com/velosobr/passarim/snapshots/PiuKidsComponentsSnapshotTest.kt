@@ -14,14 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.piuds.components.PiuNavItem
 import com.velosobr.piuds.components.kids.PiuKidsButton
+import com.velosobr.piuds.components.kids.PiuKidsNavBar
 import com.velosobr.piuds.components.kids.PiuMissingSticker
 import com.velosobr.piuds.components.kids.PiuPipo
 import com.velosobr.piuds.components.kids.PiuPipoBalloon
 import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.resources.Res
+import com.velosobr.piuds.resources.ic_explore
+import com.velosobr.piuds.resources.ic_favorites
 import com.velosobr.piuds.resources.ic_play
+import com.velosobr.piuds.resources.ic_settings
 import org.jetbrains.compose.resources.vectorResource
 import org.junit.Test
 
@@ -99,6 +104,22 @@ class PiuKidsComponentsSnapshotTest(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 PiuPipoBalloon("Qual ave vamos conhecer hoje?")
                 PiuPipoBalloon("Você já guardou 4 figurinhas da Caatinga. Falta pouco para completar o mundo!")
+            }
+        }
+
+    /** A barra do Kids com o primeiro e com o segundo item ativos: os rótulos sempre aparecem. */
+    @Test
+    fun navBar() =
+        snap("kids-nav-bar") {
+            val items =
+                listOf(
+                    PiuNavItem(vectorResource(Res.drawable.ic_explore), "Explorar"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_favorites), "Álbum"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_settings), "Ajustes"),
+                )
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuKidsNavBar(items, selected = 0, onSelect = {})
+                PiuKidsNavBar(items, selected = 1, onSelect = {})
             }
         }
 }
