@@ -6,13 +6,28 @@ package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.piuds.components.PiuNavItem
+import com.velosobr.piuds.components.kids.PiuKidsButton
+import com.velosobr.piuds.components.kids.PiuKidsNavBar
+import com.velosobr.piuds.components.kids.PiuMissingSticker
 import com.velosobr.piuds.components.kids.PiuPipo
+import com.velosobr.piuds.components.kids.PiuPipoBalloon
+import com.velosobr.piuds.components.kids.PiuSticker
+import com.velosobr.piuds.components.kids.PiuWorldCard
+import com.velosobr.piuds.resources.Res
+import com.velosobr.piuds.resources.ic_explore
+import com.velosobr.piuds.resources.ic_favorites
+import com.velosobr.piuds.resources.ic_play
+import com.velosobr.piuds.resources.ic_settings
+import org.jetbrains.compose.resources.vectorResource
 import org.junit.Test
 
 class PiuKidsComponentsSnapshotTest(
@@ -26,6 +41,89 @@ class PiuKidsComponentsSnapshotTest(
                 Image(PiuPipo, contentDescription = null, modifier = Modifier.size(32.dp))
                 Image(PiuPipo, contentDescription = null, modifier = Modifier.size(64.dp))
                 Image(PiuPipo, contentDescription = null, modifier = Modifier.size(120.dp))
+            }
+        }
+
+    /**
+     * O botão normal com ícone, o alto (72 dp) e o desabilitado. O pressionado não aparece aqui: o
+     * Compose só fica sabendo do toque por um efeito (LaunchedEffect), e o Paparazzi fotografa antes
+     * de os efeitos rodarem. O afundar é conferido no PiuKidsButtonTest, do :core:piu-ds.
+     */
+    @Test
+    fun buttons() =
+        snap("kids-buttons") {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuKidsButton("Ouvir!", onClick = {}, icon = vectorResource(Res.drawable.ic_play))
+                PiuKidsButton("Guardar no meu álbum", onClick = {}, height = 72.dp)
+                PiuKidsButton("Desabilitado", onClick = {}, enabled = false)
+            }
+        }
+
+    /**
+     * Os seis mundos em duas colunas, metade com o progresso do álbum. Duas, e não três: a 2.0×,
+     * com três colunas, os nomes quebrariam no meio da palavra (regra que a grade da frente F segue).
+     */
+    @Test
+    fun worldCards() =
+        snap("kids-world-cards") {
+            val worlds =
+                listOf(
+                    Triple(Biome.AMAZONIA, "Amazônia", null),
+                    Triple(Biome.PANTANAL, "Pantanal", "1 de 6"),
+                    Triple(Biome.CAATINGA, "Caatinga", "4 de 9"),
+                    Triple(Biome.MATA_ATLANTICA, "Mata Atlântica", "0 de 12"),
+                    Triple(Biome.CERRADO, "Cerrado", null),
+                    Triple(Biome.PAMPA, "Pampa", "2 de 3"),
+                )
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                worlds.chunked(2).forEach { pair ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        pair.forEach { (biome, name, progress) ->
+                            PiuWorldCard(biome, name, onClick = {}, progress = progress, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+            }
+        }
+
+    /** Duas figurinhas guardadas (sem foto, só o gradiente do mundo) e a que falta, tracejada. */
+    @Test
+    fun stickers() =
+        snap("kids-stickers") {
+            Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                PiuSticker("Tuiuiú", Biome.PANTANAL, imageUrl = null, onClick = {})
+                PiuSticker("Arara-azul", Biome.CERRADO, imageUrl = null, onClick = {})
+                PiuMissingSticker(label = "Ainda falta", description = "figurinha que falta")
+            }
+        }
+
+    /**
+     * O balão com uma frase bem curta (o balão e a sombra têm a largura da frase), uma média e uma
+     * longa, que quebra linha ao lado do Pipo.
+     */
+    @Test
+    fun pipoBalloon() =
+        snap("kids-pipo-balloon") {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuPipoBalloon("Oi!")
+                PiuPipoBalloon("Qual ave vamos conhecer hoje?")
+                PiuPipoBalloon("Você já guardou 4 figurinhas da Caatinga. Falta pouco para completar o mundo!")
+            }
+        }
+
+    /** A barra do Kids com o primeiro e com o segundo item ativos: os rótulos sempre aparecem. */
+    @Test
+    fun navBar() =
+        snap("kids-nav-bar") {
+            val items =
+                listOf(
+                    PiuNavItem(vectorResource(Res.drawable.ic_explore), "Explorar"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_favorites), "Álbum"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_settings), "Ajustes"),
+                )
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuKidsNavBar(items, selected = 0, onSelect = {})
+                PiuKidsNavBar(items, selected = 1, onSelect = {})
             }
         }
 }
