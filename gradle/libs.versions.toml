@@ -20,6 +20,8 @@ navigation = "2.10.0"
 splashscreen = "1.2.0"
 activityCompose = "1.13.0"
 coil = "3.6.3"
+haze = "2.0.1"
+graphicsShapes = "1.1.0"
 media3 = "1.11.1"
 maplibreCompose = "0.20.0"
 # Tem de ser a mesma versão da maplibre-native-ffi que o maplibre-compose usa (ver o .pom dele): com
@@ -28,6 +30,7 @@ maplibreNativeFfi = "0.202610.0"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.6"
 junit4 = "4.13.2"
+robolectric = "4.17"
 aboutlibraries = "15.3.0"
 
 [libraries]
@@ -85,6 +88,11 @@ coil-core = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 
+# PiuDS: desfoque (só no PiuBlurSurface, ADR-0023) e polígonos arredondados (forma cookie)
+haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
+haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
+graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphicsShapes" }
+
 # Licenças
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
@@ -106,3 +114,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
+# Testes de Compose no host Android (Robolectric); o manifesto de teste é o do androidx, por isso a versão fixa
+compose-uiTest = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose" }
+androidx-compose-uiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version = "1.12.1" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }

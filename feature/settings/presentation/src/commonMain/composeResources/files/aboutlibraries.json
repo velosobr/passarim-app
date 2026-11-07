@@ -1196,6 +1196,31 @@
             ]
         },
         {
+            "uniqueId": "androidx.graphics:graphics-shapes",
+            "artifactVersion": "1.1.0",
+            "name": "Graphics Shapes",
+            "description": "create and render rounded polygonal shapes",
+            "website": "https://developer.android.com/jetpack/androidx/releases/graphics#1.1.0",
+            "developers": [
+                {
+                    "name": "The Android Open Source Project"
+                }
+            ],
+            "organization": {
+                "name": "The Android Open Source Project"
+            },
+            "scm": {
+                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
+                "url": "https://cs.android.com/androidx/platform/frameworks/support"
+            },
+            "licenses": [
+                "Apache-2.0"
+            ],
+            "funding": [
+                
+            ]
+        },
+        {
             "uniqueId": "androidx.interpolator:interpolator",
             "artifactVersion": "1.0.0",
             "name": "Support Interpolators",
@@ -2110,10 +2135,35 @@
         },
         {
             "uniqueId": "androidx.tracing:tracing",
-            "artifactVersion": "2.0.1",
+            "artifactVersion": "2.0.3",
             "name": "Tracing",
             "description": "Android Tracing",
-            "website": "https://developer.android.com/jetpack/androidx/releases/tracing#2.0.1",
+            "website": "https://developer.android.com/jetpack/androidx/releases/tracing#2.0.3",
+            "developers": [
+                {
+                    "name": "The Android Open Source Project"
+                }
+            ],
+            "organization": {
+                "name": "The Android Open Source Project"
+            },
+            "scm": {
+                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
+                "url": "https://cs.android.com/androidx/platform/frameworks/support"
+            },
+            "licenses": [
+                "Apache-2.0"
+            ],
+            "funding": [
+                
+            ]
+        },
+        {
+            "uniqueId": "androidx.tracing:tracing-ktx",
+            "artifactVersion": "2.0.3",
+            "name": "Tracing Kotlin Extensions",
+            "description": "Android Tracing",
+            "website": "https://developer.android.com/jetpack/androidx/releases/tracing#2.0.3",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -2587,6 +2637,75 @@
                 "connection": "scm:git:git://github.com/lysine-dev/okio.git",
                 "developerConnection": "scm:git:ssh://git@github.com/lysine-dev/okio.git",
                 "url": "https://github.com/lysine-dev/okio/"
+            },
+            "licenses": [
+                "Apache-2.0"
+            ],
+            "funding": [
+                
+            ]
+        },
+        {
+            "uniqueId": "dev.chrisbanes.haze:haze",
+            "artifactVersion": "2.0.1",
+            "name": "Haze",
+            "description": "Haze",
+            "website": "https://github.com/chrisbanes/haze/",
+            "developers": [
+                {
+                    "name": "Chris Banes"
+                }
+            ],
+            "scm": {
+                "connection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "developerConnection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "url": "https://github.com/chrisbanes/haze/"
+            },
+            "licenses": [
+                "Apache-2.0"
+            ],
+            "funding": [
+                
+            ]
+        },
+        {
+            "uniqueId": "dev.chrisbanes.haze:haze-blur",
+            "artifactVersion": "2.0.1",
+            "name": "Haze Blur",
+            "description": "Haze",
+            "website": "https://github.com/chrisbanes/haze/",
+            "developers": [
+                {
+                    "name": "Chris Banes"
+                }
+            ],
+            "scm": {
+                "connection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "developerConnection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "url": "https://github.com/chrisbanes/haze/"
+            },
+            "licenses": [
+                "Apache-2.0"
+            ],
+            "funding": [
+                
+            ]
+        },
+        {
+            "uniqueId": "dev.chrisbanes.haze:haze-utils",
+            "artifactVersion": "2.0.1",
+            "name": "Haze Utils",
+            "description": "Common utilities for the Haze library",
+            "website": "https://github.com/chrisbanes/haze/",
+            "developers": [
+                {
+                    "name": "Chris Banes"
+                }
+            ],
+            "scm": {
+                "connection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "developerConnection": "scm:git:git://github.com/chrisbanes/haze.git",
+                "url": "https://github.com/chrisbanes/haze/"
             },
             "licenses": [
                 "Apache-2.0"

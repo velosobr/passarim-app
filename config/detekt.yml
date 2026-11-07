@@ -10,5 +10,8 @@ complexity:
 naming:
   FunctionNaming:
     ignoreAnnotated: ['Composable']
+    # Os padrões do detekt mais o androidHostTest (testes no host do plugin KMP do AGP 9), que o
+    # detekt ainda não conhece: nos testes, o nome é uma frase entre crases.
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidHostTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9_]*'
