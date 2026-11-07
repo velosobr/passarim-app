@@ -5,6 +5,13 @@
 
 package com.velosobr.piuds
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -12,13 +19,18 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Journey
+import com.velosobr.piuds.components.PiuBlurSurface
 import com.velosobr.piuds.components.PiuCreditCaption
+import com.velosobr.piuds.components.piuBlurSource
+import com.velosobr.piuds.components.rememberPiuBlurState
 import com.velosobr.piuds.theme.PiuTheme
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,6 +60,23 @@ class PiuCommonSemanticsTest {
                 PiuTheme(journey = Journey.KIDS) { PiuCreditCaption("Foto: Fulano", onOpenSource = {}, linkEnabled = false) }
             }
             onNodeWithText("Foto: Fulano").assertHasNoClickAction()
+        }
+
+    @Test
+    fun `superficie com desfoque mostra o conteudo por cima`() =
+        runComposeUiTest {
+            setContent {
+                PiuTheme {
+                    val blur = rememberPiuBlurState()
+                    Box(Modifier.size(120.dp)) {
+                        Box(Modifier.matchParentSize().piuBlurSource(blur).background(Color.Red))
+                        PiuBlurSurface(blur, RoundedCornerShape(16.dp), Color.White.copy(alpha = 0.8f), Modifier.size(80.dp)) {
+                            Text("Por cima")
+                        }
+                    }
+                }
+            }
+            onNodeWithText("Por cima").assertIsDisplayed()
         }
 
     @Test
