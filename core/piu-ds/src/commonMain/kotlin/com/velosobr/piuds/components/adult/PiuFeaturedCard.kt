@@ -73,7 +73,6 @@ fun PiuFeaturedCard(
         if (imageUrl != null) {
             AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
         }
-        PhotoScrim(Modifier.matchParentSize())
         // O selo fica no alto, fora do scrim: o fundo dele é a própria cor do scrim, e não o branco
         // translúcido da prancheta, para o texto branco passar no contraste sobre uma foto clara.
         Text(
@@ -92,6 +91,8 @@ fun PiuFeaturedCard(
         Column(
             Modifier
                 .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .photoTextScrim(PiuTheme.tokens.scrim)
                 .padding(start = 18.dp, end = if (play != null) 84.dp else 18.dp, bottom = 16.dp, top = 56.dp),
         ) {
             Text(name, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold, color = Color.White)

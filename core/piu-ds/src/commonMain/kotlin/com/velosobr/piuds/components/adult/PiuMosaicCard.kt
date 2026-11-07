@@ -80,9 +80,15 @@ fun PiuMosaicCard(
         if (imageUrl != null) {
             AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
         }
-        PhotoScrim(Modifier.matchParentSize(), startFraction = 0.4f)
-        // O top de 56 dp guarda o lugar do coração: um nome longo empurra o card para baixo, nunca para cima dele.
-        Column(Modifier.align(Alignment.BottomStart).padding(start = 14.dp, end = 14.dp, bottom = 12.dp, top = 56.dp)) {
+        // O top de 56 dp guarda o lugar do coração: um nome longo empurra o card para baixo, nunca para
+        // cima dele. O scrim fica atrás do bloco de texto e já está cheio quando o nome começa.
+        Column(
+            Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .photoTextScrim(PiuTheme.tokens.scrim)
+                .padding(start = 14.dp, end = 14.dp, bottom = 12.dp, top = 56.dp),
+        ) {
             Text(name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = Color.White)
             Text(
                 scientificName,

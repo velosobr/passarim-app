@@ -12,9 +12,16 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
+import coil3.ColorImage
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.AsyncImagePreviewHandler
+import coil3.compose.LocalAsyncImagePreviewHandler
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.PiuNavItem
 import com.velosobr.piuds.components.adult.PiuBiomeChip
@@ -136,6 +143,57 @@ class PiuAdultComponentsSnapshotTest(
                 Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     PiuFloatingNavBar(items, selected = 0, onSelect = {}, blurState = blur)
                     PiuFloatingNavBar(items, selected = 2, onSelect = {}, blurState = blur)
+                }
+            }
+        }
+
+    /**
+     * O pior caso do texto sobre foto: uma foto toda branca (céu, garça). O Coil, em modo de
+     * inspeção (prévias e snapshots), pergunta ao AsyncImagePreviewHandler que imagem mostrar em vez
+     * de baixar: aqui, um ColorImage branco. O nome, o nome científico, o selo e o coração precisam
+     * continuar legíveis nas três escalas de fonte.
+     */
+    @OptIn(ExperimentalCoilApi::class)
+    @Test
+    fun cardsOverWhitePhoto() =
+        snap("cards-over-white-photo") {
+            CompositionLocalProvider(
+                LocalInspectionMode provides true,
+                LocalAsyncImagePreviewHandler provides AsyncImagePreviewHandler { ColorImage(Color.White.toArgb()) },
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        PiuMosaicCard(
+                            name = "Garça-branca-grande",
+                            scientificName = "Ardea alba",
+                            imageUrl = "foto-branca",
+                            biome = Biome.PANTANAL,
+                            isFavorite = false,
+                            onToggleFavorite = {},
+                            onClick = {},
+                            modifier = Modifier.weight(1f),
+                        )
+                        PiuMosaicCard(
+                            name = "Carcará",
+                            scientificName = "Caracara plancus",
+                            imageUrl = "foto-branca",
+                            biome = Biome.CAATINGA,
+                            isFavorite = true,
+                            onToggleFavorite = {},
+                            onClick = {},
+                            modifier = Modifier.weight(1f),
+                            height = PiuMosaicHeight.SHORT,
+                        )
+                    }
+                    PiuFeaturedCard(
+                        badge = "AVE DO DIA · PANTANAL",
+                        name = "Tuiuiú",
+                        scientificName = "Jabiru mycteria",
+                        imageUrl = "foto-branca",
+                        biome = Biome.PANTANAL,
+                        onClick = {},
+                        play = PiuPlayAction(description = "Ouvir o canto do Tuiuiú", playing = false, onClick = {}),
+                    )
                 }
             }
         }
