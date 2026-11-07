@@ -22,11 +22,20 @@ kotlin {
             api(libs.compose.ui)
             api(libs.compose.resources)
             implementation(libs.coil.compose)
+            implementation(libs.haze)
+            implementation(libs.haze.blur)
+            implementation(libs.graphics.shapes)
             // Para reler a preferência "reduzir animações" quando a pessoa volta ao app.
             implementation(libs.lifecycle.runtime.compose)
         }
         commonTest.dependencies {
             implementation(libs.assertk)
+        }
+        getByName("androidHostTest").dependencies {
+            implementation(libs.compose.uiTest)
+            implementation(libs.androidx.compose.uiTestManifest)
+            implementation(libs.robolectric)
+            implementation(libs.junit4)
         }
     }
 }

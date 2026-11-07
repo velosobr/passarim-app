@@ -12,7 +12,8 @@ kotlin {
         namespace = "com.velosobr.passarim" + project.path.replace(":", ".").replace("-", "")
         compileSdk = 37
         minSdk = 26
-        withHostTest { }
+        // isIncludeAndroidResources: os testes de Compose no host (Robolectric) precisam dos recursos Android.
+        withHostTest { isIncludeAndroidResources = true }
     }
     iosArm64()
     iosSimulatorArm64()
