@@ -22,7 +22,9 @@ activityCompose = "1.13.0"
 coil = "3.6.3"
 media3 = "1.11.1"
 maplibreCompose = "0.20.0"
-maplibreNativeFfi = "0.202610.3"
+# Tem de ser a mesma versão da maplibre-native-ffi que o maplibre-compose usa (ver o .pom dele): com
+# versões diferentes, a parte nativa não acha as próprias funções e o app cai ao abrir o mapa do Detalhe.
+maplibreNativeFfi = "0.202610.0"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.6"
 junit4 = "4.13.2"
