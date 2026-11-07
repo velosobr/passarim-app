@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsNotSelected
@@ -18,6 +19,7 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -26,7 +28,9 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.adult.PiuBiomeChip
+import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.adult.PiuMosaicCard
+import com.velosobr.piuds.components.adult.PiuPlayAction
 import com.velosobr.piuds.theme.PiuTheme
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -106,5 +110,44 @@ class PiuAdultSemanticsTest {
                 }
             }
             onNode(hasContentDescription("Desfavoritar Tuiuiú")).assertIsOn()
+        }
+
+    @Test
+    fun `ave do dia e um botao e o canto e outro botao de 48 dp`() =
+        runComposeUiTest {
+            var opened = 0
+            var played = 0
+            setContent {
+                Adult {
+                    PiuFeaturedCard(
+                        badge = "AVE DO DIA · PANTANAL",
+                        name = "Tuiuiú",
+                        scientificName = "Jabiru mycteria",
+                        imageUrl = null,
+                        biome = Biome.PANTANAL,
+                        onClick = { opened++ },
+                        play = PiuPlayAction(description = "Ouvir o canto do Tuiuiú", playing = false, onClick = { played++ }),
+                    )
+                }
+            }
+            onNodeWithText("Tuiuiú").assert(hasRole(Role.Button)).assertHasClickAction()
+            onNodeWithContentDescription("Ouvir o canto do Tuiuiú")
+                .assert(hasRole(Role.Button))
+                .assertHeightIsAtLeast(48.dp)
+                .assertWidthIsAtLeast(48.dp)
+                .performClick()
+            assertThat(played).isEqualTo(1)
+            assertThat(opened).isEqualTo(0)
+        }
+
+    @Test
+    fun `ave do dia sem canto nao mostra o botao de canto`() =
+        runComposeUiTest {
+            setContent {
+                Adult {
+                    PiuFeaturedCard("AVE DO DIA · CERRADO", "Seriema", "Cariama cristata", null, Biome.CERRADO, onClick = {})
+                }
+            }
+            onAllNodes(hasRole(Role.Button)).assertCountEquals(1)
         }
 }

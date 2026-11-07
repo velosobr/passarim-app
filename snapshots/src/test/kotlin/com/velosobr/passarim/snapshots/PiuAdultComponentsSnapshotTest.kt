@@ -5,6 +5,7 @@
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.adult.PiuBiomeChip
+import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.adult.PiuMosaicCard
 import com.velosobr.piuds.components.adult.PiuMosaicHeight
+import com.velosobr.piuds.components.adult.PiuPlayAction
 import org.junit.Test
 
 class PiuAdultComponentsSnapshotTest(
@@ -73,6 +76,31 @@ class PiuAdultComponentsSnapshotTest(
                     onClick = {},
                     modifier = Modifier.weight(1f),
                     height = PiuMosaicHeight.SHORT,
+                )
+            }
+        }
+
+    /** A "Ave do dia" tocando o canto (ícone de pausa) e outra sem canto (sem o botão). */
+    @Test
+    fun featuredCard() =
+        snap("featured-card") {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                PiuFeaturedCard(
+                    badge = "AVE DO DIA · PANTANAL",
+                    name = "Tuiuiú",
+                    scientificName = "Jabiru mycteria",
+                    imageUrl = null,
+                    biome = Biome.PANTANAL,
+                    onClick = {},
+                    play = PiuPlayAction(description = "Pausar o canto do Tuiuiú", playing = true, onClick = {}),
+                )
+                PiuFeaturedCard(
+                    badge = "AVE DO DIA · CERRADO",
+                    name = "Seriema",
+                    scientificName = "Cariama cristata",
+                    imageUrl = null,
+                    biome = Biome.CERRADO,
+                    onClick = {},
                 )
             }
         }
