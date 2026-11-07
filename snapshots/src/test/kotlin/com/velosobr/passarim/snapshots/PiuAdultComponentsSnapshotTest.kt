@@ -7,11 +7,14 @@ package com.velosobr.passarim.snapshots
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.adult.PiuBiomeChip
+import com.velosobr.piuds.components.adult.PiuMosaicCard
+import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import org.junit.Test
 
 class PiuAdultComponentsSnapshotTest(
@@ -38,6 +41,39 @@ class PiuAdultComponentsSnapshotTest(
                 ).forEachIndexed { index, (biome, label) ->
                     PiuBiomeChip(biome, label, selected = index == 0, onClick = {})
                 }
+            }
+        }
+
+    /**
+     * Um card alto e favorito ao lado de um baixo: o nome longo quebra linha em vez de cortar. Lado
+     * a lado a 2.0× é o pior caso (o nome científico quebra no meio da palavra): a grade do app passa
+     * a uma coluna com fonte a partir de 1.5×, regra que a frente E mantém no mosaico.
+     */
+    @Test
+    fun mosaicCards() =
+        snap("mosaic-cards") {
+            Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                PiuMosaicCard(
+                    name = "Arara-azul-grande",
+                    scientificName = "Anodorhynchus hyacinthinus",
+                    imageUrl = null,
+                    biome = Biome.PANTANAL,
+                    isFavorite = true,
+                    onToggleFavorite = {},
+                    onClick = {},
+                    modifier = Modifier.weight(1f),
+                )
+                PiuMosaicCard(
+                    name = "Carcará",
+                    scientificName = "Caracara plancus",
+                    imageUrl = null,
+                    biome = Biome.CAATINGA,
+                    isFavorite = false,
+                    onToggleFavorite = {},
+                    onClick = {},
+                    modifier = Modifier.weight(1f),
+                    height = PiuMosaicHeight.SHORT,
+                )
             }
         }
 }
