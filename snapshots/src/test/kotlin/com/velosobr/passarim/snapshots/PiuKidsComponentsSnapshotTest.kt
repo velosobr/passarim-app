@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.kids.PiuKidsButton
 import com.velosobr.piuds.components.kids.PiuPipo
+import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.resources.Res
 import com.velosobr.piuds.resources.ic_play
 import org.jetbrains.compose.resources.vectorResource
@@ -46,6 +48,33 @@ class PiuKidsComponentsSnapshotTest(
                 PiuKidsButton("Ouvir!", onClick = {}, icon = vectorResource(Res.drawable.ic_play))
                 PiuKidsButton("Guardar no meu álbum", onClick = {}, height = 72.dp)
                 PiuKidsButton("Desabilitado", onClick = {}, enabled = false)
+            }
+        }
+
+    /**
+     * Os seis mundos em duas colunas, metade com o progresso do álbum. Duas, e não três: a 2.0×,
+     * com três colunas, os nomes quebrariam no meio da palavra (regra que a grade da frente F segue).
+     */
+    @Test
+    fun worldCards() =
+        snap("kids-world-cards") {
+            val worlds =
+                listOf(
+                    Triple(Biome.AMAZONIA, "Amazônia", null),
+                    Triple(Biome.PANTANAL, "Pantanal", "1 de 6"),
+                    Triple(Biome.CAATINGA, "Caatinga", "4 de 9"),
+                    Triple(Biome.MATA_ATLANTICA, "Mata Atlântica", "0 de 12"),
+                    Triple(Biome.CERRADO, "Cerrado", null),
+                    Triple(Biome.PAMPA, "Pampa", "2 de 3"),
+                )
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                worlds.chunked(2).forEach { pair ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        pair.forEach { (biome, name, progress) ->
+                            PiuWorldCard(biome, name, onClick = {}, progress = progress, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
             }
         }
 }
