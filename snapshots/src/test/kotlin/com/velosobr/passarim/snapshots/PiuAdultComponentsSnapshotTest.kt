@@ -4,20 +4,32 @@
 
 package com.velosobr.passarim.snapshots
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.piuds.components.PiuNavItem
 import com.velosobr.piuds.components.adult.PiuBiomeChip
 import com.velosobr.piuds.components.adult.PiuFeaturedCard
+import com.velosobr.piuds.components.adult.PiuFloatingNavBar
 import com.velosobr.piuds.components.adult.PiuMosaicCard
 import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import com.velosobr.piuds.components.adult.PiuPlayAction
+import com.velosobr.piuds.components.piuBlurSource
+import com.velosobr.piuds.components.rememberPiuBlurState
+import com.velosobr.piuds.resources.Res
+import com.velosobr.piuds.resources.ic_explore
+import com.velosobr.piuds.resources.ic_favorites
+import com.velosobr.piuds.resources.ic_settings
+import org.jetbrains.compose.resources.vectorResource
 import org.junit.Test
 
 class PiuAdultComponentsSnapshotTest(
@@ -102,6 +114,29 @@ class PiuAdultComponentsSnapshotTest(
                     biome = Biome.CERRADO,
                     onClick = {},
                 )
+            }
+        }
+
+    /**
+     * A barra flutuante sobre um fundo colorido (o que ela desfoca), com o primeiro e com o último
+     * item ativos: "Configurações" é o rótulo mais longo e tem de caber a 2.0×.
+     */
+    @Test
+    fun floatingNavBar() =
+        snap("floating-nav-bar") {
+            val blur = rememberPiuBlurState()
+            val items =
+                listOf(
+                    PiuNavItem(vectorResource(Res.drawable.ic_explore), "Explorar"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_favorites), "Favoritos"),
+                    PiuNavItem(vectorResource(Res.drawable.ic_settings), "Configurações"),
+                )
+            Box(Modifier.padding(16.dp)) {
+                Box(Modifier.matchParentSize().piuBlurSource(blur).background(Color(0xFF3E9CB5)))
+                Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    PiuFloatingNavBar(items, selected = 0, onSelect = {}, blurState = blur)
+                    PiuFloatingNavBar(items, selected = 2, onSelect = {}, blurState = blur)
+                }
             }
         }
 }
