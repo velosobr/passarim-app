@@ -5,6 +5,9 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # O runtime nativo do MapLibre acompanha a versão que o maplibre-compose traz; sobe junto com ele, à mão.
+      - dependency-name: "org.maplibre.nativeffi:*"
   - package-ecosystem: github-actions
     directory: /
     schedule:
