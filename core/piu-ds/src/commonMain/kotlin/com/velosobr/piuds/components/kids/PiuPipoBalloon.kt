@@ -35,7 +35,9 @@ fun PiuPipoBalloon(
     val shape = RoundedCornerShape(22.dp)
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         Image(PiuPipo, contentDescription = null, modifier = Modifier.size(64.dp))
-        Box(Modifier.weight(1f)) {
+        // weight(fill = false): o balão pode crescer até o espaço que sobra, mas fica do tamanho da
+        // frase; com fill = true, a sombra (matchParentSize) ocuparia a largura toda numa frase curta.
+        Box(Modifier.weight(1f, fill = false)) {
             Box(Modifier.matchParentSize().padding(top = 3.dp).background(shadow.color, shape))
             Text(
                 text,

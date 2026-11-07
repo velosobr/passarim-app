@@ -97,11 +97,15 @@ class PiuKidsComponentsSnapshotTest(
             }
         }
 
-    /** O balão com uma frase curta e com uma longa, que quebra linha ao lado do Pipo. */
+    /**
+     * O balão com uma frase bem curta (o balão e a sombra têm a largura da frase), uma média e uma
+     * longa, que quebra linha ao lado do Pipo.
+     */
     @Test
     fun pipoBalloon() =
         snap("kids-pipo-balloon") {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuPipoBalloon("Oi!")
                 PiuPipoBalloon("Qual ave vamos conhecer hoje?")
                 PiuPipoBalloon("Você já guardou 4 figurinhas da Caatinga. Falta pouco para completar o mundo!")
             }
