@@ -17,6 +17,7 @@ import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.kids.PiuKidsButton
 import com.velosobr.piuds.components.kids.PiuMissingSticker
 import com.velosobr.piuds.components.kids.PiuPipo
+import com.velosobr.piuds.components.kids.PiuPipoBalloon
 import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.resources.Res
@@ -88,6 +89,16 @@ class PiuKidsComponentsSnapshotTest(
                 PiuSticker("Tuiuiú", Biome.PANTANAL, imageUrl = null, onClick = {})
                 PiuSticker("Arara-azul", Biome.CERRADO, imageUrl = null, onClick = {})
                 PiuMissingSticker(label = "Ainda falta", description = "figurinha que falta")
+            }
+        }
+
+    /** O balão com uma frase curta e com uma longa, que quebra linha ao lado do Pipo. */
+    @Test
+    fun pipoBalloon() =
+        snap("kids-pipo-balloon") {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PiuPipoBalloon("Qual ave vamos conhecer hoje?")
+                PiuPipoBalloon("Você já guardou 4 figurinhas da Caatinga. Falta pouco para completar o mundo!")
             }
         }
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
@@ -25,6 +26,7 @@ import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.piuds.components.kids.PiuMissingSticker
+import com.velosobr.piuds.components.kids.PiuPipoBalloon
 import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.theme.PiuTheme
@@ -39,6 +41,9 @@ import org.robolectric.annotation.Config
 class PiuKidsSemanticsTest {
     /** Confere o papel que o leitor de tela anuncia ("botão", "aba"). */
     private fun hasRole(role: Role) = SemanticsMatcher.expectValue(SemanticsProperties.Role, role)
+
+    /** Qualquer nó com descrição para o leitor de tela. */
+    private fun hasAnyContentDescription() = SemanticsMatcher.keyIsDefined(SemanticsProperties.ContentDescription)
 
     @Composable
     private fun Kids(content: @Composable () -> Unit) = PiuTheme(journey = Journey.KIDS, content = content)
@@ -73,5 +78,14 @@ class PiuKidsSemanticsTest {
             onNodeWithContentDescription("figurinha que falta").assertHasNoClickAction()
             // clearAndSetSemantics troca o "?" e o rótulo pela descrição: o leitor de tela não lê o "?".
             onNodeWithText("?").assertDoesNotExist()
+        }
+
+    @Test
+    fun `balao do Pipo le so a frase e o Pipo e decoracao`() =
+        runComposeUiTest {
+            setContent { Kids { PiuPipoBalloon("Qual ave vamos conhecer hoje?") } }
+            onNodeWithText("Qual ave vamos conhecer hoje?").assertExists()
+            // Nenhum nó com descrição: o desenho do Pipo não é anunciado.
+            onAllNodes(hasAnyContentDescription(), useUnmergedTree = true).assertCountEquals(0)
         }
 }
