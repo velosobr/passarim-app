@@ -31,7 +31,7 @@ import com.velosobr.piuds.theme.PiuTheme
  * face é a cor primaryContainer do esquema Kids (o laranja) com o rótulo em
  * onPrimaryContainer (azul-noite), e a sombra é a "buttonShadow" dos tokens.
  * [interactionSource] é opcional, como nos botões do Material: serve para
- * acompanhar (ou simular, nos snapshots) o toque.
+ * acompanhar o toque de fora.
  */
 @Composable
 fun PiuKidsButton(
