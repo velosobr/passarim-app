@@ -12,8 +12,10 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -22,6 +24,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.Journey
+import com.velosobr.piuds.components.kids.PiuMissingSticker
+import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.theme.PiuTheme
 import org.junit.Test
@@ -51,5 +55,23 @@ class PiuKidsSemanticsTest {
                 .assertHeightIsAtLeast(56.dp)
                 .performClick()
             assertThat(opened).isEqualTo(1)
+        }
+
+    @Test
+    fun `figurinha guardada e um botao com o nome da ave`() =
+        runComposeUiTest {
+            var opened = 0
+            setContent { Kids { PiuSticker("Tuiuiú", Biome.PANTANAL, imageUrl = null, onClick = { opened++ }) } }
+            onNodeWithText("Tuiuiú").assert(hasRole(Role.Button)).assertHeightIsAtLeast(56.dp).performClick()
+            assertThat(opened).isEqualTo(1)
+        }
+
+    @Test
+    fun `figurinha que falta e lida como uma frase so e nao e clicavel`() =
+        runComposeUiTest {
+            setContent { Kids { PiuMissingSticker(label = "Ainda falta", description = "figurinha que falta") } }
+            onNodeWithContentDescription("figurinha que falta").assertHasNoClickAction()
+            // clearAndSetSemantics troca o "?" e o rótulo pela descrição: o leitor de tela não lê o "?".
+            onNodeWithText("?").assertDoesNotExist()
         }
 }

@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.kids.PiuKidsButton
+import com.velosobr.piuds.components.kids.PiuMissingSticker
 import com.velosobr.piuds.components.kids.PiuPipo
+import com.velosobr.piuds.components.kids.PiuSticker
 import com.velosobr.piuds.components.kids.PiuWorldCard
 import com.velosobr.piuds.resources.Res
 import com.velosobr.piuds.resources.ic_play
@@ -75,6 +77,17 @@ class PiuKidsComponentsSnapshotTest(
                         }
                     }
                 }
+            }
+        }
+
+    /** Duas figurinhas guardadas (sem foto, só o gradiente do mundo) e a que falta, tracejada. */
+    @Test
+    fun stickers() =
+        snap("kids-stickers") {
+            Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                PiuSticker("Tuiuiú", Biome.PANTANAL, imageUrl = null, onClick = {})
+                PiuSticker("Arara-azul", Biome.CERRADO, imageUrl = null, onClick = {})
+                PiuMissingSticker(label = "Ainda falta", description = "figurinha que falta")
             }
         }
 }
