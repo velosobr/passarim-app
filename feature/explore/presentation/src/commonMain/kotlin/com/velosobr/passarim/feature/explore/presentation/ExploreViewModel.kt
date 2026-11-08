@@ -10,6 +10,7 @@ package com.velosobr.passarim.feature.explore.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
@@ -93,6 +94,9 @@ class ExploreViewModel(
     private var loadJob: Job? = null
     private var retryJob: Job? = null
 
+    /** O BFF respondeu que não há "Ave do dia" (NotFound): não adianta pedir de novo nesta sessão. */
+    private var featuredAbsent = false
+
     // Monta a busca: a primeira emissão sai na hora; as seguintes esperam
     // SEARCH_DEBOUNCE_MILLIS sem digitação (debounce), para não fazer um pedido
     // por tecla. combine junta busca, bioma e UF, e distinctUntilChanged evita
@@ -115,10 +119,7 @@ class ExploreViewModel(
             .onEach { ids -> _state.update { it.copy(favoriteIds = ids) } }
             .launchIn(viewModelScope)
         loadFilters()
-        // A "Ave do dia" é buscada uma vez; qualquer falha só deixa o card de fora, sem erro na tela.
-        viewModelScope.launch {
-            featuredRepository.getFeaturedSpecies().onSuccess { f -> _state.update { it.copy(featured = f) } }
-        }
+        loadFeatured()
     }
 
     /** Trata cada ação da tela. */
@@ -148,8 +149,11 @@ class ExploreViewModel(
             ExploreAction.OpenFavorites -> eventChannel.trySend(ExploreEvent.NavigateToFavorites)
             is ExploreAction.SelectBiome ->
                 setFilters(biome = action.code.takeIf { it != _state.value.biome }, state = _state.value.state)
-            ExploreAction.OpenFeatured -> openFeatured(autoPlay = false)
-            ExploreAction.PlayFeatured -> openFeatured(autoPlay = true)
+            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay).
+            ExploreAction.OpenFeatured, ExploreAction.PlayFeatured ->
+                _state.value.featured?.let {
+                    eventChannel.trySend(ExploreEvent.NavigateToDetail(it.species.id, autoPlay = action == ExploreAction.PlayFeatured))
+                }
         }
     }
 
@@ -215,6 +219,7 @@ class ExploreViewModel(
                                 phase = if (page.items.isEmpty()) ExplorePhase.Empty else ExplorePhase.Content,
                             )
                         }
+                        loadFeatured()
                     }.onFailure { showError(it.toScreenError()) }
             }
     }
@@ -263,13 +268,24 @@ class ExploreViewModel(
         }
     }
 
-    /** Abre o Detalhe da "Ave do dia" (se ela já chegou), tocando o canto quando [autoPlay]. */
-    private fun openFeatured(autoPlay: Boolean) {
-        val id =
-            _state.value.featured
-                ?.species
-                ?.id ?: return
-        eventChannel.trySend(ExploreEvent.NavigateToDetail(id, autoPlay))
+    /**
+     * Busca a "Ave do dia", se ela ainda não chegou, não está a caminho e o BFF não disse que não há
+     * ave elegível (NotFound). Roda ao abrir e a cada lista que chega bem: assim, quem abriu sem rede
+     * ganha o card no "Tentar novamente". Qualquer falha só deixa o card de fora, sem erro na tela.
+     */
+    private fun loadFeatured() {
+        val s = _state.value
+        if (s.featured != null || s.featuredLoading || featuredAbsent) return
+        _state.update { it.copy(featuredLoading = true) }
+        viewModelScope.launch {
+            featuredRepository
+                .getFeaturedSpecies()
+                .onSuccess { f -> _state.update { it.copy(featured = f, featuredLoading = false) } }
+                .onFailure { error ->
+                    featuredAbsent = error == DataError.Network.NotFound
+                    _state.update { it.copy(featuredLoading = false) }
+                }
+        }
     }
 
     /** Carrega as opções de filtro, independente da lista. */

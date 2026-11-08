@@ -31,6 +31,8 @@ data class ExploreState(
     val favoriteIds: Set<String> = emptySet(),
     /** A "Ave do dia", ou nulo enquanto carrega ou se o BFF não tiver uma (aí o card não aparece). */
     val featured: FeaturedSpecies? = null,
+    /** A "Ave do dia" está a caminho: a grade já reserva o lugar dela no topo. */
+    val featuredLoading: Boolean = false,
 ) {
     /** Nome do bioma selecionado para o chip ("Pampa"); o código, se os filtros ainda não chegaram. */
     val biomeLabel: String?
@@ -48,6 +50,13 @@ data class ExploreState(
 
     /** A "Ave do dia" só aparece na vitrine: sem busca e sem filtro. */
     val showFeatured: Boolean get() = featured != null && query.isBlank() && !hasFilters
+
+    /**
+     * O lugar da "Ave do dia" no topo da grade: existe enquanto ela carrega e depois que ela chega.
+     * Reservar o lugar desde o começo evita que o card entre acima de uma grade já desenhada; as
+     * grades guardam a posição pelo primeiro item visível, e o card nasceria fora da tela.
+     */
+    val showFeaturedSlot: Boolean get() = (featuredLoading || featured != null) && query.isBlank() && !hasFilters
 
     /** O total de aves para o título ("41 aves"), ou nulo enquanto os filtros não chegam. */
     val speciesTotal: Int? get() = (filters as? FiltersPhase.Loaded)?.filters?.speciesTotal

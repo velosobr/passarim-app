@@ -103,8 +103,12 @@ class FakeFeaturedRepository(
 ) : FeaturedRepository {
     var calls = 0
 
+    /** Se preenchido, segura a resposta até o teste completar, para observar o "carregando". */
+    var gate: CompletableDeferred<Unit>? = null
+
     override suspend fun getFeaturedSpecies(): Result<FeaturedSpecies, DataError.Network> {
         calls++
+        gate?.await()
         return next
     }
 }

@@ -534,4 +534,44 @@ class ExploreViewModelTest {
             val vm = viewModel()
             assertThat(vm.state.value.speciesTotal).isEqualTo(41)
         }
+
+    // --- "Ave do dia": o lugar reservado e as novas tentativas (revisão final do E1) ---
+
+    @Test
+    fun `enquanto a ave do dia carrega o lugar dela ja existe no topo`() =
+        runTest {
+            // Se o card só entrasse depois da lista, a grade ficaria parada no primeiro pássaro e o card
+            // nasceria acima da tela, fora da vista.
+            featured.gate = CompletableDeferred()
+            val vm = viewModel()
+            assertThat(vm.state.value.featuredLoading).isTrue()
+            assertThat(vm.state.value.showFeaturedSlot).isTrue()
+            featured.gate!!.complete(Unit)
+            assertThat(vm.state.value.featuredLoading).isFalse()
+            assertThat(vm.state.value.featured).isEqualTo(sampleFeatured)
+        }
+
+    @Test
+    fun `sem rede a ave do dia volta junto com a lista no tentar novamente`() =
+        runTest {
+            featured.next = Result.Failure(DataError.Network.NoConnection)
+            repo.pages[null] = Result.Failure(DataError.Network.NoConnection)
+            val vm = viewModel()
+            assertThat(vm.state.value.featured).isNull()
+            featured.next = Result.Success(sampleFeatured)
+            repo.pages[null] = Result.Success(page(0, 20, "c1"))
+            vm.onAction(ExploreAction.Retry)
+            assertThat(vm.state.value.featured).isEqualTo(sampleFeatured)
+        }
+
+    @Test
+    fun `sem ave elegivel nao pede de novo a cada filtro`() =
+        runTest {
+            featured.next = Result.Failure(DataError.Network.NotFound)
+            val vm = viewModel()
+            vm.onAction(ExploreAction.SelectBiome("cerrado"))
+            vm.onAction(ExploreAction.SelectBiome(null))
+            assertThat(featured.calls).isEqualTo(1)
+            assertThat(vm.state.value.showFeaturedSlot).isFalse()
+        }
 }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +42,7 @@ import com.velosobr.passarim.feature.explore.presentation.resources.featured_bad
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_play
 import com.velosobr.passarim.feature.explore.presentation.resources.load_more_error
 import com.velosobr.passarim.feature.explore.presentation.resources.retry
+import com.velosobr.piuds.components.PiuSkeletonBox
 import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.adult.PiuMosaicCard
 import com.velosobr.piuds.components.adult.PiuMosaicHeight
@@ -73,12 +76,13 @@ internal fun SpeciesMosaic(
 ) {
     // Pede a próxima página quando o último item visível chega perto do fim (a regra está em shouldLoadMore;
     // o ViewModel ignora pedidos repetidos, então emitir a mais é inofensivo).
+    val currentOnAction by rememberUpdatedState(onAction)
     LaunchedEffect(gridState) {
         snapshotFlow {
             val info = gridState.layoutInfo
             (info.visibleItemsInfo.lastOrNull()?.index ?: -1) to info.totalItemsCount
         }.distinctUntilChanged()
-            .collect { (last, count) -> if (shouldLoadMore(last, count)) onAction(ExploreAction.LoadMore) }
+            .collect { (last, count) -> if (shouldLoadMore(last, count)) currentOnAction(ExploreAction.LoadMore) }
     }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(columns),
@@ -89,9 +93,14 @@ internal fun SpeciesMosaic(
         verticalItemSpacing = 12.dp,
     ) {
         val featured = state.featured
-        if (state.showFeatured && featured != null) {
+        if (state.showFeaturedSlot) {
+            // A mesma chave "featured" para o esqueleto e para o card: a grade troca um pelo outro no lugar.
             item(key = "featured", span = StaggeredGridItemSpan.FullLine, contentType = "featured") {
-                FeaturedCard(featured.species, featured.hasSong, state, onAction)
+                if (featured != null) {
+                    FeaturedCard(featured.species, featured.hasSong, state, onAction)
+                } else {
+                    PiuSkeletonBox(Modifier.fillMaxWidth().height(196.dp), shape = RoundedCornerShape(28.dp))
+                }
             }
         }
         itemsIndexed(state.items, key = { _, bird -> bird.id }, contentType = { _, _ -> "species" }) { index, bird ->

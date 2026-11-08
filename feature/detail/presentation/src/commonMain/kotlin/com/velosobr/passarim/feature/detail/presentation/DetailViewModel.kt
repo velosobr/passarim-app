@@ -45,7 +45,8 @@ const val KEY_AUTO_PLAY = "autoPlay"
 /**
  * Carrega a espécie, acompanha o favorito e o player, e trata as ações da
  * tela. Ao carregar, se a espécie já é favorita, atualiza o resumo guardado;
- * se a configuração pede, toca o canto sozinho.
+ * toca o canto sozinho se a rota pede (KEY_AUTO_PLAY, o canto da "Ave do
+ * dia") ou se a reprodução automática está ligada nas Configurações.
  */
 class DetailViewModel(
     savedState: SavedStateHandle,
