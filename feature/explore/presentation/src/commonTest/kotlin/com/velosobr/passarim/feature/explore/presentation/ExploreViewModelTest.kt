@@ -15,6 +15,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.StateFilter
@@ -43,9 +44,10 @@ class ExploreViewModelTest {
     private val repo = FakeExploreRepository()
     private val filters = FakeFiltersRepository()
     private val favorites = FakeFavoritesRepository()
+    private val featured = FakeFeaturedRepository()
 
     /** viewModel cria o ViewModel com os fakes e um SavedStateHandle (vazio por padrão). */
-    private fun viewModel(saved: SavedStateHandle = SavedStateHandle()) = ExploreViewModel(repo, filters, favorites, saved)
+    private fun viewModel(saved: SavedStateHandle = SavedStateHandle()) = ExploreViewModel(repo, filters, favorites, featured, saved)
 
     @BeforeTest
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -455,5 +457,121 @@ class ExploreViewModelTest {
             assertThat(saved.get<String>(KEY_QUERY)).isEqualTo("gralha")
             assertThat(saved.get<String>(KEY_BIOME)).isEqualTo("cerrado")
             assertThat(saved.get<String>(KEY_STATE)).isEqualTo("PR")
+        }
+
+    // --- "Ave do dia" ---
+
+    @Test
+    fun `ao abrir busca a ave do dia e a mostra sem busca nem filtro`() =
+        runTest {
+            val vm = viewModel()
+            assertThat(featured.calls).isEqualTo(1)
+            assertThat(vm.state.value.featured).isEqualTo(sampleFeatured)
+            assertThat(vm.state.value.showFeatured).isTrue()
+        }
+
+    @Test
+    fun `com busca ou filtro a ave do dia some da tela`() =
+        runTest {
+            val vm = viewModel()
+            vm.onAction(ExploreAction.QueryChange("bem"))
+            assertThat(vm.state.value.showFeatured).isFalse()
+            vm.onAction(ExploreAction.QueryChange(""))
+            vm.onAction(ExploreAction.SelectBiome("cerrado"))
+            assertThat(vm.state.value.showFeatured).isFalse()
+        }
+
+    @Test
+    fun `se a ave do dia falhar o card nao aparece e nada vira erro`() =
+        runTest {
+            featured.next = Result.Failure(DataError.Network.NotFound)
+            val vm = viewModel()
+            assertThat(vm.state.value.featured).isNull()
+            assertThat(vm.state.value.showFeatured).isFalse()
+            assertThat(vm.state.value.phase).isEqualTo(ExplorePhase.Content)
+        }
+
+    @Test
+    fun `tocar na ave do dia abre o detalhe e o canto abre tocando`() =
+        runTest {
+            val vm = viewModel()
+            vm.events.test {
+                vm.onAction(ExploreAction.OpenFeatured)
+                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail("tuiuiu"))
+                vm.onAction(ExploreAction.PlayFeatured)
+                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail("tuiuiu", autoPlay = true))
+            }
+        }
+
+    // --- Chips de bioma ---
+
+    @Test
+    fun `o chip de bioma aplica o filtro e tocar de novo volta a todos`() =
+        runTest {
+            val vm = viewModel()
+            vm.onAction(ExploreAction.SelectBiome("cerrado"))
+            assertThat(vm.state.value.biome).isEqualTo("cerrado")
+            assertThat(repo.calls.last()).isEqualTo(ListCall("", "cerrado", null, null))
+            vm.onAction(ExploreAction.SelectBiome("cerrado"))
+            assertThat(vm.state.value.biome).isNull()
+            vm.onAction(ExploreAction.SelectBiome("pampa"))
+            vm.onAction(ExploreAction.SelectBiome(null))
+            assertThat(vm.state.value.biome).isNull()
+        }
+
+    @Test
+    fun `o chip de bioma mantem a UF escolhida no sheet`() =
+        runTest {
+            val vm = viewModel(SavedStateHandle(mapOf(KEY_STATE to "SP")))
+            vm.onAction(ExploreAction.SelectBiome("pampa"))
+            assertThat(repo.calls.last()).isEqualTo(ListCall("", "pampa", "SP", null))
+        }
+
+    @Test
+    fun `o total de aves vem dos filtros`() =
+        runTest {
+            filters.next = Result.Success(sampleFilters.copy(primaryBiomes = listOf(BiomeFilter("cerrado", "Cerrado", 41))))
+            val vm = viewModel()
+            assertThat(vm.state.value.speciesTotal).isEqualTo(41)
+        }
+
+    // --- "Ave do dia": o lugar reservado e as novas tentativas (revisão final do E1) ---
+
+    @Test
+    fun `enquanto a ave do dia carrega o lugar dela ja existe no topo`() =
+        runTest {
+            // Se o card só entrasse depois da lista, a grade ficaria parada no primeiro pássaro e o card
+            // nasceria acima da tela, fora da vista.
+            featured.gate = CompletableDeferred()
+            val vm = viewModel()
+            assertThat(vm.state.value.featuredLoading).isTrue()
+            assertThat(vm.state.value.showFeaturedSlot).isTrue()
+            featured.gate!!.complete(Unit)
+            assertThat(vm.state.value.featuredLoading).isFalse()
+            assertThat(vm.state.value.featured).isEqualTo(sampleFeatured)
+        }
+
+    @Test
+    fun `sem rede a ave do dia volta junto com a lista no tentar novamente`() =
+        runTest {
+            featured.next = Result.Failure(DataError.Network.NoConnection)
+            repo.pages[null] = Result.Failure(DataError.Network.NoConnection)
+            val vm = viewModel()
+            assertThat(vm.state.value.featured).isNull()
+            featured.next = Result.Success(sampleFeatured)
+            repo.pages[null] = Result.Success(page(0, 20, "c1"))
+            vm.onAction(ExploreAction.Retry)
+            assertThat(vm.state.value.featured).isEqualTo(sampleFeatured)
+        }
+
+    @Test
+    fun `sem ave elegivel nao pede de novo a cada filtro`() =
+        runTest {
+            featured.next = Result.Failure(DataError.Network.NotFound)
+            val vm = viewModel()
+            vm.onAction(ExploreAction.SelectBiome("cerrado"))
+            vm.onAction(ExploreAction.SelectBiome(null))
+            assertThat(featured.calls).isEqualTo(1)
+            assertThat(vm.state.value.showFeaturedSlot).isFalse()
         }
 }

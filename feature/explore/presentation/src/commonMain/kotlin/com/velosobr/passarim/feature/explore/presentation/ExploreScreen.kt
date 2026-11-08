@@ -1,29 +1,24 @@
-// A tela Explorar: busca, chips de filtro, grade de espécies e os estados de
-// carregando, vazio e erro.
+// A tela Explorar (frente E): título com o total de aves, busca, chips de
+// bioma, a "Ave do dia" e o mosaico de espécies, mais os estados de
+// carregando, vazio e erro. Os componentes visuais vêm do PiuDS.
 
 package com.velosobr.passarim.feature.explore.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -32,17 +27,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
+import com.velosobr.passarim.feature.explore.presentation.resources.chip_all
 import com.velosobr.passarim.feature.explore.presentation.resources.clear_filters
 import com.velosobr.passarim.feature.explore.presentation.resources.empty_body_filters
 import com.velosobr.passarim.feature.explore.presentation.resources.empty_body_query
@@ -55,23 +48,24 @@ import com.velosobr.passarim.feature.explore.presentation.resources.error_rate_l
 import com.velosobr.passarim.feature.explore.presentation.resources.error_rate_limited_title
 import com.velosobr.passarim.feature.explore.presentation.resources.error_server_body
 import com.velosobr.passarim.feature.explore.presentation.resources.error_server_title
-import com.velosobr.passarim.feature.explore.presentation.resources.filter_biome
+import com.velosobr.passarim.feature.explore.presentation.resources.explore_title
 import com.velosobr.passarim.feature.explore.presentation.resources.filter_state
-import com.velosobr.passarim.feature.explore.presentation.resources.load_more_error
 import com.velosobr.passarim.feature.explore.presentation.resources.retry
 import com.velosobr.passarim.feature.explore.presentation.resources.search_placeholder
 import com.velosobr.passarim.feature.explore.presentation.resources.see_favorites
+import com.velosobr.passarim.feature.explore.presentation.resources.species_count
 import com.velosobr.piuds.components.PiuFilterChip
+import com.velosobr.piuds.components.PiuScreenTitle
 import com.velosobr.piuds.components.PiuSearchField
 import com.velosobr.piuds.components.PiuSkeletonBox
-import com.velosobr.piuds.components.PiuSpeciesCard
 import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
+import com.velosobr.piuds.components.adult.PiuBiomeChip
+import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import com.velosobr.piuds.resources.ic_cloud_off
 import com.velosobr.piuds.resources.ic_search
 import com.velosobr.piuds.resources.ic_wifi_off
 import com.velosobr.piuds.theme.PiuDimens
-import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -86,7 +80,9 @@ fun exploreGridColumns(fontScale: Float): Int = if (fontScale >= SINGLE_COLUMN_F
 
 /**
  * Explorar, sem estado próprio: tudo vem de [state] e cada interação vira uma [ExploreAction].
- * A busca e os chips ficam visíveis em todas as fases, para que digitar nunca seja interrompido.
+ * O título, a busca e os chips ficam visíveis em todas as fases, para que digitar nunca seja
+ * interrompido. [contentPadding] é o espaço que a barra flutuante ocupa embaixo: a grade rola por
+ * baixo dela (o desfoque precisa do conteúdo atrás) e termina acima dela.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,21 +90,23 @@ fun ExploreScreen(
     state: ExploreState,
     onAction: (ExploreAction) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val columns = exploreGridColumns(LocalDensity.current.fontScale)
     Column(modifier.fillMaxSize()) {
+        Header(state)
         PiuSearchField(
             value = state.query,
             onValueChange = { onAction(ExploreAction.QueryChange(it)) },
             placeholder = stringResource(Res.string.search_placeholder),
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, end = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         )
-        FilterChips(state, onAction)
+        BiomeChips(state, onAction)
         when (val phase = state.phase) {
             ExplorePhase.Loading -> SkeletonGrid(columns)
-            ExplorePhase.Content -> SpeciesGrid(state, columns, onAction)
-            ExplorePhase.Empty -> EmptyState(state, onAction)
-            is ExplorePhase.Error -> ErrorState(phase.error, state.retryEnabled, onAction)
+            ExplorePhase.Content -> SpeciesMosaic(state, columns, onAction, contentPadding)
+            ExplorePhase.Empty -> CenteredState(contentPadding) { EmptyState(state, onAction) }
+            is ExplorePhase.Error -> CenteredState(contentPadding) { ErrorState(phase.error, state.retryEnabled, onAction) }
         }
     }
     if (state.sheet != null) {
@@ -122,125 +120,100 @@ fun ExploreScreen(
     }
 }
 
-/** Os chips de bioma e UF: sem seleção abrem o sheet; selecionados mostram o X que limpa. */
-@OptIn(ExperimentalLayoutApi::class)
+/** O título da tela e, quando os filtros já chegaram, o total de aves do catálogo. */
 @Composable
-private fun FilterChips(
-    state: ExploreState,
-    onAction: (ExploreAction) -> Unit,
-) {
-    // FlowRow: com fonte grande, o chip de Estado desce de linha em vez de ser cortado.
-    FlowRow(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        val open = { onAction(ExploreAction.OpenFilters) }
-        val biome = state.biomeLabel
-        if (biome == null) {
-            PiuFilterChip(stringResource(Res.string.filter_biome), selected = false, onClick = open, showDropdown = true)
-        } else {
-            PiuFilterChip(biome, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearBiome) })
-        }
-        val uf = state.state
-        if (uf == null) {
-            PiuFilterChip(stringResource(Res.string.filter_state), selected = false, onClick = open, showDropdown = true)
-        } else {
-            PiuFilterChip(uf, selected = true, onClick = open, onClear = { onAction(ExploreAction.ClearState) })
+private fun Header(state: ExploreState) {
+    Column(Modifier.padding(bottom = 8.dp)) {
+        PiuScreenTitle(stringResource(Res.string.explore_title), Modifier.padding(bottom = 0.dp))
+        state.speciesTotal?.let { total ->
+            Text(
+                stringResource(Res.string.species_count, total),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = PiuDimens.screenMargin),
+            )
         }
     }
 }
 
 /**
- * A grade de espécies, com rodapé de "carregando mais" ou de erro.
- * LazyVerticalGrid só cria os itens visíveis; o key = id deixa o Compose
- * reaproveitar cada card certo quando a lista muda. snapshotFlow transforma a
- * leitura do estado da grade num Flow, e rememberUpdatedState dá ao efeito o
- * tamanho atual da lista sem reiniciá-lo.
+ * A linha de chips, que rola na horizontal: "Todos", um chip com o gradiente de cada bioma (o toque
+ * aplica o filtro direto) e, no fim, o chip de UF, que abre o sheet como antes. LazyRow só cria os
+ * chips visíveis, como a grade faz com os cards.
  */
 @Composable
-private fun SpeciesGrid(
+private fun BiomeChips(
     state: ExploreState,
-    columns: Int,
     onAction: (ExploreAction) -> Unit,
-    gridState: LazyGridState = rememberLazyGridState(),
 ) {
-    // Pede a próxima página quando o último item visível chega perto do fim (a regra está em shouldLoadMore;
-    // o ViewModel ignora pedidos repetidos, então emitir a mais é inofensivo).
-    val itemCount by rememberUpdatedState(state.items.size)
-    LaunchedEffect(gridState) {
-        snapshotFlow {
-            (
-                gridState.layoutInfo.visibleItemsInfo
-                    .lastOrNull()
-                    ?.index ?: -1
-            ) to itemCount
-        }.distinctUntilChanged()
-            .collect { (last, count) -> if (shouldLoadMore(last, count)) onAction(ExploreAction.LoadMore) }
-    }
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
-        state = gridState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+    val biomes = (state.filters as? FiltersPhase.Loaded)?.filters?.biomes.orEmpty()
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(state.items, key = { it.id }, contentType = { "species" }) { bird ->
-            PiuSpeciesCard(
-                name = bird.commonName,
-                scientificName = bird.scientificName,
-                imageUrl = bird.thumbnailUrl,
-                isFavorite = bird.id in state.favoriteIds,
-                onToggleFavorite = { onAction(ExploreAction.ToggleFavorite(bird)) },
-                onClick = { onAction(ExploreAction.OpenDetail(bird.id)) },
+        item(key = "all") {
+            PiuFilterChip(
+                stringResource(Res.string.chip_all),
+                selected = state.biome == null,
+                onClick = { onAction(ExploreAction.SelectBiome(null)) },
             )
         }
-        if (state.isLoadingMore || state.loadMoreError != null) {
-            item(key = "footer", span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
-                LoadMoreFooter(isLoading = state.isLoadingMore, onRetry = { onAction(ExploreAction.RetryLoadMore) })
+        // Um bioma que o app não conhece (novo no BFF) fica de fora: sem ele não há gradiente.
+        items(biomes.mapNotNull { f -> biomeOf(f.code)?.let { it to f } }, key = { it.second.code }) { (biome, filter) ->
+            PiuBiomeChip(
+                biome = biome,
+                label = filter.label,
+                selected = state.biome == filter.code,
+                onClick = { onAction(ExploreAction.SelectBiome(filter.code)) },
+            )
+        }
+        item(key = "uf") {
+            val uf = state.state
+            if (uf == null) {
+                PiuFilterChip(
+                    stringResource(Res.string.filter_state),
+                    selected = false,
+                    onClick = { onAction(ExploreAction.OpenFilters) },
+                    showDropdown = true,
+                )
+            } else {
+                PiuFilterChip(
+                    uf,
+                    selected = true,
+                    onClick = { onAction(ExploreAction.OpenFilters) },
+                    onClear = { onAction(ExploreAction.ClearState) },
+                )
             }
         }
     }
 }
 
-/** Fim da grade: carregando a próxima página, ou a linha de erro com "Tentar novamente". */
-@Composable
-private fun LoadMoreFooter(
-    isLoading: Boolean,
-    onRetry: () -> Unit,
-) {
-    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        if (isLoading) {
-            CircularProgressIndicator()
-        } else {
-            Text(
-                stringResource(Res.string.load_more_error),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            TextButton(onClick = onRetry) { Text(stringResource(Res.string.retry)) }
-        }
-    }
-}
-
-/** O "esqueleto" do carregamento: quatro cards cinzas, sem rolagem. */
+/** O "esqueleto" do carregamento: quatro blocos cinzas no desenho do mosaico, sem rolagem. */
 @Composable
 private fun SkeletonGrid(columns: Int) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(columns),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalItemSpacing = 12.dp,
         userScrollEnabled = false,
     ) {
         items(4) { index ->
-            Column {
-                PiuSkeletonBox(Modifier.fillMaxWidth().aspectRatio(4f / 5f), shape = MaterialTheme.shapes.small)
-                PiuSkeletonBox(Modifier.padding(top = 10.dp).fillMaxWidth(0.7f - index * 0.05f).height(14.dp))
-                PiuSkeletonBox(Modifier.padding(top = 6.dp).fillMaxWidth(0.5f - index * 0.03f).height(12.dp))
-            }
+            PiuSkeletonBox(
+                Modifier.fillMaxWidth().height(
+                    mosaicHeightFor(index).let {
+                        if (it ==
+                            PiuMosaicHeight.TALL
+                        ) {
+                            220.dp
+                        } else {
+                            168.dp
+                        }
+                    },
+                ),
+                shape = MaterialTheme.shapes.large,
+            )
         }
     }
 }
@@ -252,7 +225,7 @@ private fun EmptyState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val query = state.query.trim()
-    CenteredState {
+    run {
         PiuStateScreen(
             icon = painterResource(DesignRes.drawable.ic_search),
             title = stringResource(Res.string.empty_title),
@@ -306,7 +279,7 @@ private fun ErrorState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val copy = error.copy()
-    CenteredState {
+    run {
         PiuStateScreen(
             icon = painterResource(copy.icon),
             title = stringResource(copy.title),
@@ -327,10 +300,16 @@ private fun ErrorState(
     }
 }
 
-/** Centraliza o estado no espaço que sobra e rola se a fonte grande não couber na tela. */
+/**
+ * Centraliza o estado no espaço que sobra (acima da barra flutuante) e rola se a fonte grande não
+ * couber na tela.
+ */
 @Composable
-private fun CenteredState(content: @Composable () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+private fun CenteredState(
+    contentPadding: PaddingValues,
+    content: @Composable () -> Unit,
+) {
+    Box(Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding()), contentAlignment = Alignment.Center) {
         Box(Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)) { content() }
     }
 }

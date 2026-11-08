@@ -10,7 +10,9 @@ package com.velosobr.passarim.feature.explore.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
 import com.velosobr.passarim.core.domain.onFailure
 import com.velosobr.passarim.core.domain.onSuccess
@@ -64,7 +66,7 @@ private data class Criteria(
 )
 
 /**
- * Explorar: busca com debounce, filtros, paginação por cursor e favoritos.
+ * Explorar: busca com debounce, filtros, paginação por cursor, favoritos e a "Ave do dia".
  *
  * Há **um só** [loadJob] por vez (primeira página ou página seguinte): uma busca nova o cancela, então a
  * resposta de uma busca antiga nunca sobrescreve a atual, e a paginação não corre em paralelo com ela.
@@ -74,6 +76,7 @@ class ExploreViewModel(
     private val explore: ExploreRepository,
     private val filtersRepository: FiltersRepository,
     private val favorites: FavoritesRepository,
+    private val featuredRepository: FeaturedRepository,
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
     private val _state =
@@ -90,6 +93,9 @@ class ExploreViewModel(
     private var criteria = Criteria("", null, null)
     private var loadJob: Job? = null
     private var retryJob: Job? = null
+
+    /** O BFF respondeu que não há "Ave do dia" (NotFound): não adianta pedir de novo nesta sessão. */
+    private var featuredAbsent = false
 
     // Monta a busca: a primeira emissão sai na hora; as seguintes esperam
     // SEARCH_DEBOUNCE_MILLIS sem digitação (debounce), para não fazer um pedido
@@ -113,6 +119,7 @@ class ExploreViewModel(
             .onEach { ids -> _state.update { it.copy(favoriteIds = ids) } }
             .launchIn(viewModelScope)
         loadFilters()
+        loadFeatured()
     }
 
     /** Trata cada ação da tela. */
@@ -140,6 +147,13 @@ class ExploreViewModel(
             is ExploreAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary) }
             is ExploreAction.OpenDetail -> eventChannel.trySend(ExploreEvent.NavigateToDetail(action.id))
             ExploreAction.OpenFavorites -> eventChannel.trySend(ExploreEvent.NavigateToFavorites)
+            is ExploreAction.SelectBiome ->
+                setFilters(biome = action.code.takeIf { it != _state.value.biome }, state = _state.value.state)
+            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay).
+            ExploreAction.OpenFeatured, ExploreAction.PlayFeatured ->
+                _state.value.featured?.let {
+                    eventChannel.trySend(ExploreEvent.NavigateToDetail(it.species.id, autoPlay = action == ExploreAction.PlayFeatured))
+                }
         }
     }
 
@@ -205,6 +219,7 @@ class ExploreViewModel(
                                 phase = if (page.items.isEmpty()) ExplorePhase.Empty else ExplorePhase.Content,
                             )
                         }
+                        loadFeatured()
                     }.onFailure { showError(it.toScreenError()) }
             }
     }
@@ -249,6 +264,26 @@ class ExploreViewModel(
                 viewModelScope.launch {
                     delay(wait * 1_000L)
                     _state.update { it.copy(retryEnabled = true) }
+                }
+        }
+    }
+
+    /**
+     * Busca a "Ave do dia", se ela ainda não chegou, não está a caminho e o BFF não disse que não há
+     * ave elegível (NotFound). Roda ao abrir e a cada lista que chega bem: assim, quem abriu sem rede
+     * ganha o card no "Tentar novamente". Qualquer falha só deixa o card de fora, sem erro na tela.
+     */
+    private fun loadFeatured() {
+        val s = _state.value
+        if (s.featured != null || s.featuredLoading || featuredAbsent) return
+        _state.update { it.copy(featuredLoading = true) }
+        viewModelScope.launch {
+            featuredRepository
+                .getFeaturedSpecies()
+                .onSuccess { f -> _state.update { it.copy(featured = f, featuredLoading = false) } }
+                .onFailure { error ->
+                    featuredAbsent = error == DataError.Network.NotFound
+                    _state.update { it.copy(featuredLoading = false) }
                 }
         }
     }

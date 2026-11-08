@@ -1,4 +1,10 @@
 <resources>
+    <string name="explore_title">Explorar</string>
+    <string name="species_count">%1$d aves</string>
+    <string name="chip_all">Todos</string>
+    <string name="featured_badge">AVE DO DIA</string>
+    <string name="featured_badge_biome">AVE DO DIA · %1$s</string>
+    <string name="featured_play">Ouvir o canto de %1$s</string>
     <string name="search_placeholder">Buscar aves</string>
     <string name="filter_biome">Bioma</string>
     <string name="filter_state">Estado</string>

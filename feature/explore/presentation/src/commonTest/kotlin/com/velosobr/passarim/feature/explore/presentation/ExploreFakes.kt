@@ -5,6 +5,8 @@ package com.velosobr.passarim.feature.explore.presentation
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.FeaturedRepository
+import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.FiltersRepository
 import com.velosobr.passarim.core.domain.Result
@@ -90,4 +92,23 @@ class FakeFavoritesRepository : FavoritesRepository {
     }
 
     override suspend fun refresh(summary: SpeciesSummary) = Unit
+}
+
+/** sampleFeatured é uma "Ave do dia" de exemplo, com canto. */
+val sampleFeatured = FeaturedSpecies(date = "2026-11-08", species = bird("tuiuiu"), hasSong = true)
+
+/** A "Ave do dia" falsa: responde o resultado configurado e conta as chamadas. */
+class FakeFeaturedRepository(
+    var next: Result<FeaturedSpecies, DataError.Network> = Result.Success(sampleFeatured),
+) : FeaturedRepository {
+    var calls = 0
+
+    /** Se preenchido, segura a resposta até o teste completar, para observar o "carregando". */
+    var gate: CompletableDeferred<Unit>? = null
+
+    override suspend fun getFeaturedSpecies(): Result<FeaturedSpecies, DataError.Network> {
+        calls++
+        gate?.await()
+        return next
+    }
 }

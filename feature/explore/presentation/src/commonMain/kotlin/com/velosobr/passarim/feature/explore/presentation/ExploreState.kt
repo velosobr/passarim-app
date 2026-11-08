@@ -2,6 +2,7 @@
 
 package com.velosobr.passarim.feature.explore.presentation
 
+import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.StateFilter
@@ -28,6 +29,10 @@ data class ExploreState(
     /** Sheet de filtros aberto (com as escolhas ainda não aplicadas) ou nulo, se fechado. */
     val sheet: FiltersSheetState? = null,
     val favoriteIds: Set<String> = emptySet(),
+    /** A "Ave do dia", ou nulo enquanto carrega ou se o BFF não tiver uma (aí o card não aparece). */
+    val featured: FeaturedSpecies? = null,
+    /** A "Ave do dia" está a caminho: a grade já reserva o lugar dela no topo. */
+    val featuredLoading: Boolean = false,
 ) {
     /** Nome do bioma selecionado para o chip ("Pampa"); o código, se os filtros ainda não chegaram. */
     val biomeLabel: String?
@@ -42,6 +47,19 @@ data class ExploreState(
 
     /** Se há bioma ou UF selecionados. */
     val hasFilters: Boolean get() = biome != null || state != null
+
+    /** A "Ave do dia" só aparece na vitrine: sem busca e sem filtro. */
+    val showFeatured: Boolean get() = featured != null && query.isBlank() && !hasFilters
+
+    /**
+     * O lugar da "Ave do dia" no topo da grade: existe enquanto ela carrega e depois que ela chega.
+     * Reservar o lugar desde o começo evita que o card entre acima de uma grade já desenhada; as
+     * grades guardam a posição pelo primeiro item visível, e o card nasceria fora da tela.
+     */
+    val showFeaturedSlot: Boolean get() = (featuredLoading || featured != null) && query.isBlank() && !hasFilters
+
+    /** O total de aves para o título ("41 aves"), ou nulo enquanto os filtros não chegam. */
+    val speciesTotal: Int? get() = (filters as? FiltersPhase.Loaded)?.filters?.speciesTotal
 }
 
 /** Em que ponto a lista está: carregando, com itens, vazia ou com erro. */
