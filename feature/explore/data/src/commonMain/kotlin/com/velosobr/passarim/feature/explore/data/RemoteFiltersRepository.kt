@@ -18,11 +18,15 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 
-/** O corpo de `GET /v1/filters`: biomas e UFs com contagem. */
+/**
+ * O corpo de `GET /v1/filters`: biomas e UFs com contagem, e a contagem por bioma principal, que só
+ * existe a partir da frente B do BFF (ausente, vira lista vazia).
+ */
 @Serializable
 internal data class FiltersDto(
     val biomes: List<BiomeDto>,
     val states: List<StateDto>,
+    val primaryBiomes: List<BiomeDto> = emptyList(),
 )
 
 /** Um bioma com o rótulo em português. */
@@ -45,6 +49,7 @@ internal fun FiltersDto.toDomain() =
     Filters(
         biomes = biomes.map { BiomeFilter(it.code, it.label, it.speciesCount) },
         states = states.map { StateFilter(it.code, it.speciesCount) },
+        primaryBiomes = primaryBiomes.map { BiomeFilter(it.code, it.label, it.speciesCount) },
     )
 
 /**

@@ -57,6 +57,20 @@ class RemoteFiltersRepositoryTest {
         }
 
     @Test
+    fun `le a contagem por bioma principal quando o BFF a manda`() =
+        runTest {
+            val withPrimary =
+                """
+                {"biomes":[],"states":[],
+                 "primaryBiomes":[{"code":"cerrado","label":"Cerrado","speciesCount":7},{"code":"pampa","label":"Pampa","speciesCount":4}]}
+                """.trimIndent()
+            val engine = MockEngine { respond(withPrimary, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }
+            val result = RemoteFiltersRepository(createHttpClient(engine, config)).get() as Result.Success<Filters>
+            assertThat(result.data.primaryBiomes).isEqualTo(listOf(BiomeFilter("cerrado", "Cerrado", 7), BiomeFilter("pampa", "Pampa", 4)))
+            assertThat(result.data.speciesTotal).isEqualTo(11)
+        }
+
+    @Test
     fun `propaga o erro de servidor`() =
         runTest {
             val result = RemoteFiltersRepository(createHttpClient(MockEngine { down() }, config)).get()
