@@ -58,7 +58,10 @@ fun TabsScreen(
     ) { padding ->
         NavHost(navController, startDestination = ExploreRoute, modifier = Modifier.padding(padding)) {
             composable<ExploreRoute> {
-                ExploreRoot(onOpenDetail = onOpenDetail, onOpenFavorites = { navController.navigateToTab(Tab.Favorites) })
+                ExploreRoot(
+                    onOpenDetail = { id, _ -> onOpenDetail(id) },
+                    onOpenFavorites = { navController.navigateToTab(Tab.Favorites) },
+                )
             }
             composable<FavoritesRoute> {
                 FavoritesRoot(onOpenDetail = onOpenDetail, onOpenExplore = { navController.navigateToTab(Tab.Explore) })

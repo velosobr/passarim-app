@@ -2,6 +2,7 @@
 
 package com.velosobr.passarim.feature.explore.presentation
 
+import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.StateFilter
@@ -28,6 +29,8 @@ data class ExploreState(
     /** Sheet de filtros aberto (com as escolhas ainda não aplicadas) ou nulo, se fechado. */
     val sheet: FiltersSheetState? = null,
     val favoriteIds: Set<String> = emptySet(),
+    /** A "Ave do dia", ou nulo enquanto carrega ou se o BFF não tiver uma (aí o card não aparece). */
+    val featured: FeaturedSpecies? = null,
 ) {
     /** Nome do bioma selecionado para o chip ("Pampa"); o código, se os filtros ainda não chegaram. */
     val biomeLabel: String?
@@ -42,6 +45,12 @@ data class ExploreState(
 
     /** Se há bioma ou UF selecionados. */
     val hasFilters: Boolean get() = biome != null || state != null
+
+    /** A "Ave do dia" só aparece na vitrine: sem busca e sem filtro. */
+    val showFeatured: Boolean get() = featured != null && query.isBlank() && !hasFilters
+
+    /** O total de aves para o título ("41 aves"), ou nulo enquanto os filtros não chegam. */
+    val speciesTotal: Int? get() = (filters as? FiltersPhase.Loaded)?.filters?.speciesTotal
 }
 
 /** Em que ponto a lista está: carregando, com itens, vazia ou com erro. */

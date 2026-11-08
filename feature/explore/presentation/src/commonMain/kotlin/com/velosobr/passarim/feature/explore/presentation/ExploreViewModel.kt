@@ -11,6 +11,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
 import com.velosobr.passarim.core.domain.onFailure
 import com.velosobr.passarim.core.domain.onSuccess
@@ -64,7 +65,7 @@ private data class Criteria(
 )
 
 /**
- * Explorar: busca com debounce, filtros, paginação por cursor e favoritos.
+ * Explorar: busca com debounce, filtros, paginação por cursor, favoritos e a "Ave do dia".
  *
  * Há **um só** [loadJob] por vez (primeira página ou página seguinte): uma busca nova o cancela, então a
  * resposta de uma busca antiga nunca sobrescreve a atual, e a paginação não corre em paralelo com ela.
@@ -74,6 +75,7 @@ class ExploreViewModel(
     private val explore: ExploreRepository,
     private val filtersRepository: FiltersRepository,
     private val favorites: FavoritesRepository,
+    private val featuredRepository: FeaturedRepository,
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
     private val _state =
@@ -113,6 +115,10 @@ class ExploreViewModel(
             .onEach { ids -> _state.update { it.copy(favoriteIds = ids) } }
             .launchIn(viewModelScope)
         loadFilters()
+        // A "Ave do dia" é buscada uma vez; qualquer falha só deixa o card de fora, sem erro na tela.
+        viewModelScope.launch {
+            featuredRepository.getFeaturedSpecies().onSuccess { f -> _state.update { it.copy(featured = f) } }
+        }
     }
 
     /** Trata cada ação da tela. */
@@ -140,6 +146,10 @@ class ExploreViewModel(
             is ExploreAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary) }
             is ExploreAction.OpenDetail -> eventChannel.trySend(ExploreEvent.NavigateToDetail(action.id))
             ExploreAction.OpenFavorites -> eventChannel.trySend(ExploreEvent.NavigateToFavorites)
+            is ExploreAction.SelectBiome ->
+                setFilters(biome = action.code.takeIf { it != _state.value.biome }, state = _state.value.state)
+            ExploreAction.OpenFeatured -> openFeatured(autoPlay = false)
+            ExploreAction.PlayFeatured -> openFeatured(autoPlay = true)
         }
     }
 
@@ -251,6 +261,15 @@ class ExploreViewModel(
                     _state.update { it.copy(retryEnabled = true) }
                 }
         }
+    }
+
+    /** Abre o Detalhe da "Ave do dia" (se ela já chegou), tocando o canto quando [autoPlay]. */
+    private fun openFeatured(autoPlay: Boolean) {
+        val id =
+            _state.value.featured
+                ?.species
+                ?.id ?: return
+        eventChannel.trySend(ExploreEvent.NavigateToDetail(id, autoPlay))
     }
 
     /** Carrega as opções de filtro, independente da lista. */

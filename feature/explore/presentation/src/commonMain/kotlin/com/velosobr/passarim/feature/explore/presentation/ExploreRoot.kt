@@ -14,14 +14,14 @@ import org.koin.compose.viewmodel.koinViewModel
  */
 @Composable
 fun ExploreRoot(
-    onOpenDetail: (String) -> Unit,
+    onOpenDetail: (id: String, autoPlay: Boolean) -> Unit,
     onOpenFavorites: () -> Unit,
     viewModel: ExploreViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            is ExploreEvent.NavigateToDetail -> onOpenDetail(event.id)
+            is ExploreEvent.NavigateToDetail -> onOpenDetail(event.id, event.autoPlay)
             ExploreEvent.NavigateToFavorites -> onOpenFavorites()
         }
     }

@@ -71,6 +71,20 @@ sealed interface ExploreAction {
 
     /** "Ver favoritos" da tela sem conexão. */
     data object OpenFavorites : ExploreAction
+
+    /**
+     * Toque num chip de bioma: [code] aplica o bioma; o mesmo bioma de novo, ou null ("Todos"),
+     * tira o filtro. A UF escolhida no sheet continua.
+     */
+    data class SelectBiome(
+        val code: String?,
+    ) : ExploreAction
+
+    /** Toque no card da "Ave do dia": abre o Detalhe. */
+    data object OpenFeatured : ExploreAction
+
+    /** Toque no botão de canto da "Ave do dia": abre o Detalhe já tocando o canto. */
+    data object PlayFeatured : ExploreAction
 }
 
 /**
@@ -78,8 +92,10 @@ sealed interface ExploreAction {
  * não se repetirem ao girar a tela.
  */
 sealed interface ExploreEvent {
+    /** Abrir o Detalhe da ave [id]; com [autoPlay], o canto começa ao abrir. */
     data class NavigateToDetail(
         val id: String,
+        val autoPlay: Boolean = false,
     ) : ExploreEvent
 
     data object NavigateToFavorites : ExploreEvent
