@@ -80,6 +80,7 @@ class SafeCallTest {
             val table =
                 mapOf(
                     "SPECIES_NOT_FOUND" to DataError.Network.NotFound,
+                    "FEATURED_NOT_FOUND" to DataError.Network.NotFound,
                     "NOT_FOUND" to DataError.Network.NotFound,
                     "INVALID_PARAMETER" to DataError.Network.InvalidParameter,
                     "METHOD_NOT_ALLOWED" to DataError.Network.InvalidParameter,

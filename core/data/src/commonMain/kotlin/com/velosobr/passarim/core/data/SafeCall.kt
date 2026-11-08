@@ -95,7 +95,8 @@ internal suspend fun HttpResponse.toNetworkError(): DataError.Network {
 /** Traduz o `code` estável do contrato do BFF no erro do app. */
 private fun String.toNetworkError(retryAfterSeconds: Int?): DataError.Network =
     when (this) {
-        "SPECIES_NOT_FOUND", "NOT_FOUND" -> DataError.Network.NotFound
+        // FEATURED_NOT_FOUND: o catalog não tem nenhuma ave elegível para a "Ave do dia".
+        "SPECIES_NOT_FOUND", "FEATURED_NOT_FOUND", "NOT_FOUND" -> DataError.Network.NotFound
         "INVALID_PARAMETER", "METHOD_NOT_ALLOWED" -> DataError.Network.InvalidParameter
         "RATE_LIMITED" -> DataError.Network.RateLimited(retryAfterSeconds)
         "SERVICE_UNAVAILABLE" -> DataError.Network.ServiceUnavailable
