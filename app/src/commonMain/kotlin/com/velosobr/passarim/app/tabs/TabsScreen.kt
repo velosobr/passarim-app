@@ -1,19 +1,23 @@
-// A tela com a barra inferior e a navegação dentro de cada aba.
-// "by" lê o State como valor comum; currentBackStackEntryAsState recompõe a
-// barra quando a aba muda. Scaffold é o esqueleto do Material com espaço para
-// a barra inferior.
+// A tela das abas do adulto: o NavHost de cada aba e, flutuando por cima, a
+// barra de navegação em pílula do PiuDS, que desfoca o conteúdo que passa por
+// baixo dela (frente E). "by" lê o State como valor comum;
+// currentBackStackEntryAsState recompõe a barra quando a aba muda.
 
 package com.velosobr.passarim.app.tabs
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -27,12 +31,21 @@ import com.velosobr.passarim.app.navigation.SettingsRoute
 import com.velosobr.passarim.feature.explore.presentation.ExploreRoot
 import com.velosobr.passarim.feature.favorites.presentation.FavoritesRoot
 import com.velosobr.passarim.feature.settings.presentation.SettingsRoot
+import com.velosobr.piuds.components.PiuNavItem
+import com.velosobr.piuds.components.adult.PiuFloatingNavBar
+import com.velosobr.piuds.components.piuBlurSource
+import com.velosobr.piuds.components.rememberPiuBlurState
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+/** A altura da barra flutuante (68 dp) mais a margem dela até o fim da tela (24 dp). */
+private val FloatingBarSpace = 92.dp
+
 /**
- * Scaffold com a barra inferior e um `NavHost` interno: cada aba tem a sua pilha, e trocar de aba
- * guarda e restaura o estado (`saveState`/`restoreState`).
+ * As abas com um `NavHost` interno: cada aba tem a sua pilha, e trocar de aba guarda e restaura o
+ * estado (`saveState`/`restoreState`). O conteúdo ocupa a tela inteira e é a fonte do desfoque; a
+ * barra flutua por cima, acima da área do gesto de navegação do sistema (`navigationBars`). Cada
+ * tela recebe o espaço da barra para o fim da lista não ficar escondido atrás dela.
  */
 @Composable
 fun TabsScreen(
@@ -42,34 +55,43 @@ fun TabsScreen(
 ) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                Tab.entries.forEach { tab ->
-                    NavigationBarItem(
-                        selected = backStack?.destination?.hasRoute(tab.route::class) == true,
-                        onClick = { navController.navigateToTab(tab) },
-                        icon = { Icon(vectorResource(tab.icon), contentDescription = null) },
-                        label = { Text(stringResource(tab.label)) },
-                    )
-                }
-            }
-        },
-    ) { padding ->
-        NavHost(navController, startDestination = ExploreRoute, modifier = Modifier.padding(padding)) {
+    val blur = rememberPiuBlurState()
+    val systemBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val barPadding = PaddingValues(bottom = FloatingBarSpace + systemBottom)
+    Box(Modifier.fillMaxSize()) {
+        NavHost(
+            navController,
+            startDestination = ExploreRoute,
+            modifier = Modifier.fillMaxSize().piuBlurSource(blur).statusBarsPadding(),
+        ) {
             composable<ExploreRoute> {
                 ExploreRoot(
                     onOpenDetail = onOpenDetail,
                     onOpenFavorites = { navController.navigateToTab(Tab.Favorites) },
+                    contentPadding = barPadding,
                 )
             }
+            // Favoritos e Configurações ganham o visual novo na frente E3; até lá, só reservam o espaço da barra.
             composable<FavoritesRoute> {
-                FavoritesRoot(onOpenDetail = { id ->
-                    onOpenDetail(id, false)
-                }, onOpenExplore = { navController.navigateToTab(Tab.Explore) })
+                Box(Modifier.padding(barPadding)) {
+                    FavoritesRoot(
+                        onOpenDetail = { id -> onOpenDetail(id, false) },
+                        onOpenExplore = { navController.navigateToTab(Tab.Explore) },
+                    )
+                }
             }
-            composable<SettingsRoute> { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
+            composable<SettingsRoute> {
+                Box(Modifier.padding(barPadding)) { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
+            }
         }
+        val tabs = Tab.entries
+        PiuFloatingNavBar(
+            items = tabs.map { PiuNavItem(vectorResource(it.icon), stringResource(it.label)) },
+            selected = tabs.indexOfFirst { backStack?.destination?.hasRoute(it.route::class) == true }.coerceAtLeast(0),
+            onSelect = { navController.navigateToTab(tabs[it]) },
+            blurState = blur,
+            modifier = Modifier.align(Alignment.BottomCenter).padding(start = 24.dp, end = 24.dp, bottom = 24.dp + systemBottom),
+        )
     }
 }
 
