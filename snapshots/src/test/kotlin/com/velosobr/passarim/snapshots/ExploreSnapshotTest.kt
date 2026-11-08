@@ -2,7 +2,9 @@
 
 package com.velosobr.passarim.snapshots
 
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.BiomeFilter
+import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.StateFilter
@@ -25,10 +27,10 @@ class ExploreSnapshotTest(
 ) : ThemedSnapshotTest(dark, fontScalePercent) {
     private val birds =
         listOf(
-            SpeciesSummary("arara-azul-grande", "Arara-azul-grande", "Anodorhynchus hyacinthinus", null),
-            SpeciesSummary("bem-te-vi", "Bem-te-vi", "Pitangus sulphuratus", null),
-            SpeciesSummary("sabia-laranjeira", "Sabiá-laranjeira", "Turdus rufiventris", null),
-            SpeciesSummary("tucano-toco", "Tucano-toco", "Ramphastos toco", null),
+            SpeciesSummary("arara-azul-grande", "Arara-azul-grande", "Anodorhynchus hyacinthinus", null, Biome.PANTANAL),
+            SpeciesSummary("bem-te-vi", "Bem-te-vi", "Pitangus sulphuratus", null, Biome.CERRADO),
+            SpeciesSummary("sabia-laranjeira", "Sabiá-laranjeira", "Turdus rufiventris", null, Biome.MATA_ATLANTICA),
+            SpeciesSummary("tucano-toco", "Tucano-toco", "Ramphastos toco", null, Biome.CAATINGA),
         )
 
     private val filters =
@@ -46,6 +48,7 @@ class ExploreSnapshotTest(
                 listOf("SP" to 29, "PR" to 24, "RS" to 24, "RJ" to 23, "GO" to 22, "BA" to 21, "AM" to 19, "PA" to 19)
                     .plus(listOf("MT" to 19, "MG" to 19, "MS" to 16, "SC" to 15, "AC" to 3))
                     .map { (code, count) -> StateFilter(code, count) },
+            primaryBiomes = listOf(BiomeFilter("pantanal", "Pantanal", 21), BiomeFilter("cerrado", "Cerrado", 20)),
         )
 
     private fun screen(
@@ -53,11 +56,31 @@ class ExploreSnapshotTest(
         state: ExploreState,
     ) = snap(name) { ExploreScreen(state = state, onAction = {}) }
 
+    /** A vitrine: o total de aves, os chips de bioma, a "Ave do dia" e o mosaico. */
     @Test
     fun grid() =
         screen(
             "grid",
-            ExploreState(items = birds, phase = ExplorePhase.Content, favoriteIds = setOf("arara-azul-grande", "tucano-toco")),
+            ExploreState(
+                items = birds,
+                phase = ExplorePhase.Content,
+                favoriteIds = setOf("arara-azul-grande", "tucano-toco"),
+                filters = FiltersPhase.Loaded(filters),
+                featured =
+                    FeaturedSpecies(
+                        "2026-11-08",
+                        SpeciesSummary("tuiuiu", "Tuiuiú", "Jabiru mycteria", null, Biome.PANTANAL),
+                        hasSong = true,
+                    ),
+            ),
+        )
+
+    /** Com um bioma marcado: o chip fica selecionado, e a "Ave do dia" sai da tela. */
+    @Test
+    fun gridFiltered() =
+        screen(
+            "grid-filtered",
+            ExploreState(biome = "cerrado", items = birds, phase = ExplorePhase.Content, filters = FiltersPhase.Loaded(filters)),
         )
 
     @Test
