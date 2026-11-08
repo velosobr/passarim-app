@@ -8,6 +8,7 @@ import com.velosobr.passarim.core.data.safeCall
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
+import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.domain.map
 import com.velosobr.passarim.feature.explore.domain.ExploreRepository
 import com.velosobr.passarim.feature.explore.domain.SpeciesPage
@@ -16,13 +17,17 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import kotlinx.serialization.Serializable
 
-/** O contrato também traz `conservationStatus`; os cards não o mostram, então o DTO o ignora. */
+/**
+ * O contrato também traz `conservationStatus`; os cards não o mostram, então o DTO o ignora.
+ * `primaryBiome` só existe a partir da frente B do BFF: num BFF antigo ele falta e fica nulo.
+ */
 @Serializable
 internal data class SpeciesSummaryDto(
     val id: String,
     val commonName: String,
     val scientificName: String,
     val thumbnailUrl: String? = null,
+    val primaryBiome: String? = null,
 )
 
 /** Uma página da resposta; nextCursor ausente vira null (última página). */
@@ -32,10 +37,17 @@ internal data class SpeciesPageDto(
     val nextCursor: String? = null,
 )
 
-/** Converte a página no domínio, trocando o host das miniaturas em debug. */
+/**
+ * Converte o resumo no domínio, trocando o host da miniatura em debug. biomeOf devolve null para um
+ * bioma que o app não conhece (um bioma novo no BFF não derruba a lista).
+ */
+internal fun SpeciesSummaryDto.toDomain(rewriter: MediaUrlRewriter) =
+    SpeciesSummary(id, commonName, scientificName, rewriter.rewrite(thumbnailUrl), biomeOf(primaryBiome))
+
+/** Converte a página no domínio. */
 internal fun SpeciesPageDto.toDomain(rewriter: MediaUrlRewriter) =
     SpeciesPage(
-        items = items.map { SpeciesSummary(it.id, it.commonName, it.scientificName, rewriter.rewrite(it.thumbnailUrl)) },
+        items = items.map { it.toDomain(rewriter) },
         nextCursor = nextCursor,
     )
 

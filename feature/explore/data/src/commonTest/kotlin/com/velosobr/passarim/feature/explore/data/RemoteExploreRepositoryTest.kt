@@ -8,6 +8,7 @@ import assertk.assertions.isNull
 import com.velosobr.passarim.core.data.MediaUrlRewriter
 import com.velosobr.passarim.core.data.createHttpClient
 import com.velosobr.passarim.core.domain.AppConfig
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
@@ -27,9 +28,12 @@ class RemoteExploreRepositoryTest {
         """
         {"items":[
           {"id":"bem-te-vi","commonName":"Bem-te-vi","scientificName":"Pitangus sulphuratus",
-           "thumbnailUrl":"http://localhost:8888/buckets/passarim-media/bem-te-vi/thumb.jpg","conservationStatus":"LC"},
+           "thumbnailUrl":"http://localhost:8888/buckets/passarim-media/bem-te-vi/thumb.jpg","conservationStatus":"LC",
+           "primaryBiome":"mata_atlantica"},
           {"id":"ararinha-azul","commonName":"Ararinha-azul","scientificName":"Cyanopsitta spixii",
-           "thumbnailUrl":null,"conservationStatus":"EW"}
+           "thumbnailUrl":null,"conservationStatus":"EW","primaryBiome":null},
+          {"id":"ave-nova","commonName":"Ave nova","scientificName":"Avis nova",
+           "thumbnailUrl":null,"conservationStatus":"LC","primaryBiome":"marte"}
         ],"nextCursor":"c2"}
         """.trimIndent()
 
@@ -75,7 +79,7 @@ class RemoteExploreRepositoryTest {
         }
 
     @Test
-    fun `mapeia a pagina com thumbnail nulo e o proximo cursor`() =
+    fun `mapeia a pagina com thumbnail nulo o bioma principal e o proximo cursor`() =
         runTest {
             val result = repo().list(query = "", biome = null, state = null, cursor = null)
             assertThat(result).isEqualTo(
@@ -88,8 +92,11 @@ class RemoteExploreRepositoryTest {
                                     "Bem-te-vi",
                                     "Pitangus sulphuratus",
                                     "http://localhost:8888/buckets/passarim-media/bem-te-vi/thumb.jpg",
+                                    primaryBiome = Biome.MATA_ATLANTICA,
                                 ),
+                                // Sem bioma principal e com um bioma que o app não conhece: os dois viram nulo.
                                 SpeciesSummary("ararinha-azul", "Ararinha-azul", "Cyanopsitta spixii", null),
+                                SpeciesSummary("ave-nova", "Ave nova", "Avis nova", null),
                             ),
                         nextCursor = "c2",
                     ),
