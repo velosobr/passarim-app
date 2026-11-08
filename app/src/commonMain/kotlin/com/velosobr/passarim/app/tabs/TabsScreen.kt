@@ -36,7 +36,7 @@ import org.jetbrains.compose.resources.vectorResource
  */
 @Composable
 fun TabsScreen(
-    onOpenDetail: (String) -> Unit,
+    onOpenDetail: (id: String, autoPlay: Boolean) -> Unit,
     onOpenStorage: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
@@ -59,12 +59,14 @@ fun TabsScreen(
         NavHost(navController, startDestination = ExploreRoute, modifier = Modifier.padding(padding)) {
             composable<ExploreRoute> {
                 ExploreRoot(
-                    onOpenDetail = { id, _ -> onOpenDetail(id) },
+                    onOpenDetail = onOpenDetail,
                     onOpenFavorites = { navController.navigateToTab(Tab.Favorites) },
                 )
             }
             composable<FavoritesRoute> {
-                FavoritesRoot(onOpenDetail = onOpenDetail, onOpenExplore = { navController.navigateToTab(Tab.Explore) })
+                FavoritesRoot(onOpenDetail = { id ->
+                    onOpenDetail(id, false)
+                }, onOpenExplore = { navController.navigateToTab(Tab.Explore) })
             }
             composable<SettingsRoute> { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
         }

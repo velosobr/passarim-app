@@ -80,7 +80,7 @@ private fun AppNavHost() {
     NavHost(rootNav, startDestination = TabsRoute) {
         composable<TabsRoute> {
             TabsScreen(
-                onOpenDetail = { id -> rootNav.navigate(DetailRoute(id)) },
+                onOpenDetail = { id, autoPlay -> rootNav.navigate(DetailRoute(id, autoPlay)) },
                 onOpenStorage = { rootNav.navigate(StorageRoute) },
                 onOpenAbout = { rootNav.navigate(AboutRoute) },
             )

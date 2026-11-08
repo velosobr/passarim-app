@@ -37,6 +37,12 @@ import kotlinx.coroutines.launch
 const val KEY_SPECIES_ID = "id"
 
 /**
+ * Argumento da rota que pede o canto tocando ao abrir (o botão de canto da "Ave do dia"). Vale
+ * mesmo com a reprodução automática desligada nas Configurações.
+ */
+const val KEY_AUTO_PLAY = "autoPlay"
+
+/**
  * Carrega a espécie, acompanha o favorito e o player, e trata as ações da
  * tela. Ao carregar, se a espécie já é favorita, atualiza o resumo guardado;
  * se a configuração pede, toca o canto sozinho.
@@ -49,6 +55,7 @@ class DetailViewModel(
     private val player: AudioPlayer,
 ) : ViewModel() {
     private val id: String = savedState[KEY_SPECIES_ID] ?: ""
+    private val autoPlayRequested: Boolean = savedState[KEY_AUTO_PLAY] ?: false
 
     private val _state = MutableStateFlow(DetailState())
     val state: StateFlow<DetailState> = _state.asStateFlow()
@@ -96,7 +103,7 @@ class DetailViewModel(
                 .onSuccess { detail ->
                     _state.update { it.copy(phase = DetailPhase.Content(detail)) }
                     if (id in favorites.observeIds().first()) favorites.refresh(detail.toSummary())
-                    if (settings.observe().first().autoPlay) detail.audio?.let { player.play(it.url) }
+                    if (autoPlayRequested || settings.observe().first().autoPlay) detail.audio?.let { player.play(it.url) }
                 }.onFailure { error ->
                     if (error == DataError.Network.NotFound) {
                         _state.update { it.copy(phase = DetailPhase.NotFound) }

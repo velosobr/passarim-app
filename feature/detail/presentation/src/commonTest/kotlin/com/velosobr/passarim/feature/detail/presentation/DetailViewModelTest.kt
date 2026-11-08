@@ -210,6 +210,19 @@ class DetailViewModelTest {
     }
 
     @Test
+    fun `aberto pelo canto da ave do dia toca mesmo com a reproducao automatica desligada`() {
+        // A rota DetailRoute(id, autoPlay = true) põe o argumento no SavedStateHandle.
+        DetailViewModel(
+            SavedStateHandle(mapOf(KEY_SPECIES_ID to ARARA_ID, KEY_AUTO_PLAY to true)),
+            repo,
+            favorites,
+            FakeSettingsRepository(autoPlay = false),
+            player,
+        )
+        assertThat(player.calls).containsExactly("play:$AUDIO_URL")
+    }
+
+    @Test
     fun `reproducao automatica sem audio nao toca`() {
         repo.next = Result.Success(arara.copy(audio = null))
         viewModel(autoPlay = true)
