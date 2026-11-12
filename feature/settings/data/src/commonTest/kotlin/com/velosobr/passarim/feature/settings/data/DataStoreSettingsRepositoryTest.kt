@@ -4,6 +4,7 @@
 package com.velosobr.passarim.feature.settings.data
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -16,7 +17,9 @@ import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.ThemeMode
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.Path
@@ -121,4 +124,37 @@ class DataStoreSettingsRepositoryTest {
 
             assertThat(repository.observe().first().journey).isEqualTo(Journey.KIDS)
         }
+
+    @Test
+    fun `erro de leitura do arquivo usa os padroes`() =
+        runTest {
+            val repository = DataStoreSettingsRepository(UnreadableDataStore())
+
+            assertThat(repository.observe().first()).isEqualTo(Settings())
+        }
+
+    @Test
+    fun `arquivo corrompido volta aos padroes e aceita gravar de novo`() =
+        runTest {
+            FileSystem.SYSTEM.write(file) { writeUtf8("isto nao e um arquivo de preferencias") }
+            val repository = DataStoreSettingsRepository(createSettingsDataStore(backgroundScope) { file })
+
+            assertThat(repository.observe().first()).isEqualTo(Settings())
+
+            repository.setTheme(ThemeMode.DARK)
+
+            assertThat(repository.observe().first().theme).isEqualTo(ThemeMode.DARK)
+        }
+}
+
+/**
+ * Um DataStore falso cujo arquivo não pode ser lido (disco cheio, permissão
+ * negada): o data lança IOException assim que alguém começa a coletar.
+ * flow { } cria um Flow que roda o bloco a cada coleta.
+ */
+private class UnreadableDataStore : DataStore<Preferences> {
+    override val data: Flow<Preferences> = flow { throw IOException("arquivo ilegível", null) }
+
+    override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences =
+        throw IOException("arquivo ilegível", null)
 }

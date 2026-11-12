@@ -3,15 +3,18 @@
 package com.velosobr.passarim.feature.settings.data
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.ThemeMode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -24,7 +27,21 @@ import kotlinx.coroutines.flow.map
 class DataStoreSettingsRepository(
     private val dataStore: DataStore<Preferences>,
 ) : SettingsRepository {
-    override fun observe(): Flow<Settings> = dataStore.data.map { it.toSettings() }.distinctUntilChanged()
+    /**
+     * As preferências atuais e as próximas mudanças. O catch intercepta um
+     * erro que aconteça no Flow antes dele: se o arquivo não pôde ser lido
+     * (IOException), emite preferências vazias, e quem observa recebe os
+     * padrões de Settings() em vez de ver a coleta morrer (a raiz do app
+     * depende deste Flow para escolher o que mostrar). Outros erros são bugs
+     * e seguem adiante. São dois IOException porque, no iOS, o do DataStore e
+     * o do Okio (que lê o arquivo) são classes diferentes; no Android, os dois
+     * são o java.io.IOException.
+     */
+    override fun observe(): Flow<Settings> =
+        dataStore.data
+            .catch { if (it is IOException || it is okio.IOException) emit(emptyPreferences()) else throw it }
+            .map { it.toSettings() }
+            .distinctUntilChanged()
 
     override suspend fun setTheme(theme: ThemeMode) {
         dataStore.edit { it[THEME] = theme.name }
