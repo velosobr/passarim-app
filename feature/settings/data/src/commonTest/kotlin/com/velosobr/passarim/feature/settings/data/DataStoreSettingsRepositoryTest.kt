@@ -10,6 +10,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.ThemeMode
 import kotlinx.coroutines.CoroutineScope
@@ -57,5 +59,47 @@ class DataStoreSettingsRepositoryTest {
             dataStore.edit { it[stringPreferencesKey("theme")] = "PURPLE" }
 
             assertThat(DataStoreSettingsRepository(dataStore).observe().first().theme).isEqualTo(ThemeMode.SYSTEM)
+        }
+
+    @Test
+    fun `sem arquivo a jornada e nula`() =
+        runTest {
+            val repository = DataStoreSettingsRepository(backgroundScope.dataStore())
+
+            assertThat(repository.observe().first().journey).isNull()
+        }
+
+    @Test
+    fun `grava a jornada sem mexer nas outras opcoes`() =
+        runTest {
+            val repository = DataStoreSettingsRepository(backgroundScope.dataStore())
+            repository.setTheme(ThemeMode.DARK)
+            repository.setDynamicColors(true)
+            repository.setAutoPlay(true)
+
+            repository.setJourney(Journey.KIDS)
+
+            assertThat(repository.observe().first())
+                .isEqualTo(Settings(ThemeMode.DARK, dynamicColors = true, autoPlay = true, journey = Journey.KIDS))
+        }
+
+    @Test
+    fun `trocar de jornada substitui a anterior`() =
+        runTest {
+            val repository = DataStoreSettingsRepository(backgroundScope.dataStore())
+
+            repository.setJourney(Journey.KIDS)
+            repository.setJourney(Journey.ADULT)
+
+            assertThat(repository.observe().first().journey).isEqualTo(Journey.ADULT)
+        }
+
+    @Test
+    fun `jornada desconhecida no arquivo vira nula`() =
+        runTest {
+            val dataStore = backgroundScope.dataStore()
+            dataStore.edit { it[stringPreferencesKey("journey")] = "TEEN" }
+
+            assertThat(DataStoreSettingsRepository(dataStore).observe().first().journey).isNull()
         }
 }

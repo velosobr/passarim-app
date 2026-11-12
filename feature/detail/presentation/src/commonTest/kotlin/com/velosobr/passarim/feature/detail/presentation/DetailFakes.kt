@@ -5,6 +5,7 @@ package com.velosobr.passarim.feature.detail.presentation
 import com.velosobr.passarim.core.domain.Credit
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
@@ -92,6 +93,8 @@ class FakeSettingsRepository(
     override suspend fun setDynamicColors(enabled: Boolean) = settings.update { it.copy(dynamicColors = enabled) }
 
     override suspend fun setAutoPlay(enabled: Boolean) = settings.update { it.copy(autoPlay = enabled) }
+
+    override suspend fun setJourney(journey: Journey) = settings.update { it.copy(journey = journey) }
 }
 
 /** Player falso: anota cada chamada (play, pause, seek, release) e o estado é controlado pelo teste. */

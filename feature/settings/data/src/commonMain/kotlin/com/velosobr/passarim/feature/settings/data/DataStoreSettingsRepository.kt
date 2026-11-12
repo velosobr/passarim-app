@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.ThemeMode
@@ -37,6 +38,11 @@ class DataStoreSettingsRepository(
         dataStore.edit { it[AUTO_PLAY] = enabled }
     }
 
+    /** Grava a jornada pelo nome do enum ("ADULT" ou "KIDS"); o edit só toca nesta chave, e as outras ficam como estão. */
+    override suspend fun setJourney(journey: Journey) {
+        dataStore.edit { it[JOURNEY] = journey.name }
+    }
+
     /** Converte o que está gravado nas Settings do domínio. */
     private fun Preferences.toSettings(): Settings {
         val defaults = Settings()
@@ -44,6 +50,10 @@ class DataStoreSettingsRepository(
             theme = ThemeMode.entries.firstOrNull { it.name == this[THEME] } ?: defaults.theme,
             dynamicColors = this[DYNAMIC_COLORS] ?: defaults.dynamicColors,
             autoPlay = this[AUTO_PLAY] ?: defaults.autoPlay,
+            // Sem a chave, ou com um nome que este app não conhece (um valor
+            // de outra versão, por exemplo), a jornada fica nula e a Escolha
+            // aparece de novo, em vez de o app quebrar ao abrir.
+            journey = Journey.entries.firstOrNull { it.name == this[JOURNEY] },
         )
     }
 
@@ -52,5 +62,6 @@ class DataStoreSettingsRepository(
         val THEME = stringPreferencesKey("theme")
         val DYNAMIC_COLORS = booleanPreferencesKey("dynamicColors")
         val AUTO_PLAY = booleanPreferencesKey("autoPlay")
+        val JOURNEY = stringPreferencesKey("journey")
     }
 }
