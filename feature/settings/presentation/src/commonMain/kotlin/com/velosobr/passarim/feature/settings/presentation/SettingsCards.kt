@@ -33,11 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
@@ -176,24 +180,54 @@ internal class Segment(
 )
 
 /**
- * Botões segmentados: as opções coladas num contorno de pílula, com a marcada pintada. [stacked]
- * põe uma embaixo da outra, na largura toda (fonte grande: empilhar, nunca cortar o texto).
+ * Botões segmentados: as opções coladas num contorno de pílula, com a marcada pintada. Ficam lado a
+ * lado só se couberem inteiras na largura disponível; senão, uma embaixo da outra, na largura toda
+ * (empilhar, nunca cortar o texto). [alwaysStacked] empilha mesmo quando caberia (fonte grande).
  * selectableGroup junta as opções num grupo para o leitor de tela, e cada opção é selectable com
  * Role.RadioButton: ele anuncia "botão de opção, selecionado". Cada opção tem 48 dp de altura, o
  * alvo mínimo de toque.
+ *
+ * A decisão é por medida, não pela escala de fonte: num aparelho estreito o controle pode não caber
+ * nem com fonte 1.0×, e uma Row comum daria ao último botão só o que sobrou, quebrando "Escuro" no
+ * meio. Layout é o jeito de medir e posicionar os filhos à mão: maxIntrinsicWidth pergunta a cada
+ * opção "quanto você mede sem quebrar linha?" antes de medir de verdade, e a soma decide o arranjo.
  */
 @Composable
 internal fun SegmentedControl(
     segments: List<Segment>,
-    stacked: Boolean,
+    alwaysStacked: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(24.dp)
-    val frame = modifier.selectableGroup().clip(shape).border(1.dp, MaterialTheme.colorScheme.outline, shape)
-    if (stacked) {
-        Column(frame.fillMaxWidth()) { segments.forEach { SegmentButton(it, Modifier.fillMaxWidth()) } }
-    } else {
-        Row(frame) { segments.forEach { SegmentButton(it) } }
+    Layout(
+        content = { segments.forEach { SegmentButton(it) } },
+        modifier = modifier.selectableGroup().clip(shape).border(1.dp, MaterialTheme.colorScheme.outline, shape),
+    ) { measurables, constraints ->
+        val widths = measurables.map { it.maxIntrinsicWidth(Constraints.Infinity) }
+        val sideBySide = !alwaysStacked && widths.sum() <= constraints.maxWidth
+        if (sideBySide) {
+            // Lado a lado: cada opção na largura do próprio rótulo e todas na altura da mais alta.
+            val height = measurables.zip(widths).maxOf { (measurable, width) -> measurable.maxIntrinsicHeight(width) }
+            val placeables = measurables.zip(widths).map { (measurable, width) -> measurable.measure(Constraints.fixed(width, height)) }
+            layout(constraints.constrainWidth(widths.sum()), constraints.constrainHeight(height)) {
+                var x = 0
+                placeables.forEach { placeable ->
+                    placeable.placeRelative(x, 0)
+                    x += placeable.width
+                }
+            }
+        } else {
+            // Empilhadas: todas na largura toda (ou na da opção mais larga, se a largura não tiver limite).
+            val width = if (constraints.hasBoundedWidth) constraints.maxWidth else widths.max()
+            val placeables = measurables.map { it.measure(Constraints(minWidth = width, maxWidth = width)) }
+            layout(width, constraints.constrainHeight(placeables.sumOf { it.height })) {
+                var y = 0
+                placeables.forEach { placeable ->
+                    placeable.placeRelative(0, y)
+                    y += placeable.height
+                }
+            }
+        }
     }
 }
 

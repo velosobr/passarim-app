@@ -125,8 +125,9 @@ fun SettingsScreen(
 }
 
 /**
- * O tema como botões segmentados (Sistema, Claro, Escuro). Com fonte a partir de 1.5×, as opções
- * ficam uma embaixo da outra (PIU_STACK_FONT_SCALE, a mesma regra que põe o mosaico em uma coluna).
+ * O tema como botões segmentados (Sistema, Claro, Escuro). As opções ficam uma embaixo da outra
+ * quando não cabem lado a lado (o SegmentedControl mede) e, com fonte a partir de 1.5×, sempre
+ * (PIU_STACK_FONT_SCALE, a mesma regra que põe o mosaico em uma coluna).
  */
 @Composable
 private fun ThemeSegments(
@@ -138,7 +139,7 @@ private fun ThemeSegments(
             ThemeMode.entries.map { mode ->
                 Segment(stringResource(mode.label), selected = mode == selected, onClick = { onAction(SettingsAction.SelectTheme(mode)) })
             },
-        stacked = LocalDensity.current.fontScale >= PIU_STACK_FONT_SCALE,
+        alwaysStacked = LocalDensity.current.fontScale >= PIU_STACK_FONT_SCALE,
     )
 }
 
