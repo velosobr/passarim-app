@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
-import com.velosobr.passarim.core.presentation.speciesPhotoKey
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
 import com.velosobr.passarim.feature.detail.presentation.resources.back
@@ -57,7 +57,7 @@ import com.velosobr.piuds.resources.Res as DesignRes
 val HERO_HEIGHT = 430.dp
 
 /** O gradiente atrás da foto de uma ave sem bioma principal (BFF antigo): o do Pantanal, como no mosaico. */
-private val FallbackBiome = Biome.PANTANAL
+internal val FallbackBiome = Biome.PANTANAL
 
 /** A altura da faixa que funde a base da foto (já escurecida pelo scrim) à cor do fundo da tela. */
 private val FadeHeight = 32.dp
@@ -65,8 +65,9 @@ private val FadeHeight = 32.dp
 /**
  * O topo: foto, nome e botões. A caixa tem no mínimo [HERO_HEIGHT]; com fonte grande, o nome
  * empurra a caixa para baixo em vez de ser cortado. A foto é a fonte do desfoque
- * (piuBlurSource): os botões desfocam o que está atrás deles. Ao abrir pelo mosaico, ela chega
- * voando do card (a mesma chave speciesPhotoKey). Ela fica numa camada à parte dos
+ * (piuBlurSource): os botões desfocam o que está atrás deles. Ao abrir por um card, ela chega
+ * voando dele com a chave da [preview] (a mesma do esqueleto do carregamento), e a miniatura do
+ * card fica por baixo até a foto grande baixar. Ela fica numa camada à parte dos
  * botões porque uma superfície não pode desfocar a si mesma.
  *
  * O nome fica num bloco com o photoTextScrim, o degradê escuro do PiuDS que garante o contraste
@@ -77,6 +78,7 @@ private val FadeHeight = 32.dp
 @Composable
 internal fun DetailHero(
     detail: SpeciesDetail,
+    preview: DetailPreview,
     isFavorite: Boolean,
     onAction: (DetailAction) -> Unit,
 ) {
@@ -85,9 +87,10 @@ internal fun DetailHero(
     Box(Modifier.fillMaxWidth().heightIn(min = HERO_HEIGHT)) {
         PiuHeroPhoto(
             imageUrl = detail.photos.firstOrNull()?.heroUrl,
-            biome = detail.primaryBiome ?: FallbackBiome,
+            biome = detail.primaryBiome ?: preview.biome ?: FallbackBiome,
             aspectRatio = null,
-            sharedPhotoKey = speciesPhotoKey(detail.id),
+            placeholderUrl = preview.thumbnailUrl,
+            sharedPhotoKey = preview.photoKey,
             modifier = Modifier.matchParentSize().piuBlurSource(blur),
         )
         Column(Modifier.align(Alignment.BottomStart).fillMaxWidth()) {

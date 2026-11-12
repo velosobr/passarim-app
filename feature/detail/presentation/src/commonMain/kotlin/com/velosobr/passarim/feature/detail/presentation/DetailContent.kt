@@ -87,7 +87,7 @@ internal fun DetailContent(
     val credit = rememberCreditFormatter()
     Box {
         Column(Modifier.fillMaxSize().verticalScroll(scrollState).navigationBarsPadding()) {
-            DetailHero(detail, state.isFavorite, onAction)
+            DetailHero(detail, state.preview, state.isFavorite, onAction)
             Column(
                 Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),

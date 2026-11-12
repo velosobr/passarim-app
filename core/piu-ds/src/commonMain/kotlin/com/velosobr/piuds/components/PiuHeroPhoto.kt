@@ -41,7 +41,10 @@ private const val HERO_ASPECT_RATIO = 1.3f
  * passarinho. Com [aspectRatio] nulo, a altura vem do [modifier] (o Detalhe
  * usa uma altura fixa e faz a foto ocupar o espaço todo). Com
  * [sharedPhotoKey], a foto chega voando do card com a mesma chave (veja
- * PiuSharedPhoto.kt).
+ * PiuSharedPhoto.kt). [placeholderUrl] é uma imagem menor que já está
+ * guardada (a miniatura do card tocado), desenhada entre o gradiente e a foto
+ * enquanto a foto grande baixa: assim o topo não volta ao gradiente depois de
+ * a miniatura ter chegado voando.
  */
 @Composable
 fun PiuHeroPhoto(
@@ -49,6 +52,7 @@ fun PiuHeroPhoto(
     modifier: Modifier = Modifier,
     biome: Biome? = null,
     aspectRatio: Float? = HERO_ASPECT_RATIO,
+    placeholderUrl: String? = null,
     sharedPhotoKey: String? = null,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
@@ -65,6 +69,14 @@ fun PiuHeroPhoto(
                 )
             } else {
                 PhotoPlaceholder(iconSize = 96.dp)
+            }
+            if (placeholderUrl != null && placeholderUrl != imageUrl) {
+                AsyncImage(
+                    model = placeholderUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
             if (imageUrl != null) {
                 AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())

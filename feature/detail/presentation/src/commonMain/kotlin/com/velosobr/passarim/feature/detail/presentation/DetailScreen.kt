@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.detail.domain.Cluster
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
@@ -41,10 +42,12 @@ import com.velosobr.passarim.feature.detail.presentation.resources.not_found_act
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_body
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_title
 import com.velosobr.passarim.feature.detail.presentation.resources.retry
+import com.velosobr.piuds.components.PiuHeroPhoto
 import com.velosobr.piuds.components.PiuSkeletonBox
 import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
 import com.velosobr.piuds.components.piuBlurSource
+import com.velosobr.piuds.components.piuSharedPhoto
 import com.velosobr.piuds.components.rememberPiuBlurState
 import com.velosobr.piuds.resources.ic_arrow_back
 import com.velosobr.piuds.resources.ic_bird
@@ -71,7 +74,7 @@ fun DetailScreen(
     scrollState: ScrollState = rememberScrollState(),
 ) {
     when (val phase = state.phase) {
-        DetailPhase.Loading -> DetailSkeleton(onBack = { onAction(DetailAction.Back) })
+        DetailPhase.Loading -> DetailSkeleton(state.preview, onBack = { onAction(DetailAction.Back) })
         is DetailPhase.Content -> DetailContent(phase.detail, state, onAction, mapContent, scrollState)
         DetailPhase.NotFound ->
             StatePage(onBack = { onAction(DetailAction.Back) }) {
@@ -107,14 +110,34 @@ fun DetailScreen(
 
 /**
  * O "esqueleto" do carregamento, já com o botão de voltar funcionando, no mesmo lugar e no mesmo
- * círculo de vidro do conteúdo. O bloco cinza do topo é a fonte do desfoque do botão.
+ * círculo de vidro do conteúdo. O topo é a fonte do desfoque do botão.
+ *
+ * Ao abrir por um card, o Detalhe quase sempre nasce aqui (a ave ainda vem da rede), e é este topo
+ * que recebe a foto que viaja do card: ele já tem a chave da [preview] no primeiro quadro, e mostra
+ * a miniatura do card sobre o gradiente do bioma, então a foto chega sem virar um bloco cinza. Sem
+ * miniatura nem bioma (aberto pelos Favoritos), o topo é o bloco cinza de sempre, com a chave se
+ * houver.
  */
 @Composable
-private fun DetailSkeleton(onBack: () -> Unit) {
+private fun DetailSkeleton(
+    preview: DetailPreview,
+    onBack: () -> Unit,
+) {
     val blur = rememberPiuBlurState()
     Column(Modifier.fillMaxSize()) {
         Box {
-            PiuSkeletonBox(Modifier.fillMaxWidth().height(HERO_HEIGHT).piuBlurSource(blur), shape = RectangleShape)
+            val heroModifier = Modifier.fillMaxWidth().height(HERO_HEIGHT).piuBlurSource(blur)
+            if (preview.thumbnailUrl != null || preview.biome != null) {
+                PiuHeroPhoto(
+                    imageUrl = preview.thumbnailUrl,
+                    biome = preview.biome ?: FallbackBiome,
+                    aspectRatio = null,
+                    sharedPhotoKey = preview.photoKey,
+                    modifier = heroModifier,
+                )
+            } else {
+                PiuSkeletonBox(heroModifier.piuSharedPhoto(preview.photoKey), shape = RectangleShape)
+            }
             BackButton(blur, onBack, Modifier.statusBarsPadding().padding(horizontal = 16.dp, vertical = 8.dp))
         }
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

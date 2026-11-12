@@ -110,10 +110,9 @@ internal fun LazyStaggeredGridScope.mosaicItems(
             biome = bird.primaryBiome ?: FallbackBiome,
             isFavorite = bird.id in state.favoriteIds,
             onToggleFavorite = { onAction(ExploreAction.ToggleFavorite(bird)) },
-            onClick = { onAction(ExploreAction.OpenDetail(bird.id)) },
+            onClick = { onAction(ExploreAction.OpenDetail(bird)) },
             height = mosaicHeightFor(index),
-            // A foto do card viaja até o topo do Detalhe ao abrir a ave (só o mosaico: a "Ave do dia"
-            // costuma estar também no mosaico, e duas fotos com a mesma chave deixariam a origem ambígua).
+            // A foto do card viaja até o topo do Detalhe ao abrir a ave: o ViewModel manda a mesma chave na rota.
             sharedPhotoKey = speciesPhotoKey(bird.id),
         )
     }

@@ -22,6 +22,7 @@ import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
 import com.velosobr.passarim.core.domain.ConservationStatus
 import com.velosobr.passarim.core.domain.Credit
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.detail.domain.Audio
 import com.velosobr.passarim.feature.detail.domain.Biome
@@ -40,8 +41,8 @@ import com.velosobr.passarim.core.domain.Biome as PrimaryBiome
 
 /**
  * O Detalhe completo (topo, meio e fim, com créditos abertos e o canto pausado), o player com e
- * sem os picos da forma de onda, sem canto, sem foto (o gradiente do bioma), carregando, não
- * encontrado e com erro. O mapa entra como um desenho simples, porque o MapLibre não desenha no
+ * sem os picos da forma de onda, sem canto, sem foto (o gradiente do bioma), carregando (sem e com
+ * a prévia do card que abriu a tela), não encontrado e com erro. O mapa entra como um desenho simples, porque o MapLibre não desenha no
  * Paparazzi. A foto é uma imagem toda branca, o pior caso para o nome em branco sobre ela: o Coil,
  * em modo de inspeção (LocalInspectionMode), pede a imagem ao AsyncImagePreviewHandler em vez de
  * baixar.
@@ -155,6 +156,17 @@ class DetailSnapshotTest(
 
     @Test
     fun loading() = screen("detail-loading", DetailState(phase = DetailPhase.Loading))
+
+    /** Aberto por um card do mosaico: enquanto a ave carrega, o topo já mostra a miniatura do card sobre o gradiente do bioma. */
+    @Test
+    fun loadingFromCard() =
+        screen(
+            "detail-loading-from-card",
+            DetailState(
+                phase = DetailPhase.Loading,
+                preview = DetailPreview("foto-${arara.id}", "foto-branca", PrimaryBiome.PANTANAL),
+            ),
+        )
 
     @Test
     fun notFound() = screen("detail-not-found", DetailState(phase = DetailPhase.NotFound))

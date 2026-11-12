@@ -23,6 +23,7 @@ import com.velosobr.passarim.app.navigation.DetailRoute
 import com.velosobr.passarim.app.navigation.LicensesRoute
 import com.velosobr.passarim.app.navigation.StorageRoute
 import com.velosobr.passarim.app.navigation.TabsRoute
+import com.velosobr.passarim.app.navigation.toRoute
 import com.velosobr.passarim.app.tabs.TabsScreen
 import com.velosobr.passarim.app.theme.SystemBarsAppearance
 import com.velosobr.passarim.core.domain.SettingsRepository
@@ -89,7 +90,7 @@ private fun AppNavHost() {
             composable<TabsRoute> {
                 PiuSharedScope(this) {
                     TabsScreen(
-                        onOpenDetail = { id, autoPlay -> rootNav.navigate(DetailRoute(id, autoPlay)) },
+                        onOpenDetail = { opening -> rootNav.navigate(opening.toRoute()) },
                         onOpenStorage = { rootNav.navigate(StorageRoute) },
                         onOpenAbout = { rootNav.navigate(AboutRoute) },
                     )

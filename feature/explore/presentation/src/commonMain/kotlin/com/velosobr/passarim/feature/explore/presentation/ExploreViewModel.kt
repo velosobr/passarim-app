@@ -14,9 +14,13 @@ import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.onFailure
 import com.velosobr.passarim.core.domain.onSuccess
+import com.velosobr.passarim.core.presentation.DetailOpening
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
+import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.core.presentation.toScreenError
 import com.velosobr.passarim.feature.explore.domain.ExploreRepository
 import com.velosobr.passarim.feature.explore.domain.MAX_QUERY_LENGTH
@@ -145,14 +149,18 @@ class ExploreViewModel(
             ExploreAction.ApplyFilters -> applySheet()
             ExploreAction.RetryFilters -> loadFilters()
             is ExploreAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary) }
-            is ExploreAction.OpenDetail -> eventChannel.trySend(ExploreEvent.NavigateToDetail(action.id))
+            // O card do mosaico leva a chave da foto dele: a foto viaja do card até o topo do Detalhe.
+            is ExploreAction.OpenDetail ->
+                eventChannel.trySend(ExploreEvent.NavigateToDetail(action.summary.opening(photoKey = speciesPhotoKey(action.summary.id))))
             ExploreAction.OpenFavorites -> eventChannel.trySend(ExploreEvent.NavigateToFavorites)
             is ExploreAction.SelectBiome ->
                 setFilters(biome = action.code.takeIf { it != _state.value.biome }, state = _state.value.state)
-            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay).
+            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay). Sem chave de foto: a mesma ave
+            // costuma estar também no mosaico, e a foto viajaria do card dela, que ninguém tocou.
             ExploreAction.OpenFeatured, ExploreAction.PlayFeatured ->
                 _state.value.featured?.let {
-                    eventChannel.trySend(ExploreEvent.NavigateToDetail(it.species.id, autoPlay = action == ExploreAction.PlayFeatured))
+                    val opening = it.species.opening(photoKey = null, autoPlay = action == ExploreAction.PlayFeatured)
+                    eventChannel.trySend(ExploreEvent.NavigateToDetail(opening))
                 }
         }
     }
@@ -299,3 +307,12 @@ class ExploreViewModel(
         }
     }
 }
+
+/**
+ * O pedido de abrir o Detalhe desta ave, com o que o card já mostra (miniatura e bioma) e a
+ * [photoKey] da foto que viaja do card (nula: a foto não viaja).
+ */
+private fun SpeciesSummary.opening(
+    photoKey: String?,
+    autoPlay: Boolean = false,
+): DetailOpening = DetailOpening(id, autoPlay, DetailPreview(photoKey, thumbnailUrl, primaryBiome))
