@@ -1,4 +1,6 @@
-// A aba Configurações: aparência, reprodução, dados e sobre.
+// A aba Configurações (frente E3): as seções Aparência, Reprodução, Dados e
+// Sobre, cada uma num cartão de cantos arredondados (SettingsCards.kt). A seção
+// "Para crianças" entra com a frente D.
 
 package com.velosobr.passarim.feature.settings.presentation
 
@@ -6,24 +8,21 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
@@ -38,18 +37,19 @@ import com.velosobr.passarim.feature.settings.presentation.resources.section_app
 import com.velosobr.passarim.feature.settings.presentation.resources.section_data
 import com.velosobr.passarim.feature.settings.presentation.resources.section_playback
 import com.velosobr.passarim.feature.settings.presentation.resources.settings_title
-import com.velosobr.passarim.feature.settings.presentation.resources.storage
 import com.velosobr.passarim.feature.settings.presentation.resources.storage_body
+import com.velosobr.passarim.feature.settings.presentation.resources.storage_row
 import com.velosobr.passarim.feature.settings.presentation.resources.theme
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_dark
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_light
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_system
-import com.velosobr.piuds.components.PiuScreenTitle
+import com.velosobr.piuds.components.adult.PIU_STACK_FONT_SCALE
 import com.velosobr.piuds.resources.ic_info
 import com.velosobr.piuds.resources.ic_palette
 import com.velosobr.piuds.resources.ic_storage
 import com.velosobr.piuds.resources.ic_theme
 import com.velosobr.piuds.resources.ic_volume
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -64,85 +64,98 @@ private val ThemeMode.label: StringResource
             ThemeMode.DARK -> Res.string.theme_dark
         }
 
-/** A tela sem estado próprio. A opção de cores dinâmicas só aparece onde o sistema tem. */
+/**
+ * A tela sem estado próprio: tudo vem de [state] e cada toque vira uma [SettingsAction]. A opção de
+ * cores dinâmicas só aparece onde o sistema tem. [contentPadding] é o espaço da barra flutuante: a
+ * tela rola por baixo dela e o último cartão termina acima dela. As linhas que abrem outra tela
+ * levam Role.Button, para o leitor de tela anunciá-las como botão.
+ */
 @Composable
 fun SettingsScreen(
     state: SettingsState,
     onAction: (SettingsAction) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     scrollState: ScrollState = rememberScrollState(),
 ) {
-    Column(modifier.fillMaxSize().verticalScroll(scrollState).padding(bottom = 16.dp)) {
-        PiuScreenTitle(stringResource(Res.string.settings_title))
-        SectionHeader(stringResource(Res.string.section_appearance))
-        SettingsRow(title = stringResource(Res.string.theme), icon = DesignRes.drawable.ic_theme)
-        ThemeOptions(state.settings.theme, onAction)
-        if (state.dynamicColorsSupported) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(bottom = contentPadding.calculateBottomPadding() + 16.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+    ) {
+        // O título no estilo do PiuScreenTitle, mas sem os 8 dp que ele põe embaixo: o espaço até a
+        // primeira seção é só o spacedBy(18.dp) da coluna, como na prancheta.
+        Text(
+            stringResource(Res.string.settings_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin).semantics { heading() },
+        )
+        SettingsGroup(stringResource(Res.string.section_appearance)) {
+            GroupFlowRow(title = stringResource(Res.string.theme), icon = DesignRes.drawable.ic_theme) {
+                ThemeSegments(state.settings.theme, onAction)
+            }
+            if (state.dynamicColorsSupported) {
+                GroupDivider()
+                SwitchRow(
+                    title = stringResource(Res.string.dynamic_colors),
+                    subtitle = stringResource(Res.string.dynamic_colors_body),
+                    icon = DesignRes.drawable.ic_palette,
+                    checked = state.settings.dynamicColors,
+                    onCheckedChange = { onAction(SettingsAction.ChangeDynamicColors(it)) },
+                )
+            }
+        }
+        SettingsGroup(stringResource(Res.string.section_playback)) {
             SwitchRow(
-                title = stringResource(Res.string.dynamic_colors),
-                subtitle = stringResource(Res.string.dynamic_colors_body),
-                icon = DesignRes.drawable.ic_palette,
-                checked = state.settings.dynamicColors,
-                onCheckedChange = { onAction(SettingsAction.ChangeDynamicColors(it)) },
+                title = stringResource(Res.string.autoplay),
+                subtitle = stringResource(Res.string.autoplay_body),
+                icon = DesignRes.drawable.ic_volume,
+                checked = state.settings.autoPlay,
+                onCheckedChange = { onAction(SettingsAction.ChangeAutoPlay(it)) },
             )
         }
-        SectionHeader(stringResource(Res.string.section_playback))
-        SwitchRow(
-            title = stringResource(Res.string.autoplay),
-            subtitle = stringResource(Res.string.autoplay_body),
-            icon = DesignRes.drawable.ic_volume,
-            checked = state.settings.autoPlay,
-            onCheckedChange = { onAction(SettingsAction.ChangeAutoPlay(it)) },
-        )
-        SectionHeader(stringResource(Res.string.section_data))
-        SettingsRow(
-            title = stringResource(Res.string.storage),
-            subtitle = stringResource(Res.string.storage_body),
-            icon = DesignRes.drawable.ic_storage,
-            modifier = Modifier.clickable { onAction(SettingsAction.OpenStorage) },
-        ) { Chevron() }
-        SectionHeader(stringResource(Res.string.section_about))
-        SettingsRow(
-            title = stringResource(Res.string.about_row),
-            subtitle = stringResource(Res.string.about_row_body, state.versionName),
-            icon = DesignRes.drawable.ic_info,
-            modifier = Modifier.clickable { onAction(SettingsAction.OpenAbout) },
-        ) { Chevron() }
+        SettingsGroup(stringResource(Res.string.section_data)) {
+            GroupRow(
+                title = stringResource(Res.string.storage_row),
+                subtitle = stringResource(Res.string.storage_body),
+                icon = DesignRes.drawable.ic_storage,
+                modifier = Modifier.clickable(role = Role.Button) { onAction(SettingsAction.OpenStorage) },
+            ) { Chevron() }
+        }
+        SettingsGroup(stringResource(Res.string.section_about)) {
+            GroupRow(
+                title = stringResource(Res.string.about_row),
+                subtitle = stringResource(Res.string.about_row_body, state.versionName),
+                icon = DesignRes.drawable.ic_info,
+                modifier = Modifier.clickable(role = Role.Button) { onAction(SettingsAction.OpenAbout) },
+            ) { Chevron() }
+        }
     }
 }
 
 /**
- * As opções de tema como um grupo de botões de rádio. selectableGroup junta as
- * opções num grupo para o leitor de tela, e Role.RadioButton com selected diz que
- * cada uma é uma opção marcável; o toque vale na linha toda, não só no círculo.
+ * O tema como botões segmentados (Sistema, Claro, Escuro). As opções ficam uma embaixo da outra
+ * quando não cabem lado a lado (o SegmentedControl mede) e, com fonte a partir de 1.5×, sempre
+ * (PIU_STACK_FONT_SCALE, a mesma regra que põe o mosaico em uma coluna).
  */
 @Composable
-private fun ThemeOptions(
+private fun ThemeSegments(
     selected: ThemeMode,
     onAction: (SettingsAction) -> Unit,
 ) {
-    Column(Modifier.selectableGroup()) {
-        ThemeMode.entries.forEach { mode ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .selectable(
-                        selected = mode == selected,
-                        onClick = { onAction(SettingsAction.SelectTheme(mode)) },
-                        role = Role.RadioButton,
-                    ).padding(start = RowTextStart, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                RadioButton(selected = mode == selected, onClick = null)
-                Text(stringResource(mode.label), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-    }
+    SegmentedControl(
+        segments =
+            ThemeMode.entries.map { mode ->
+                Segment(stringResource(mode.label), selected = mode == selected, onClick = { onAction(SettingsAction.SelectTheme(mode)) })
+            },
+        alwaysStacked = LocalDensity.current.fontScale >= PIU_STACK_FONT_SCALE,
+    )
 }
 
-/** Uma linha com chave liga/desliga; o toque vale na linha toda (toggleable). */
+/** Uma linha com chave liga/desliga; o toque vale na linha toda (toggleable) e a chave só mostra o estado. */
 @Composable
 private fun SwitchRow(
     title: String,
@@ -151,7 +164,7 @@ private fun SwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    SettingsRow(
+    GroupRow(
         title = title,
         subtitle = subtitle,
         icon = icon,

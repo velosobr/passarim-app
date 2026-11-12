@@ -91,6 +91,17 @@ class FavoritesViewModelTest {
     }
 
     @Test
+    fun `a contagem acompanha as aves guardadas`() {
+        // A contagem vai para o subtítulo ("2 aves guardadas") e cai junto quando uma ave sai.
+        val repository = FakeFavoritesRepository(initial = listOf(tucano, arara))
+        val vm = FavoritesViewModel(repository)
+        assertThat((vm.state.value as FavoritesState.Content).count).isEqualTo(2)
+
+        vm.onAction(FavoritesAction.ToggleFavorite(tucano))
+        assertThat((vm.state.value as FavoritesState.Content).count).isEqualTo(1)
+    }
+
+    @Test
     fun `abrir uma ave e explorar viram eventos de navegacao`() =
         runTest {
             val vm = FavoritesViewModel(FakeFavoritesRepository(initial = listOf(arara)))

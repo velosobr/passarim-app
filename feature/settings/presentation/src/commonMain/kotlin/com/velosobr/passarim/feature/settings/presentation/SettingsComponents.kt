@@ -1,4 +1,5 @@
-// Peças visuais compartilhadas pelas telas de Configurações.
+// Peças visuais compartilhadas pelas subtelas de Configurações (Dados e
+// armazenamento, Sobre). A aba em si usa os cartões de SettingsCards.kt.
 
 package com.velosobr.passarim.feature.settings.presentation
 
@@ -17,31 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.piuds.resources.Res
 import com.velosobr.piuds.resources.ic_chevron_right
 import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
-
-/** Onde o texto das linhas começa (depois do ícone), para as opções de tema se alinharem a ele. */
-internal val RowTextStart = 72.dp
-
-/** Título de uma seção, marcado como cabeçalho para o leitor de tela. */
-@Composable
-internal fun SectionHeader(text: String) {
-    Text(
-        text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier =
-            Modifier
-                .padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin, bottom = 8.dp)
-                .semantics { heading() },
-    )
-}
 
 /** Uma linha de configuração: ícone, título, subtítulo e um slot à direita (chave, seta). */
 @Composable

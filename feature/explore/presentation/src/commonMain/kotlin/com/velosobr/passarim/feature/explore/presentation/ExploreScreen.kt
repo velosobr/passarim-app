@@ -62,6 +62,7 @@ import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
 import com.velosobr.piuds.components.adult.PiuBiomeChip
 import com.velosobr.piuds.components.adult.PiuMosaicHeight
+import com.velosobr.piuds.components.adult.piuMosaicHeightFor
 import com.velosobr.piuds.resources.ic_cloud_off
 import com.velosobr.piuds.resources.ic_search
 import com.velosobr.piuds.resources.ic_wifi_off
@@ -202,7 +203,7 @@ private fun SkeletonGrid(columns: Int) {
         items(4) { index ->
             PiuSkeletonBox(
                 Modifier.fillMaxWidth().height(
-                    mosaicHeightFor(index).let {
+                    piuMosaicHeightFor(index).let {
                         if (it ==
                             PiuMosaicHeight.TALL
                         ) {
