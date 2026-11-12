@@ -72,6 +72,16 @@ class SettingsScreenTest {
             onNodeWithText("Para crianças").assertDoesNotExist()
         }
 
+    /** Prancheta: 18 dp entre o título da tela e o título da primeira seção. */
+    @Test
+    fun `o titulo fica a 18 dp da primeira secao`() =
+        runComposeUiTest {
+            setContent { PiuTheme { SettingsScreen(state, onAction = {}) } }
+            val title = onNode(hasText("Configurações") and isHeading).getBoundsInRoot()
+            val firstSection = onNode(hasText("Aparência") and isHeading).getBoundsInRoot()
+            assertThat(firstSection.top - title.bottom).isEqualTo(18.dp)
+        }
+
     @Test
     fun `o tema e um grupo de botoes segmentados com a opcao atual marcada`() =
         runComposeUiTest {
@@ -160,9 +170,10 @@ class SettingsScreenTest {
         runComposeUiTest {
             val actions = mutableListOf<SettingsAction>()
             setContent { PiuTheme { SettingsScreen(state, onAction = { actions += it }) } }
-            onNodeWithText("Armazenamento").performScrollTo().performClick()
+            // Role.Button: o leitor de tela anuncia a linha como botão.
+            onNodeWithText("Armazenamento").performScrollTo().assert(hasRole(Role.Button)).performClick()
             onNodeWithText("Versão 1.0.0, fontes e licenças").performScrollTo()
-            onNodeWithText("Sobre o Passarim").performClick()
+            onNodeWithText("Sobre o Passarim").assert(hasRole(Role.Button)).performClick()
             assertThat(actions).containsExactly(SettingsAction.OpenStorage, SettingsAction.OpenAbout)
         }
 }

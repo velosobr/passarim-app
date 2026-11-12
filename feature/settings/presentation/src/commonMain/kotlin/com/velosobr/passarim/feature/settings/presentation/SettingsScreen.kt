@@ -14,11 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
@@ -39,13 +43,13 @@ import com.velosobr.passarim.feature.settings.presentation.resources.theme
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_dark
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_light
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_system
-import com.velosobr.piuds.components.PiuScreenTitle
 import com.velosobr.piuds.components.adult.PIU_STACK_FONT_SCALE
 import com.velosobr.piuds.resources.ic_info
 import com.velosobr.piuds.resources.ic_palette
 import com.velosobr.piuds.resources.ic_storage
 import com.velosobr.piuds.resources.ic_theme
 import com.velosobr.piuds.resources.ic_volume
+import com.velosobr.piuds.theme.PiuDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -63,7 +67,8 @@ private val ThemeMode.label: StringResource
 /**
  * A tela sem estado próprio: tudo vem de [state] e cada toque vira uma [SettingsAction]. A opção de
  * cores dinâmicas só aparece onde o sistema tem. [contentPadding] é o espaço da barra flutuante: a
- * tela rola por baixo dela e o último cartão termina acima dela.
+ * tela rola por baixo dela e o último cartão termina acima dela. As linhas que abrem outra tela
+ * levam Role.Button, para o leitor de tela anunciá-las como botão.
  */
 @Composable
 fun SettingsScreen(
@@ -80,7 +85,14 @@ fun SettingsScreen(
             .padding(bottom = contentPadding.calculateBottomPadding() + 16.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        PiuScreenTitle(stringResource(Res.string.settings_title), Modifier.padding(bottom = 0.dp))
+        // O título no estilo do PiuScreenTitle, mas sem os 8 dp que ele põe embaixo: o espaço até a
+        // primeira seção é só o spacedBy(18.dp) da coluna, como na prancheta.
+        Text(
+            stringResource(Res.string.settings_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin).semantics { heading() },
+        )
         SettingsGroup(stringResource(Res.string.section_appearance)) {
             GroupFlowRow(title = stringResource(Res.string.theme), icon = DesignRes.drawable.ic_theme) {
                 ThemeSegments(state.settings.theme, onAction)
@@ -110,7 +122,7 @@ fun SettingsScreen(
                 title = stringResource(Res.string.storage_row),
                 subtitle = stringResource(Res.string.storage_body),
                 icon = DesignRes.drawable.ic_storage,
-                modifier = Modifier.clickable { onAction(SettingsAction.OpenStorage) },
+                modifier = Modifier.clickable(role = Role.Button) { onAction(SettingsAction.OpenStorage) },
             ) { Chevron() }
         }
         SettingsGroup(stringResource(Res.string.section_about)) {
@@ -118,7 +130,7 @@ fun SettingsScreen(
                 title = stringResource(Res.string.about_row),
                 subtitle = stringResource(Res.string.about_row_body, state.versionName),
                 icon = DesignRes.drawable.ic_info,
-                modifier = Modifier.clickable { onAction(SettingsAction.OpenAbout) },
+                modifier = Modifier.clickable(role = Role.Button) { onAction(SettingsAction.OpenAbout) },
             ) { Chevron() }
         }
     }

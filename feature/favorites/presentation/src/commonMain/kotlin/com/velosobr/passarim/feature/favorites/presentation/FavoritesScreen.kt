@@ -127,6 +127,9 @@ private fun FavoritesMosaic(
         item(key = "header", span = StaggeredGridItemSpan.FullLine, contentType = "header") {
             FavoritesHeader(count = state.count)
         }
+        // key: cada card é identificado pelo id da ave, e não pela posição; assim o animateItem segue
+        // a mesma ave quando outra sai da lista. contentType: itens do mesmo tipo ("species") podem
+        // reaproveitar a composição uns dos outros ao rolar, o que deixa a grade mais leve.
         itemsIndexed(state.items, key = { _, bird -> bird.id }, contentType = { _, _ -> "species" }) { index, bird ->
             PiuMosaicCard(
                 name = bird.commonName,
