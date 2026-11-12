@@ -30,6 +30,8 @@ import com.velosobr.passarim.feature.detail.presentation.DetailRoot
 import com.velosobr.passarim.feature.settings.presentation.AboutRoot
 import com.velosobr.passarim.feature.settings.presentation.LicensesRoot
 import com.velosobr.passarim.feature.settings.presentation.StorageRoot
+import com.velosobr.piuds.components.PiuSharedScope
+import com.velosobr.piuds.components.PiuSharedTransitionLayout
 import com.velosobr.piuds.theme.PiuTheme
 import com.velosobr.piuds.theme.isDark
 import org.koin.compose.koinInject
@@ -73,32 +75,41 @@ fun App(onSettingsLoaded: () -> Unit = {}) {
  * RESUMED; durante uma transição (entrando ou saindo) o toque é ignorado, o
  * que evita voltar duas vezes com toques rápidos. Os
  * blocos de rota só ligam as telas: os efeitos ficam dentro delas.
+ *
+ * PiuSharedTransitionLayout em volta do NavHost deixa a foto do card do
+ * mosaico viajar até o topo do Detalhe. Cada bloco de rota passa o próprio
+ * escopo de animação (o `this` de composable { }) com PiuSharedScope; as
+ * abas, que têm o NavHost delas, usam o escopo da rota das abas daqui.
  */
 @Composable
 private fun AppNavHost() {
     val rootNav = rememberNavController()
-    NavHost(rootNav, startDestination = TabsRoute) {
-        composable<TabsRoute> {
-            TabsScreen(
-                onOpenDetail = { id, autoPlay -> rootNav.navigate(DetailRoute(id, autoPlay)) },
-                onOpenStorage = { rootNav.navigate(StorageRoute) },
-                onOpenAbout = { rootNav.navigate(AboutRoute) },
-            )
-        }
-        composable<DetailRoute> {
-            DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
-        }
-        composable<StorageRoute> {
-            StorageRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
-        }
-        composable<AboutRoute> {
-            AboutRoot(
-                onBack = dropUnlessResumed { rootNav.popBackStack() },
-                onOpenLicenses = { rootNav.navigate(LicensesRoute) },
-            )
-        }
-        composable<LicensesRoute> {
-            LicensesRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+    PiuSharedTransitionLayout {
+        NavHost(rootNav, startDestination = TabsRoute) {
+            composable<TabsRoute> {
+                PiuSharedScope(this) {
+                    TabsScreen(
+                        onOpenDetail = { id, autoPlay -> rootNav.navigate(DetailRoute(id, autoPlay)) },
+                        onOpenStorage = { rootNav.navigate(StorageRoute) },
+                        onOpenAbout = { rootNav.navigate(AboutRoute) },
+                    )
+                }
+            }
+            composable<DetailRoute> {
+                PiuSharedScope(this) { DetailRoot(onBack = dropUnlessResumed { rootNav.popBackStack() }) }
+            }
+            composable<StorageRoute> {
+                StorageRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+            }
+            composable<AboutRoute> {
+                AboutRoot(
+                    onBack = dropUnlessResumed { rootNav.popBackStack() },
+                    onOpenLicenses = { rootNav.navigate(LicensesRoute) },
+                )
+            }
+            composable<LicensesRoute> {
+                LicensesRoot(onBack = dropUnlessResumed { rootNav.popBackStack() })
+            }
         }
     }
 }

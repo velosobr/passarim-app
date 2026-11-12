@@ -1,4 +1,5 @@
-// Testes das regras do SpeciesDetail: URLs de foto e o resumo para os favoritos.
+// Testes das regras do SpeciesDetail: URLs de foto e o resumo para os favoritos
+// (com o bioma principal, que dá o gradiente do card).
 
 package com.velosobr.passarim.feature.detail.domain
 
@@ -8,6 +9,7 @@ import assertk.assertions.isNull
 import com.velosobr.passarim.core.domain.Credit
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import kotlin.test.Test
+import com.velosobr.passarim.core.domain.Biome as PrimaryBiome
 
 class SpeciesDetailTest {
     private val credit = Credit("autor", "CC BY", "inaturalist", null)
@@ -55,5 +57,10 @@ class SpeciesDetailTest {
     fun `o resumo do favorito usa a miniatura da primeira foto`() {
         assertThat(detail.toSummary()).isEqualTo(SpeciesSummary("pitangus-sulphuratus", "Bem-te-vi", "Pitangus sulphuratus", "thumb-1"))
         assertThat(detail.copy(photos = emptyList()).toSummary().thumbnailUrl).isNull()
+    }
+
+    @Test
+    fun `o resumo do favorito leva o bioma principal da ave`() {
+        assertThat(detail.copy(primaryBiome = PrimaryBiome.CERRADO).toSummary().primaryBiome).isEqualTo(PrimaryBiome.CERRADO)
     }
 }

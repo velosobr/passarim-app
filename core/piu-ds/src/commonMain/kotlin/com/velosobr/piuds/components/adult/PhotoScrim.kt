@@ -1,6 +1,7 @@
 // O scrim das fotos do adulto: o degradê escuro atrás do nome da ave, para o
-// texto branco ter contraste sobre qualquer foto. Usado pelo card do mosaico
-// e pela "Ave do dia"; fica interno ao PiuDS.
+// texto branco ter contraste sobre qualquer foto. Usado pelo card do mosaico,
+// pela "Ave do dia" e pelo nome sobre a foto do Detalhe: com a terceira tela,
+// passou a ser público (antes era interno ao PiuDS).
 
 package com.velosobr.piuds.components.adult
 
@@ -26,7 +27,7 @@ import androidx.compose.ui.unit.dp
  * degradê vai de 0 a [fade] em pixels; depois do fim, ele repete a última
  * cor (o padrão "clamp"), por isso o resto do bloco fica todo escuro.
  */
-internal fun Modifier.photoTextScrim(
+fun Modifier.photoTextScrim(
     color: Color,
     fade: Dp = 32.dp,
 ): Modifier =
