@@ -6,6 +6,7 @@ package com.velosobr.passarim.feature.settings.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import assertk.assertThat
@@ -94,12 +95,30 @@ class DataStoreSettingsRepositoryTest {
             assertThat(repository.observe().first().journey).isEqualTo(Journey.ADULT)
         }
 
+    // Confere também as outras chaves: uma leitura que caísse em Settings()
+    // inteiro diante do valor desconhecido apagaria o tema e o autoPlay.
     @Test
-    fun `jornada desconhecida no arquivo vira nula`() =
+    fun `jornada desconhecida no arquivo vira nula e as outras chaves continuam`() =
         runTest {
             val dataStore = backgroundScope.dataStore()
-            dataStore.edit { it[stringPreferencesKey("journey")] = "TEEN" }
+            dataStore.edit {
+                it[stringPreferencesKey("theme")] = "DARK"
+                it[booleanPreferencesKey("autoPlay")] = true
+                it[stringPreferencesKey("journey")] = "TEEN"
+            }
 
-            assertThat(DataStoreSettingsRepository(dataStore).observe().first().journey).isNull()
+            assertThat(DataStoreSettingsRepository(dataStore).observe().first())
+                .isEqualTo(Settings(ThemeMode.DARK, autoPlay = true, journey = null))
+        }
+
+    @Test
+    fun `gravar outra opcao depois da jornada mantem a jornada`() =
+        runTest {
+            val repository = DataStoreSettingsRepository(backgroundScope.dataStore())
+
+            repository.setJourney(Journey.KIDS)
+            repository.setTheme(ThemeMode.DARK)
+
+            assertThat(repository.observe().first().journey).isEqualTo(Journey.KIDS)
         }
 }
