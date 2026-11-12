@@ -23,6 +23,8 @@ internal data class SpeciesDetailDto(
     val photos: List<PhotoDto> = emptyList(),
     val audio: AudioDto? = null,
     val whereToFind: WhereToFindDto,
+    /** O código do bioma principal ("pantanal"); só vem do BFF a partir da frente B. */
+    val primaryBiome: String? = null,
 )
 
 /** O status de conservação; o app só lê o código e usa o próprio rótulo. */
@@ -62,12 +64,13 @@ internal data class PhotoDto(
     val credit: CreditDto,
 )
 
-/** O canto. */
+/** O canto. [peaks] são as 64 alturas da forma de onda (de 0 a 1); só vêm a partir da frente B. */
 @Serializable
 internal data class AudioDto(
     val url: String,
     val durationMs: Long,
     val credit: CreditDto,
+    val peaks: List<Float> = emptyList(),
 )
 
 /** A seção "Onde encontrar". */
