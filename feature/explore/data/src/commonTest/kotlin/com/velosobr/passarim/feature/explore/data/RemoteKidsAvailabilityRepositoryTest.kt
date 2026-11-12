@@ -99,6 +99,26 @@ class RemoteKidsAvailabilityRepositoryTest {
             assertThat(result).isEqualTo(Result.Failure(DataError.Network.ServiceUnavailable))
         }
 
+    // Um BFF que não aceita o audience=kids responde 400 em problem+json com o
+    // code INVALID_PARAMETER. Para o app, isso é um BFF sem Kids: tentar de
+    // novo não resolveria, então o Kids fica escondido em vez de virar erro.
+    @Test
+    fun `audience recusado pelo BFF esconde o Kids`() =
+        runTest {
+            val engine =
+                MockEngine {
+                    respond(
+                        """{"status":400,"code":"INVALID_PARAMETER","errors":[{"field":"audience","reason":"use adult ou kids"}]}""",
+                        HttpStatusCode.BadRequest,
+                        headersOf(HttpHeaders.ContentType, "application/problem+json"),
+                    )
+                }
+
+            val result = repository(engine).checkKidsAvailability()
+
+            assertThat(result).isEqualTo(Result.Success(false))
+        }
+
     @Test
     fun `sem rede vira NoConnection`() =
         runTest {

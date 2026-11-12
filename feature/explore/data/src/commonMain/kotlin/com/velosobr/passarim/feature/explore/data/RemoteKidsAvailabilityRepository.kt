@@ -8,7 +8,6 @@ import com.velosobr.passarim.core.data.safeCall
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.KidsAvailabilityRepository
 import com.velosobr.passarim.core.domain.Result
-import com.velosobr.passarim.core.domain.map
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -22,6 +21,9 @@ import io.ktor.client.request.parameter
  *   dá zero, e o Kids fica escondido.
  * - Um catálogo sem aves para o Kids manda as contagens zeradas: também
  *   escondido, para o Kids não abrir vazio.
+ * - Um BFF que recusa o `audience=kids` (400 com o code INVALID_PARAMETER)
+ *   também não tem o Kids: vira false, e não falha, porque tentar de novo
+ *   daria a mesma recusa e a tela mostraria um "Tentar de novo" inútil.
  *
  * De propósito, não passa pelo cache em memória do RemoteFiltersRepository:
  * aquele cache guarda os filtros do adulto (sem `audience`), e a resposta
@@ -31,6 +33,8 @@ class RemoteKidsAvailabilityRepository(
     private val client: HttpClient,
 ) : KidsAvailabilityRepository {
     override suspend fun checkKidsAvailability(): Result<Boolean, DataError.Network> =
-        safeCall<FiltersDto> { client.get("/v1/filters") { parameter("audience", "kids") } }
-            .map { filters -> filters.primaryBiomes.sumOf { it.speciesCount } > 0 }
+        when (val result = safeCall<FiltersDto> { client.get("/v1/filters") { parameter("audience", "kids") } }) {
+            is Result.Success -> Result.Success(result.data.primaryBiomes.sumOf { it.speciesCount } > 0)
+            is Result.Failure -> if (result.error == DataError.Network.InvalidParameter) Result.Success(false) else result
+        }
 }

@@ -14,9 +14,11 @@ package com.velosobr.passarim.core.domain
 interface KidsAvailabilityRepository {
     /**
      * true quando o BFF tem aves para o Kids; false quando o BFF não conhece o
-     * Kids (anterior à frente B) ou não tem nenhuma ave para ele. Falha só
-     * quando não deu para perguntar (sem rede, BFF fora do ar etc.), e aí a
-     * tela decide o que mostrar, como o "Tentar de novo".
+     * Kids (anterior à frente B, ou que recusa o pedido do Kids como parâmetro
+     * inválido) ou não tem nenhuma ave para ele. Falha quando não deu para
+     * perguntar (sem rede, BFF fora do ar etc.) ou quando a resposta veio
+     * num formato que o app não entende, e aí a tela decide o que mostrar,
+     * como o "Tentar de novo".
      */
     suspend fun checkKidsAvailability(): Result<Boolean, DataError.Network>
 }
