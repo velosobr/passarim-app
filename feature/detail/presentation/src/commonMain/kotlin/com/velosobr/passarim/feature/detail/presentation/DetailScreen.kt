@@ -41,10 +41,11 @@ import com.velosobr.passarim.feature.detail.presentation.resources.not_found_act
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_body
 import com.velosobr.passarim.feature.detail.presentation.resources.not_found_title
 import com.velosobr.passarim.feature.detail.presentation.resources.retry
-import com.velosobr.piuds.components.PiuHeroIconButton
 import com.velosobr.piuds.components.PiuSkeletonBox
 import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
+import com.velosobr.piuds.components.piuBlurSource
+import com.velosobr.piuds.components.rememberPiuBlurState
 import com.velosobr.piuds.resources.ic_arrow_back
 import com.velosobr.piuds.resources.ic_bird
 import com.velosobr.piuds.resources.ic_cloud_off
@@ -104,18 +105,17 @@ fun DetailScreen(
     }
 }
 
-/** O "esqueleto" do carregamento, já com o botão de voltar funcionando. */
+/**
+ * O "esqueleto" do carregamento, já com o botão de voltar funcionando, no mesmo lugar e no mesmo
+ * círculo de vidro do conteúdo. O bloco cinza do topo é a fonte do desfoque do botão.
+ */
 @Composable
 private fun DetailSkeleton(onBack: () -> Unit) {
+    val blur = rememberPiuBlurState()
     Column(Modifier.fillMaxSize()) {
         Box {
-            PiuSkeletonBox(Modifier.fillMaxWidth().height(300.dp), shape = RectangleShape)
-            PiuHeroIconButton(
-                painterResource(DesignRes.drawable.ic_arrow_back),
-                contentDescription = stringResource(Res.string.back),
-                onClick = onBack,
-                modifier = Modifier.statusBarsPadding().padding(8.dp),
-            )
+            PiuSkeletonBox(Modifier.fillMaxWidth().height(HERO_HEIGHT).piuBlurSource(blur), shape = RectangleShape)
+            BackButton(blur, onBack, Modifier.statusBarsPadding().padding(horizontal = 16.dp, vertical = 8.dp))
         }
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             PiuSkeletonBox(Modifier.width(250.dp).height(32.dp))

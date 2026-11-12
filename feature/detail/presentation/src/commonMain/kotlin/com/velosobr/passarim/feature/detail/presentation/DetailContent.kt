@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Credit
 import com.velosobr.passarim.feature.detail.domain.Audio
@@ -37,7 +35,6 @@ import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.domain.WhereToFind
 import com.velosobr.passarim.feature.detail.domain.isSafeLink
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
-import com.velosobr.passarim.feature.detail.presentation.resources.back
 import com.velosobr.passarim.feature.detail.presentation.resources.credit_audio
 import com.velosobr.passarim.feature.detail.presentation.resources.credit_open_source
 import com.velosobr.passarim.feature.detail.presentation.resources.credit_photo
@@ -64,24 +61,15 @@ import com.velosobr.piuds.components.GalleryPhoto
 import com.velosobr.piuds.components.PiuConservationBadge
 import com.velosobr.piuds.components.PiuCreditCaption
 import com.velosobr.piuds.components.PiuFactTile
-import com.velosobr.piuds.components.PiuHeroIconButton
-import com.velosobr.piuds.components.PiuHeroPhoto
 import com.velosobr.piuds.components.PiuInfoChips
 import com.velosobr.piuds.components.PiuLabeledChips
 import com.velosobr.piuds.components.PiuPhotoGallery
-import com.velosobr.piuds.resources.favorite_add
-import com.velosobr.piuds.resources.favorite_remove
-import com.velosobr.piuds.resources.ic_arrow_back
-import com.velosobr.piuds.resources.ic_favorite_filled
-import com.velosobr.piuds.resources.ic_favorites
 import com.velosobr.piuds.theme.PiuDimens
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
-import com.velosobr.piuds.resources.Res as DesignRes
 
 /**
- * A página rolável do Detalhe: foto do topo, cabeçalho, fatos, biomas,
+ * A página rolável do Detalhe: foto do topo com o nome (DetailHero), cabeçalho, fatos, biomas,
  * dieta, canto, descrição, curiosidades, galeria, "Onde encontrar" e
  * créditos. Seções sem dado não aparecem. [mapContent] é um slot para o mapa,
  * para os snapshots trocarem o MapLibre por um desenho simples.
@@ -99,9 +87,9 @@ internal fun DetailContent(
     val credit = rememberCreditFormatter()
     Box {
         Column(Modifier.fillMaxSize().verticalScroll(scrollState).navigationBarsPadding()) {
-            Hero(detail, state.isFavorite, onAction)
+            DetailHero(detail, state.isFavorite, onAction)
             Column(
-                Modifier.padding(horizontal = PiuDimens.screenMargin, vertical = 16.dp),
+                Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 Header(
@@ -192,32 +180,10 @@ private fun WhereToFindSection(
     }
 }
 
-/** A foto do topo, que vai até atrás da barra de status, com os botões de voltar e de favoritar por cima, logo abaixo dela. */
-@Composable
-private fun Hero(
-    detail: SpeciesDetail,
-    isFavorite: Boolean,
-    onAction: (DetailAction) -> Unit,
-) {
-    PiuHeroPhoto(imageUrl = detail.photos.firstOrNull()?.heroUrl) {
-        Row(Modifier.fillMaxWidth().statusBarsPadding().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            PiuHeroIconButton(
-                painterResource(DesignRes.drawable.ic_arrow_back),
-                contentDescription = stringResource(Res.string.back),
-                onClick = { onAction(DetailAction.Back) },
-            )
-            PiuHeroIconButton(
-                painterResource(if (isFavorite) DesignRes.drawable.ic_favorite_filled else DesignRes.drawable.ic_favorites),
-                contentDescription =
-                    stringResource(if (isFavorite) DesignRes.string.favorite_remove else DesignRes.string.favorite_add, detail.commonName),
-                onClick = { onAction(DetailAction.ToggleFavorite) },
-                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            )
-        }
-    }
-}
-
-/** Crédito da foto, nome popular, nome científico em itálico, selo de conservação e família. */
+/**
+ * O que vem logo abaixo da foto: o crédito dela, o selo de conservação e a família. O nome e o
+ * nome científico ficam sobre a foto (DetailHero).
+ */
 @Composable
 private fun Header(
     detail: SpeciesDetail,
@@ -225,13 +191,6 @@ private fun Header(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         photoCredit?.let { PiuCreditCaption(it) }
-        Text(detail.commonName, style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
-        Text(
-            detail.scientificName,
-            style = MaterialTheme.typography.bodyLarge,
-            fontStyle = FontStyle.Italic,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             detail.conservation?.let { PiuConservationBadge(it, Modifier.align(Alignment.CenterVertically)) }
             Text(

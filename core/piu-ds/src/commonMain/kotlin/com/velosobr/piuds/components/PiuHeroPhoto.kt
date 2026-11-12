@@ -21,7 +21,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.theme.PiuDimens
+import com.velosobr.piuds.theme.PiuTheme
+import com.velosobr.piuds.theme.toBrush
 
 /** Proporção largura:altura da foto do topo. */
 private const val HERO_ASPECT_RATIO = 1.3f
@@ -32,15 +35,32 @@ private const val HERO_ASPECT_RATIO = 1.3f
  * para desenhar por cima (os botões de voltar e favoritar). AsyncImage é o
  * componente do Coil que baixa e mostra a imagem; ContentScale.Crop preenche o
  * espaço cortando as bordas.
+ *
+ * Com [biome], o fundo enquanto a foto não chega (ou sem foto) é o gradiente
+ * do bioma, como nos cards do mosaico, no lugar do placeholder com o
+ * passarinho. Com [aspectRatio] nulo, a altura vem do [modifier] (o Detalhe
+ * usa uma altura fixa e faz a foto ocupar o espaço todo).
  */
 @Composable
 fun PiuHeroPhoto(
     imageUrl: String?,
     modifier: Modifier = Modifier,
+    biome: Biome? = null,
+    aspectRatio: Float? = HERO_ASPECT_RATIO,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
-    Box(modifier.fillMaxWidth().aspectRatio(HERO_ASPECT_RATIO)) {
-        PhotoPlaceholder(iconSize = 96.dp)
+    Box(modifier.fillMaxWidth().then(if (aspectRatio != null) Modifier.aspectRatio(aspectRatio) else Modifier)) {
+        if (biome != null) {
+            Box(
+                Modifier.fillMaxSize().background(
+                    PiuTheme.tokens.gradients
+                        .getValue(biome)
+                        .toBrush(),
+                ),
+            )
+        } else {
+            PhotoPlaceholder(iconSize = 96.dp)
+        }
         if (imageUrl != null) {
             AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
         }
