@@ -1,6 +1,8 @@
 // Testes da checagem do Passarim Kids: o pedido feito ao BFF, a regra da soma
 // das contagens por bioma principal e os erros de rede. O MockEngine do Ktor
 // faz o papel do BFF: cada teste diz o que ele responde, sem rede de verdade.
+// runTest roda o corpo do teste numa coroutine de teste, o que permite chamar
+// a função suspend checkKidsAvailability() direto, sem esperar tempo real.
 
 package com.velosobr.passarim.feature.explore.data
 
@@ -20,7 +22,11 @@ import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
-/** json responde um corpo de sucesso; os corpos abaixo imitam o BFF com e sem a frente B. */
+/**
+ * Os corpos abaixo imitam o BFF com e sem a frente B. json é uma extension
+ * function de MockRequestHandleScope (o "this" dentro do bloco do
+ * MockEngine): responde 200 com o corpo dado e o Content-Type de JSON.
+ */
 class RemoteKidsAvailabilityRepositoryTest {
     private val config = AppConfig(isDebug = false, baseUrl = "http://localhost:8080", mediaHostOverride = null, versionName = "1.0.0")
 

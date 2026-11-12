@@ -32,6 +32,13 @@ import io.ktor.client.request.parameter
 class RemoteKidsAvailabilityRepository(
     private val client: HttpClient,
 ) : KidsAvailabilityRepository {
+    // safeCall faz o pedido e nunca lança: uma resposta de erro vira Failure
+    // com o erro do code do problem+json (ou do status HTTP), e uma falha de
+    // transporte (sem rede, prazo estourado) vira Failure também. No sucesso,
+    // converte o JSON no FiltersDto. parameter("audience", "kids") acrescenta
+    // ?audience=kids na URL. O when olha os dois casos do Result: no Success,
+    // sumOf soma o speciesCount de cada bioma principal; no Failure, só a
+    // recusa do parâmetro vira false, e os outros erros seguem como estão.
     override suspend fun checkKidsAvailability(): Result<Boolean, DataError.Network> =
         when (val result = safeCall<FiltersDto> { client.get("/v1/filters") { parameter("audience", "kids") } }) {
             is Result.Success -> Result.Success(result.data.primaryBiomes.sumOf { it.speciesCount } > 0)

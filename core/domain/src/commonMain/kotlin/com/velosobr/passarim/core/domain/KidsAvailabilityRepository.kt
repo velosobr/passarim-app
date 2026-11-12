@@ -19,6 +19,12 @@ interface KidsAvailabilityRepository {
      * perguntar (sem rede, BFF fora do ar etc.) ou quando a resposta veio
      * num formato que o app não entende, e aí a tela decide o que mostrar,
      * como o "Tentar de novo".
+     *
+     * É "suspend" porque espera a resposta da rede: a função pode pausar sem
+     * travar a tela (roda numa coroutine) e só pode ser chamada de dentro de
+     * outra função suspend ou de uma coroutine. O Result<Boolean,
+     * DataError.Network> obriga quem chama a tratar os dois casos: o
+     * Success traz o true/false, e o Failure traz o erro de rede tipado.
      */
     suspend fun checkKidsAvailability(): Result<Boolean, DataError.Network>
 }
