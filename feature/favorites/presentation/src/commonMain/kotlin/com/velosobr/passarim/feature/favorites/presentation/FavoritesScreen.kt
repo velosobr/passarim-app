@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.feature.favorites.presentation.resources.Res
 import com.velosobr.passarim.feature.favorites.presentation.resources.empty_body
 import com.velosobr.passarim.feature.favorites.presentation.resources.empty_title
@@ -38,6 +37,7 @@ import com.velosobr.passarim.feature.favorites.presentation.resources.explore_bi
 import com.velosobr.passarim.feature.favorites.presentation.resources.favorites_count
 import com.velosobr.passarim.feature.favorites.presentation.resources.favorites_title
 import com.velosobr.piuds.components.PiuStateScreen
+import com.velosobr.piuds.components.adult.PiuFallbackBiome
 import com.velosobr.piuds.components.adult.PiuMosaicCard
 import com.velosobr.piuds.components.adult.piuMosaicColumns
 import com.velosobr.piuds.components.adult.piuMosaicHeightFor
@@ -47,9 +47,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import com.velosobr.piuds.resources.Res as DesignRes
-
-/** O gradiente de um card sem bioma principal: o do Pantanal, como no Explorar. */
-private val FallbackBiome = Biome.PANTANAL
 
 /**
  * A tela sem estado próprio: tudo vem de [state] e cada toque vira uma [FavoritesAction]. Enquanto o
@@ -135,7 +132,7 @@ private fun FavoritesMosaic(
                 name = bird.commonName,
                 scientificName = bird.scientificName,
                 imageUrl = bird.thumbnailUrl,
-                biome = bird.primaryBiome ?: FallbackBiome,
+                biome = bird.primaryBiome ?: PiuFallbackBiome,
                 isFavorite = true,
                 onToggleFavorite = { onAction(FavoritesAction.ToggleFavorite(bird)) },
                 onClick = { onAction(FavoritesAction.OpenDetail(bird.id)) },

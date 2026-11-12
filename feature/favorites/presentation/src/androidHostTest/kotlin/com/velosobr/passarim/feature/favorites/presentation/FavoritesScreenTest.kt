@@ -1,6 +1,6 @@
 // Testes da tela de Favoritos no mosaico (frente E3): o título e a contagem no
 // singular e no plural, os toques no card e no coração, o título rolando junto
-// com a grade e o estado vazio. Rodam no Robolectric (um Android de mentira na
+// com a grade, o xadrez de alturas do mosaico e o estado vazio. Rodam no Robolectric (um Android de mentira na
 // JVM) com runComposeUiTest, que monta a tela e deixa consultar a semântica.
 
 package com.velosobr.passarim.feature.favorites.presentation
@@ -10,6 +10,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
@@ -18,8 +19,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.height
 import assertk.assertThat
 import assertk.assertions.containsExactly
+import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.SpeciesSummary
@@ -31,6 +36,8 @@ import org.robolectric.annotation.Config
 
 private val arara = SpeciesSummary("anodorhynchus-hyacinthinus", "Arara-azul-grande", "Anodorhynchus hyacinthinus", null, Biome.PANTANAL)
 private val carcara = SpeciesSummary("caracara-plancus", "Carcará", "Caracara plancus", null, Biome.CAATINGA)
+private val tuiuiu = SpeciesSummary("jabiru-mycteria", "Tuiuiú", "Jabiru mycteria", null, Biome.PANTANAL)
+private val seriema = SpeciesSummary("cariama-cristata", "Seriema", "Cariama cristata", null, Biome.CERRADO)
 
 @OptIn(ExperimentalTestApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -75,6 +82,26 @@ class FavoritesScreenTest {
             onNode(hasScrollAction()).performScrollToNode(hasText("Ave 16"))
             // Se o título ficasse fixo no topo, ele continuaria na tela depois de rolar até o fim.
             assertThat(onNodeWithText("Favoritos").isNotDisplayed()).isTrue()
+        }
+
+    /**
+     * O xadrez da prancheta: com as quatro aves dela, cada coluna tem um card alto e um baixo, e as
+     * duas terminam na mesma altura. A tela alta (qualifiers h900dp) deixa os quatro cards
+     * compostos de uma vez; a grade só cria os que cabem na tela.
+     */
+    @Test
+    @Config(qualifiers = "w393dp-h900dp")
+    fun `cada coluna do mosaico tem um card alto e um baixo e as duas terminam juntas`() =
+        runComposeUiTest {
+            setContent { PiuTheme { FavoritesScreen(FavoritesState.Content(listOf(tuiuiu, carcara, seriema, arara)), onAction = {}) } }
+            val bounds = listOf("Tuiuiú", "Carcará", "Seriema", "Arara-azul-grande").map { onNodeWithText(it).getBoundsInRoot() }
+            // groupBy separa os cards pela borda esquerda: cada grupo é uma coluna.
+            val columns = bounds.groupBy { it.left }.values.toList()
+            assertThat(columns.size).isEqualTo(2)
+            columns.forEach { column ->
+                assertThat(column.map { it.height }).containsExactlyInAnyOrder(220.dp, 168.dp)
+            }
+            assertThat(columns[0].maxOf { it.bottom }).isEqualTo(columns[1].maxOf { it.bottom })
         }
 
     @Test

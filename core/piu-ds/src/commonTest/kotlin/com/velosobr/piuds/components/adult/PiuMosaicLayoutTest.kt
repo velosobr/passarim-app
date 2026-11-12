@@ -21,8 +21,10 @@ class PiuMosaicLayoutTest {
 
     @Test
     fun `as alturas alternam alto e baixo para as colunas ficarem desencontradas`() {
-        // Coluna da esquerda: alto, baixo; da direita: baixo, alto. As linhas nunca se alinham.
+        // A grade põe cada card na coluna mais curta: alto (esquerda), baixo (direita), alto (direita,
+        // que ficou mais curta), baixo (esquerda). Cada coluna fica com um alto e um baixo e as duas
+        // terminam juntas, como na prancheta; FavoritesScreenTest confere isso na tela de verdade.
         val heights = (0 until 8).map { piuMosaicHeightFor(it) }
-        assertThat(heights).isEqualTo(listOf(TALL, SHORT, SHORT, TALL, TALL, SHORT, SHORT, TALL))
+        assertThat(heights).isEqualTo(listOf(TALL, SHORT, TALL, SHORT, TALL, SHORT, TALL, SHORT))
     }
 }

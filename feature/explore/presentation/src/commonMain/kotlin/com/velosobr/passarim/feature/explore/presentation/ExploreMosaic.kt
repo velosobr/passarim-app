@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_badge
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_badge_biome
@@ -43,26 +42,20 @@ import com.velosobr.passarim.feature.explore.presentation.resources.featured_pla
 import com.velosobr.passarim.feature.explore.presentation.resources.load_more_error
 import com.velosobr.passarim.feature.explore.presentation.resources.retry
 import com.velosobr.piuds.components.PiuSkeletonBox
+import com.velosobr.piuds.components.adult.PiuFallbackBiome
 import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.adult.PiuMosaicCard
-import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import com.velosobr.piuds.components.adult.PiuPlayAction
+import com.velosobr.piuds.components.adult.piuMosaicHeightFor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * A altura do card na posição [index] do mosaico: alto, baixo, baixo, alto, e repete. Com duas
- * colunas, a da esquerda começa alta e a da direita baixa, e as linhas nunca se alinham.
- */
-fun mosaicHeightFor(index: Int): PiuMosaicHeight = if (index % 4 == 0 || index % 4 == 3) PiuMosaicHeight.TALL else PiuMosaicHeight.SHORT
-
-/** O gradiente de um card sem bioma principal (catalog sem esse dado): o do Pantanal. */
-private val FallbackBiome = Biome.PANTANAL
-
-/**
  * O mosaico: a "Ave do dia" ocupando a largura toda e, embaixo, os cards em colunas desencontradas,
  * com o rodapé de "carregando mais" ou de erro. LazyVerticalStaggeredGrid é a grade em que cada item
- * tem a própria altura e entra na coluna mais curta; FullLine faz um item ocupar todas as colunas.
+ * tem a própria altura e entra na coluna mais curta; FullLine faz um item ocupar todas as colunas. A
+ * altura de cada card e o bioma de quem não tem um vêm do PiuDS (piuMosaicHeightFor, PiuFallbackBiome),
+ * as mesmas regras dos Favoritos.
  * snapshotFlow transforma a leitura do estado da grade num Flow, e rememberUpdatedState dá ao efeito
  * o total atual de itens sem reiniciá-lo.
  */
@@ -108,11 +101,11 @@ internal fun SpeciesMosaic(
                 name = bird.commonName,
                 scientificName = bird.scientificName,
                 imageUrl = bird.thumbnailUrl,
-                biome = bird.primaryBiome ?: FallbackBiome,
+                biome = bird.primaryBiome ?: PiuFallbackBiome,
                 isFavorite = bird.id in state.favoriteIds,
                 onToggleFavorite = { onAction(ExploreAction.ToggleFavorite(bird)) },
                 onClick = { onAction(ExploreAction.OpenDetail(bird.id)) },
-                height = mosaicHeightFor(index),
+                height = piuMosaicHeightFor(index),
             )
         }
         if (state.isLoadingMore || state.loadMoreError != null) {
@@ -147,7 +140,7 @@ private fun FeaturedCard(
         name = bird.commonName,
         scientificName = bird.scientificName,
         imageUrl = bird.thumbnailUrl,
-        biome = bird.primaryBiome ?: FallbackBiome,
+        biome = bird.primaryBiome ?: PiuFallbackBiome,
         onClick = { onAction(ExploreAction.OpenFeatured) },
         play =
             if (hasSong) {
