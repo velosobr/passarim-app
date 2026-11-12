@@ -170,6 +170,7 @@ private fun Song(
     Section(stringResource(Res.string.section_song)) {
         AudioPlayerCard(
             durationMs = audio.durationMs,
+            peaks = audio.peaks,
             credit = stringResource(Res.string.credit_audio, credit(audio.credit)),
             playback = playback,
             onTogglePlay = { onAction(DetailAction.TogglePlay) },
