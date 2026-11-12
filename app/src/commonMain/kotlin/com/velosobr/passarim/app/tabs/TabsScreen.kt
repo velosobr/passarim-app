@@ -78,9 +78,8 @@ fun TabsScreen(
                     contentPadding = barPadding,
                 )
             }
-            // Configurações ganham o visual novo ainda na frente E3; até lá, só reservam o espaço da barra.
             composable<SettingsRoute> {
-                Box(Modifier.padding(barPadding)) { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
+                SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout, contentPadding = barPadding)
             }
         }
         val tabs = Tab.entries
