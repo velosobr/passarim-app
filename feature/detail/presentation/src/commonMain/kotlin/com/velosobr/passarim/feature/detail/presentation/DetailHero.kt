@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.presentation.resources.Res
 import com.velosobr.passarim.feature.detail.presentation.resources.back
@@ -64,7 +65,8 @@ private val FadeHeight = 32.dp
 /**
  * O topo: foto, nome e botões. A caixa tem no mínimo [HERO_HEIGHT]; com fonte grande, o nome
  * empurra a caixa para baixo em vez de ser cortado. A foto é a fonte do desfoque
- * (piuBlurSource): os botões desfocam o que está atrás deles. Ela fica numa camada à parte dos
+ * (piuBlurSource): os botões desfocam o que está atrás deles. Ao abrir pelo mosaico, ela chega
+ * voando do card (a mesma chave speciesPhotoKey). Ela fica numa camada à parte dos
  * botões porque uma superfície não pode desfocar a si mesma.
  *
  * O nome fica num bloco com o photoTextScrim, o degradê escuro do PiuDS que garante o contraste
@@ -85,6 +87,7 @@ internal fun DetailHero(
             imageUrl = detail.photos.firstOrNull()?.heroUrl,
             biome = detail.primaryBiome ?: FallbackBiome,
             aspectRatio = null,
+            sharedPhotoKey = speciesPhotoKey(detail.id),
             modifier = Modifier.matchParentSize().piuBlurSource(blur),
         )
         Column(Modifier.align(Alignment.BottomStart).fillMaxWidth()) {

@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_badge
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_badge_biome
@@ -111,6 +112,9 @@ internal fun LazyStaggeredGridScope.mosaicItems(
             onToggleFavorite = { onAction(ExploreAction.ToggleFavorite(bird)) },
             onClick = { onAction(ExploreAction.OpenDetail(bird.id)) },
             height = mosaicHeightFor(index),
+            // A foto do card viaja até o topo do Detalhe ao abrir a ave (só o mosaico: a "Ave do dia"
+            // costuma estar também no mosaico, e duas fotos com a mesma chave deixariam a origem ambígua).
+            sharedPhotoKey = speciesPhotoKey(bird.id),
         )
     }
     if (state.isLoadingMore || state.loadMoreError != null) {

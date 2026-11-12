@@ -39,7 +39,9 @@ private const val HERO_ASPECT_RATIO = 1.3f
  * Com [biome], o fundo enquanto a foto não chega (ou sem foto) é o gradiente
  * do bioma, como nos cards do mosaico, no lugar do placeholder com o
  * passarinho. Com [aspectRatio] nulo, a altura vem do [modifier] (o Detalhe
- * usa uma altura fixa e faz a foto ocupar o espaço todo).
+ * usa uma altura fixa e faz a foto ocupar o espaço todo). Com
+ * [sharedPhotoKey], a foto chega voando do card com a mesma chave (veja
+ * PiuSharedPhoto.kt).
  */
 @Composable
 fun PiuHeroPhoto(
@@ -47,22 +49,26 @@ fun PiuHeroPhoto(
     modifier: Modifier = Modifier,
     biome: Biome? = null,
     aspectRatio: Float? = HERO_ASPECT_RATIO,
+    sharedPhotoKey: String? = null,
     overlay: @Composable BoxScope.() -> Unit = {},
 ) {
     Box(modifier.fillMaxWidth().then(if (aspectRatio != null) Modifier.aspectRatio(aspectRatio) else Modifier)) {
-        if (biome != null) {
-            Box(
-                Modifier.fillMaxSize().background(
-                    PiuTheme.tokens.gradients
-                        .getValue(biome)
-                        .toBrush(),
-                ),
-            )
-        } else {
-            PhotoPlaceholder(iconSize = 96.dp)
-        }
-        if (imageUrl != null) {
-            AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+        // A camada da foto (fundo e imagem) é a que viaja do card; o overlay fica fora dela.
+        Box(Modifier.matchParentSize().piuSharedPhoto(sharedPhotoKey)) {
+            if (biome != null) {
+                Box(
+                    Modifier.fillMaxSize().background(
+                        PiuTheme.tokens.gradients
+                            .getValue(biome)
+                            .toBrush(),
+                    ),
+                )
+            } else {
+                PhotoPlaceholder(iconSize = 96.dp)
+            }
+            if (imageUrl != null) {
+                AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+            }
         }
         overlay()
     }
