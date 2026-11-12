@@ -71,15 +71,14 @@ fun TabsScreen(
                     contentPadding = barPadding,
                 )
             }
-            // Favoritos e Configurações ganham o visual novo na frente E3; até lá, só reservam o espaço da barra.
             composable<FavoritesRoute> {
-                Box(Modifier.padding(barPadding)) {
-                    FavoritesRoot(
-                        onOpenDetail = { id -> onOpenDetail(id, false) },
-                        onOpenExplore = { navController.navigateToTab(Tab.Explore) },
-                    )
-                }
+                FavoritesRoot(
+                    onOpenDetail = { id -> onOpenDetail(id, false) },
+                    onOpenExplore = { navController.navigateToTab(Tab.Explore) },
+                    contentPadding = barPadding,
+                )
             }
+            // Configurações ganham o visual novo ainda na frente E3; até lá, só reservam o espaço da barra.
             composable<SettingsRoute> {
                 Box(Modifier.padding(barPadding)) { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
             }
