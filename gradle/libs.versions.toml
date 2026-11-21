@@ -30,7 +30,7 @@ maplibreNativeFfi = "0.202610.0"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.6"
 junit4 = "4.13.2"
-robolectric = "4.17"
+robolectric = "4.18.1"
 aboutlibraries = "15.3.0"
 
 [libraries]
