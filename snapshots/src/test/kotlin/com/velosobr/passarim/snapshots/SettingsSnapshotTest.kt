@@ -3,6 +3,8 @@
 package com.velosobr.passarim.snapshots
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.ThemeMode
 import com.velosobr.passarim.feature.settings.presentation.AboutScreen
@@ -16,7 +18,8 @@ import org.junit.Test
 /**
  * Configurações em várias combinações (com e sem cores dinâmicas, rolada até
  * o fim), Dados e armazenamento e Sobre. ScrollState(Int.MAX_VALUE) começa a
- * tela rolada até o fim.
+ * tela rolada até o fim. A aba Configurações recebe o espaço da barra
+ * flutuante (92 dp), como no app: o fim rolado mostra o último cartão acima dela.
  */
 class SettingsSnapshotTest(
     dark: Boolean,
@@ -28,7 +31,7 @@ class SettingsSnapshotTest(
         scrollToEnd: Boolean = false,
     ) = snap(name) {
         val scroll = ScrollState(if (scrollToEnd) Int.MAX_VALUE else 0)
-        SettingsScreen(state = state, onAction = {}, scrollState = scroll)
+        SettingsScreen(state = state, onAction = {}, contentPadding = PaddingValues(bottom = 92.dp), scrollState = scroll)
     }
 
     private val defaults = SettingsState(Settings(), dynamicColorsSupported = true, versionName = "1.0.0")

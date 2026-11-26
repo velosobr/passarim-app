@@ -2,6 +2,7 @@
 
 package com.velosobr.passarim.feature.settings.presentation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalUriHandler
@@ -9,11 +10,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
-/** A aba Configurações: liga a tela ao ViewModel e transforma os eventos em navegação. */
+/**
+ * A aba Configurações: liga a tela ao ViewModel e transforma os eventos em navegação.
+ * [contentPadding] é o espaço da barra flutuante das abas, repassado à tela.
+ */
 @Composable
 fun SettingsRoot(
     onOpenStorage: () -> Unit,
     onOpenAbout: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(),
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -23,7 +28,7 @@ fun SettingsRoot(
             SettingsEvent.NavigateToAbout -> onOpenAbout()
         }
     }
-    SettingsScreen(state = state, onAction = viewModel::onAction)
+    SettingsScreen(state = state, onAction = viewModel::onAction, contentPadding = contentPadding)
 }
 
 /** Dados e armazenamento. */

@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.presentation.featuredPhotoKey
 import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
@@ -44,21 +43,14 @@ import com.velosobr.passarim.feature.explore.presentation.resources.featured_pla
 import com.velosobr.passarim.feature.explore.presentation.resources.load_more_error
 import com.velosobr.passarim.feature.explore.presentation.resources.retry
 import com.velosobr.piuds.components.PiuSkeletonBox
+import com.velosobr.piuds.components.adult.PiuFallbackBiome
 import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.adult.PiuMosaicCard
 import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import com.velosobr.piuds.components.adult.PiuPlayAction
+import com.velosobr.piuds.components.adult.piuMosaicHeightFor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import org.jetbrains.compose.resources.stringResource
-
-/**
- * A altura do card na posição [index] do mosaico: alto, baixo, baixo, alto, e repete. Com duas
- * colunas, a da esquerda começa alta e a da direita baixa, e as linhas nunca se alinham.
- */
-fun mosaicHeightFor(index: Int): PiuMosaicHeight = if (index % 4 == 0 || index % 4 == 3) PiuMosaicHeight.TALL else PiuMosaicHeight.SHORT
-
-/** O gradiente de um card sem bioma principal (catalog sem esse dado): o do Pantanal. */
-private val FallbackBiome = Biome.PANTANAL
 
 /**
  * Pede a próxima página quando o último item visível chega perto do fim da grade (a regra está em
@@ -103,16 +95,18 @@ internal fun LazyStaggeredGridScope.mosaicItems(
             }
         }
     }
+    // A altura de cada card (o xadrez de piuMosaicHeightFor) e o bioma de quem não tem um
+    // (PiuFallbackBiome) vêm do PiuDS: são as mesmas regras do mosaico dos Favoritos.
     itemsIndexed(state.items, key = { _, bird -> bird.id }, contentType = { _, _ -> "species" }) { index, bird ->
         PiuMosaicCard(
             name = bird.commonName,
             scientificName = bird.scientificName,
             imageUrl = bird.thumbnailUrl,
-            biome = bird.primaryBiome ?: FallbackBiome,
+            biome = bird.primaryBiome ?: PiuFallbackBiome,
             isFavorite = bird.id in state.favoriteIds,
             onToggleFavorite = { onAction(ExploreAction.ToggleFavorite(bird)) },
             onClick = { onAction(ExploreAction.OpenDetail(bird)) },
-            height = mosaicHeightFor(index),
+            height = piuMosaicHeightFor(index),
             // A foto do card viaja até o topo do Detalhe ao abrir a ave: o ViewModel manda a mesma chave na rota.
             sharedPhotoKey = speciesPhotoKey(bird.id),
         )
@@ -124,10 +118,13 @@ internal fun LazyStaggeredGridScope.mosaicItems(
     }
 }
 
-/** O "esqueleto" do carregamento: quatro blocos cinzas no desenho do mosaico, no lugar dos cards. */
+/**
+ * O "esqueleto" do carregamento: quatro blocos cinzas no desenho do mosaico, no lugar dos cards. As
+ * alturas seguem o mesmo xadrez do PiuDS (piuMosaicHeightFor) para o esqueleto já ter a cara da grade.
+ */
 internal fun LazyStaggeredGridScope.skeletonItems() {
     items(4, key = { "skeleton-$it" }, contentType = { "skeleton" }) { index ->
-        val height = if (mosaicHeightFor(index) == PiuMosaicHeight.TALL) 220.dp else 168.dp
+        val height = if (piuMosaicHeightFor(index) == PiuMosaicHeight.TALL) 220.dp else 168.dp
         PiuSkeletonBox(Modifier.fillMaxWidth().height(height), shape = MaterialTheme.shapes.large)
     }
 }
@@ -156,7 +153,7 @@ private fun FeaturedCard(
         name = bird.commonName,
         scientificName = bird.scientificName,
         imageUrl = bird.thumbnailUrl,
-        biome = bird.primaryBiome ?: FallbackBiome,
+        biome = bird.primaryBiome ?: PiuFallbackBiome,
         onClick = { onAction(ExploreAction.OpenFeatured) },
         // A chave própria da "Ave do dia": a mesma ave pode estar no mosaico, com a chave do mosaico.
         sharedPhotoKey = featuredPhotoKey(bird.id),

@@ -72,17 +72,17 @@ fun TabsScreen(
                     contentPadding = barPadding,
                 )
             }
-            // Favoritos e Configurações ganham o visual novo na frente E3; até lá, só reservam o espaço da barra.
             composable<FavoritesRoute> {
-                Box(Modifier.padding(barPadding)) {
-                    FavoritesRoot(
-                        onOpenDetail = { id -> onOpenDetail(DetailOpening(id)) },
-                        onOpenExplore = { navController.navigateToTab(Tab.Explore) },
-                    )
-                }
+                // Favoritos recebe o espaço da barra flutuante como contentPadding (a lista rola por baixo
+                // dela) e abre o Detalhe com um DetailOpening, o pacote que leva a transição compartilhada.
+                FavoritesRoot(
+                    onOpenDetail = { id -> onOpenDetail(DetailOpening(id)) },
+                    onOpenExplore = { navController.navigateToTab(Tab.Explore) },
+                    contentPadding = barPadding,
+                )
             }
             composable<SettingsRoute> {
-                Box(Modifier.padding(barPadding)) { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
+                SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout, contentPadding = barPadding)
             }
         }
         val tabs = Tab.entries
