@@ -1,6 +1,7 @@
 // Conversão dos DTOs do Detalhe no domínio: textos vazios viram null, as
 // licenças são formatadas, o host das mídias é trocado em debug, o código do
-// bioma principal vira o enum e os picos do canto ficam entre 0 e 1.
+// bioma principal vira o enum, os picos do canto ficam entre 0 e 1 e o
+// conteúdo Kids sem texto vira ausente.
 
 package com.velosobr.passarim.feature.detail.data
 
@@ -11,6 +12,7 @@ import com.velosobr.passarim.core.domain.conservationStatusOf
 import com.velosobr.passarim.feature.detail.domain.Audio
 import com.velosobr.passarim.feature.detail.domain.Biome
 import com.velosobr.passarim.feature.detail.domain.Cluster
+import com.velosobr.passarim.feature.detail.domain.KidsContent
 import com.velosobr.passarim.feature.detail.domain.Photo
 import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.domain.WhereToFind
@@ -40,7 +42,22 @@ internal fun SpeciesDetailDto.toDomain(rewriter: MediaUrlRewriter) =
             ),
         // biomeOf devolve null para um código que o app não conhece (um bioma novo no BFF).
         primaryBiome = biomeOf(primaryBiome),
+        kids = kids?.toDomain(),
     )
+
+/**
+ * Converte o conteúdo Kids, com os textos aparados e sem as curiosidades em branco. Sem o texto
+ * principal não há o que mostrar à criança, e o conteúdo vira null: o Detalhe Kids mostra
+ * "Essa ave ainda não chegou ao Kids", em vez de uma tela pela metade ou do texto do adulto.
+ */
+private fun KidsDto.toDomain(): KidsContent? =
+    description.orNullIfBlank()?.let { text ->
+        KidsContent(
+            description = text,
+            facts = facts.mapNotNull { it.text.orNullIfBlank() },
+            didYouKnow = didYouKnow.orNullIfBlank().orEmpty(),
+        )
+    }
 
 /** Converte o crédito; a licença "CC-BY-4.0" vira "CC BY 4.0". */
 private fun CreditDto.toDomain() =

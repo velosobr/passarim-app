@@ -18,6 +18,7 @@ import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.feature.detail.domain.Audio
 import com.velosobr.passarim.feature.detail.domain.Biome
 import com.velosobr.passarim.feature.detail.domain.Cluster
+import com.velosobr.passarim.feature.detail.domain.KidsContent
 import com.velosobr.passarim.feature.detail.domain.Photo
 import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 import com.velosobr.passarim.feature.detail.domain.WhereToFind
@@ -187,6 +188,62 @@ class RemoteDetailRepositoryTest {
         runTest {
             val body = full.replace("\"primaryBiome\":\"pantanal\"", "\"primaryBiome\":\"tundra\"")
             assertThat((repo(body = body).get("x") as Result.Success).data.primaryBiome).isNull()
+        }
+
+    /** withKids é a resposta full com o campo kids dado (o JSON cru, ou null). */
+    private fun withKids(kids: String) = full.replace("\"primaryBiome\":\"pantanal\",", "\"primaryBiome\":\"pantanal\",\"kids\":$kids,")
+
+    @Test
+    fun `le o conteudo Kids sem os fatos em branco`() =
+        runTest {
+            val body =
+                withKids(
+                    """
+                    {"description":" A arara gigante do Pantanal. ","facts":[{"text":"Quebra coco com o bico!"},{"text":" "}],
+                     "didYouKnow":"Ela vive uns 50 anos."}
+                    """.trimIndent(),
+                )
+
+            val detail = (repo(body = body).get("x") as Result.Success).data
+
+            assertThat(detail.kids).isEqualTo(
+                KidsContent(
+                    description = "A arara gigante do Pantanal.",
+                    facts = listOf("Quebra coco com o bico!"),
+                    didYouKnow = "Ela vive uns 50 anos.",
+                ),
+            )
+        }
+
+    @Test
+    fun `kids nulo vira ausente`() =
+        runTest {
+            assertThat((repo(body = withKids("null")).get("x") as Result.Success).data.kids).isNull()
+        }
+
+    /** Um BFF de antes da frente B não manda o campo kids. */
+    @Test
+    fun `sem o campo kids a especie continua sendo lida sem conteudo Kids`() =
+        runTest {
+            assertThat(full.contains("\"kids\"")).isFalse()
+            assertThat((repo().get("x") as Result.Success).data.kids).isNull()
+        }
+
+    /** Sem o texto principal, a ave não tem conteúdo Kids para mostrar: o Detalhe Kids nunca cai no texto do adulto. */
+    @Test
+    fun `kids com texto em branco vira ausente`() =
+        runTest {
+            val body =
+                withKids("""{"description":"  ","facts":[{"text":"Quebra coco com o bico!"}],"didYouKnow":"Ela vive uns 50 anos."}""")
+            assertThat((repo(body = body).get("x") as Result.Success).data.kids).isNull()
+        }
+
+    @Test
+    fun `kids sem fatos nem Voce sabia fica com listas e texto vazios`() =
+        runTest {
+            val body = withKids("""{"description":"A arara gigante do Pantanal."}""")
+            assertThat((repo(body = body).get("x") as Result.Success).data.kids)
+                .isEqualTo(KidsContent("A arara gigante do Pantanal.", emptyList(), ""))
         }
 
     @Test

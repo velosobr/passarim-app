@@ -25,6 +25,16 @@ internal data class SpeciesDetailDto(
     val whereToFind: WhereToFindDto,
     /** O código do bioma principal ("pantanal"); só vem do BFF a partir da frente B. */
     val primaryBiome: String? = null,
+    /** O conteúdo Kids; nulo numa ave sem ele e ausente num BFF de antes da frente B. */
+    val kids: KidsDto? = null,
+)
+
+/** O conteúdo Kids: o texto, as curiosidades (no mesmo formato dos fatos do adulto) e o "Você sabia?". */
+@Serializable
+internal data class KidsDto(
+    val description: String,
+    val facts: List<FactDto> = emptyList(),
+    val didYouKnow: String = "",
 )
 
 /** O status de conservação; o app só lê o código e usa o próprio rótulo. */
