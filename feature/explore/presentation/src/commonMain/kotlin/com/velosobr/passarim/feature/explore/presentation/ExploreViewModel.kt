@@ -14,6 +14,7 @@ import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.onFailure
 import com.velosobr.passarim.core.domain.onSuccess
@@ -119,8 +120,9 @@ class ExploreViewModel(
             .distinctUntilChanged()
             .onEach(::loadFirstPage)
             .launchIn(viewModelScope)
+        // Os corações do Explorar do adulto são os favoritos do adulto, nunca o álbum do Kids.
         favorites
-            .observeIds()
+            .observeIds(Journey.ADULT)
             .onEach { ids -> _state.update { it.copy(favoriteIds = ids) } }
             .launchIn(viewModelScope)
         loadFilters()
@@ -149,7 +151,7 @@ class ExploreViewModel(
             ExploreAction.ClearSheet -> updateSheet { it.copy(biome = null, state = null) }
             ExploreAction.ApplyFilters -> applySheet()
             ExploreAction.RetryFilters -> loadFilters()
-            is ExploreAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary) }
+            is ExploreAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary, Journey.ADULT) }
             // O card do mosaico leva a chave da foto dele: a foto viaja do card até o topo do Detalhe.
             is ExploreAction.OpenDetail ->
                 eventChannel.trySend(ExploreEvent.NavigateToDetail(action.summary.opening(photoKey = speciesPhotoKey(action.summary.id))))
@@ -303,7 +305,7 @@ class ExploreViewModel(
         _state.update { it.copy(filters = FiltersPhase.Loading) }
         viewModelScope.launch {
             filtersRepository
-                .get()
+                .getFilters(Journey.ADULT)
                 .onSuccess { f -> _state.update { it.copy(filters = FiltersPhase.Loaded(f)) } }
                 .onFailure { _state.update { it.copy(filters = FiltersPhase.Error) } }
         }

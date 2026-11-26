@@ -30,7 +30,11 @@ data class Filters(
         get() = primaryBiomes.sumOf { it.speciesCount }.takeIf { it > 0 }
 }
 
-/** Busca as opções de filtro no BFF. */
+/**
+ * Busca as opções de filtro no BFF. [audience] diz de qual jornada: ADULT (o padrão) traz as contagens
+ * do catálogo todo; KIDS traz só as das aves com conteúdo para crianças, e o primaryBiomes dele é a
+ * contagem de aves de cada mundo do Kids.
+ */
 interface FiltersRepository {
-    suspend fun get(): Result<Filters, DataError.Network>
+    suspend fun getFilters(audience: Journey = Journey.ADULT): Result<Filters, DataError.Network>
 }

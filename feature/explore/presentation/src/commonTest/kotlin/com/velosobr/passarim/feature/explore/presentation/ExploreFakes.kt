@@ -2,6 +2,7 @@
 
 package com.velosobr.passarim.feature.explore.presentation
 
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
@@ -9,6 +10,7 @@ import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.StateFilter
@@ -52,6 +54,8 @@ class FakeExploreRepository : ExploreRepository {
         state: String?,
         cursor: String?,
         limit: Int,
+        audience: Journey,
+        primaryBiome: Biome?,
     ): Result<SpeciesPage, DataError.Network> {
         val index = calls.size
         calls += ListCall(query, biome, state, cursor)
@@ -67,31 +71,52 @@ val sampleFilters =
         states = listOf(StateFilter("RJ", 23), StateFilter("SP", 29), StateFilter("AC", 3)),
     )
 
-/** Repositório falso de filtros, que responde o resultado configurado e conta as chamadas. */
+/** Repositório falso de filtros, que responde o resultado configurado, conta as chamadas e guarda a audiência de cada uma. */
 class FakeFiltersRepository(
     var next: Result<Filters, DataError.Network> = Result.Success(sampleFilters),
 ) : FiltersRepository {
     var calls = 0
+    val audiences = mutableListOf<Journey>()
 
-    override suspend fun get(): Result<Filters, DataError.Network> {
+    override suspend fun getFilters(audience: Journey): Result<Filters, DataError.Network> {
         calls++
+        audiences += audience
         return next
     }
 }
 
-/** Favoritos falsos, em memória. */
+/**
+ * Favoritos falsos, em memória, só do adulto: o Explorar do adulto nunca deve pedir os do Kids.
+ * [audiences] guarda a audiência de cada chamada, para o teste conferir que todas foram ADULT.
+ */
 class FakeFavoritesRepository : FavoritesRepository {
     val ids = MutableStateFlow<Set<String>>(emptySet())
+    val audiences = mutableListOf<Journey>()
 
-    override fun observeIds(): Flow<Set<String>> = ids
+    override fun observeIds(audience: Journey): Flow<Set<String>> {
+        audiences += audience
+        return ids
+    }
 
-    override fun observeAll(): Flow<List<SpeciesSummary>> = flowOf(emptyList())
+    override fun observeAll(audience: Journey): Flow<List<SpeciesSummary>> {
+        audiences += audience
+        return flowOf(emptyList())
+    }
 
-    override suspend fun toggle(summary: SpeciesSummary) {
+    override suspend fun toggle(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
         ids.value = if (summary.id in ids.value) ids.value - summary.id else ids.value + summary.id
     }
 
-    override suspend fun refresh(summary: SpeciesSummary) = Unit
+    override suspend fun refresh(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
+    }
 }
 
 /** sampleFeatured é uma "Ave do dia" de exemplo, com canto. */

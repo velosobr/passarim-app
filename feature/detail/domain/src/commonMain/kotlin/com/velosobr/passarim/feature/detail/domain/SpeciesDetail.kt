@@ -16,6 +16,10 @@ import com.velosobr.passarim.core.domain.Biome as PrimaryBiome
  * A espécie completa como a tela de Detalhe usa. A primeira foto é a principal. [primaryBiome] é
  * o bioma principal da ave (o gradiente do card quando ela vira um resumo); fica nulo
  * com um BFF de antes da frente B ou com um bioma que o app não conhece.
+ *
+ * [kids] é o conteúdo escrito para crianças, que só o Detalhe Kids mostra (o do adulto ignora o
+ * campo). O BFF manda o mesmo Detalhe nas duas jornadas, então é este campo nulo que diz que a ave
+ * ainda não chegou ao Kids.
  */
 data class SpeciesDetail(
     val id: String,
@@ -33,6 +37,17 @@ data class SpeciesDetail(
     val audio: Audio?,
     val whereToFind: WhereToFind,
     val primaryBiome: PrimaryBiome? = null,
+    val kids: KidsContent? = null,
+)
+
+/**
+ * O conteúdo Kids de uma ave: o texto curto ([description]), as curiosidades ([facts], uma por
+ * bloco da tela) e o "Você sabia?" ([didYouKnow], vazio quando o catalog não tem).
+ */
+data class KidsContent(
+    val description: String,
+    val facts: List<String>,
+    val didYouKnow: String,
 )
 
 /** Um bioma com o rótulo para o chip. */

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.domain.onFailure
@@ -92,7 +93,8 @@ class DetailViewModel(
         get() = (_state.value.phase as? DetailPhase.Content)?.detail
 
     init {
-        favorites.observeIds().onEach { ids -> _state.update { it.copy(isFavorite = id in ids) } }.launchIn(viewModelScope)
+        // O Detalhe do adulto só olha e mexe nos favoritos do adulto (Journey.ADULT), nunca no álbum do Kids.
+        favorites.observeIds(Journey.ADULT).onEach { ids -> _state.update { it.copy(isFavorite = id in ids) } }.launchIn(viewModelScope)
         player.state.onEach { playback -> _state.update { it.copy(player = playback) } }.launchIn(viewModelScope)
         if (isValidSpeciesId(id)) load() else _state.update { it.copy(phase = DetailPhase.NotFound) }
     }
@@ -102,7 +104,7 @@ class DetailViewModel(
         when (action) {
             DetailAction.Back -> eventChannel.trySend(DetailEvent.NavigateBack)
             DetailAction.Retry -> if (_state.value.retryEnabled) load()
-            DetailAction.ToggleFavorite -> detail?.let { viewModelScope.launch { favorites.toggle(it.toSummary()) } }
+            DetailAction.ToggleFavorite -> detail?.let { viewModelScope.launch { favorites.toggle(it.toSummary(), Journey.ADULT) } }
             DetailAction.TogglePlay -> togglePlay()
             is DetailAction.Seek -> player.seekTo(action.positionMs)
             DetailAction.ToggleCredits -> _state.update { it.copy(creditsExpanded = !it.creditsExpanded) }
@@ -125,7 +127,7 @@ class DetailViewModel(
                 .get(id)
                 .onSuccess { detail ->
                     _state.update { it.copy(phase = DetailPhase.Content(detail)) }
-                    if (id in favorites.observeIds().first()) favorites.refresh(detail.toSummary())
+                    if (id in favorites.observeIds(Journey.ADULT).first()) favorites.refresh(detail.toSummary(), Journey.ADULT)
                     if (autoPlayRequested || settings.observe().first().autoPlay) detail.audio?.let { player.play(it.url) }
                 }.onFailure { error ->
                     if (error == DataError.Network.NotFound) {

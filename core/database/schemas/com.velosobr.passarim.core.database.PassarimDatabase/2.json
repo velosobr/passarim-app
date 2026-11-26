@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "b6b2724d3289ca05ce026344cc18a7fa",
+    "entities": [
+      {
+        "tableName": "favorites",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `commonName` TEXT NOT NULL, `scientificName` TEXT NOT NULL, `thumbnailUrl` TEXT, `addedAt` INTEGER NOT NULL, `audience` TEXT NOT NULL DEFAULT 'ADULT', `primaryBiome` TEXT, PRIMARY KEY(`id`, `audience`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commonName",
+            "columnName": "commonName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scientificName",
+            "columnName": "scientificName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audience",
+            "columnName": "audience",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'ADULT'"
+          },
+          {
+            "fieldPath": "primaryBiome",
+            "columnName": "primaryBiome",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id",
+            "audience"
+          ]
+        }
+      },
+      {
+        "tableName": "kids_world_counts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`biome` TEXT NOT NULL, `speciesCount` INTEGER NOT NULL, PRIMARY KEY(`biome`))",
+        "fields": [
+          {
+            "fieldPath": "biome",
+            "columnName": "biome",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "speciesCount",
+            "columnName": "speciesCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "biome"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b6b2724d3289ca05ce026344cc18a7fa')"
+    ]
+  }
+}

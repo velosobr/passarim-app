@@ -13,11 +13,13 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
+import assertk.assertions.isNotEmpty
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.StateFilter
 import com.velosobr.passarim.core.presentation.DetailOpening
@@ -431,6 +433,30 @@ class ExploreViewModelTest {
 
             vm.onAction(ExploreAction.ToggleFavorite(first))
             assertThat(vm.state.value.favoriteIds).isEmpty()
+        }
+
+    @Test
+    fun `os filtros do Explorar sao os do adulto`() =
+        runTest {
+            viewModel()
+
+            assertThat(filters.audiences).containsExactly(Journey.ADULT)
+        }
+
+    @Test
+    fun `os favoritos do Explorar sao sempre os do adulto`() =
+        runTest {
+            val vm = viewModel()
+
+            vm.onAction(
+                ExploreAction.ToggleFavorite(
+                    vm.state.value.items
+                        .first(),
+                ),
+            )
+
+            assertThat(favorites.audiences).isNotEmpty()
+            assertThat(favorites.audiences.toSet()).isEqualTo(setOf(Journey.ADULT))
         }
 
     /**

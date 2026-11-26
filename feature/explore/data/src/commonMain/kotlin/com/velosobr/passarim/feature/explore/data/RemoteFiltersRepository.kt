@@ -1,5 +1,5 @@
 // As opções de filtro vindas do BFF, guardadas em memória depois da primeira
-// resposta com sucesso.
+// resposta com sucesso de cada audiência (adulto e Kids).
 
 package com.velosobr.passarim.feature.explore.data
 
@@ -8,12 +8,14 @@ import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.StateFilter
 import com.velosobr.passarim.core.domain.map
 import com.velosobr.passarim.core.domain.onSuccess
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
@@ -53,8 +55,10 @@ internal fun FiltersDto.toDomain() =
     )
 
 /**
- * `GET /v1/filters`: biomas e estados com a contagem de espécies. As contagens mudam pouco, então o
- * primeiro sucesso fica em memória até o processo morrer; uma falha não fica, e a próxima chamada tenta de novo.
+ * `GET /v1/filters`: biomas e estados com a contagem de espécies. No Kids vai `?audience=kids`, e o
+ * adulto chama sem parâmetro, como sempre. As contagens mudam pouco, então o primeiro sucesso de cada
+ * audiência fica em memória até o processo morrer; uma falha não fica, e a próxima chamada tenta de novo.
+ * O cache é um mapa por audiência: a resposta do Kids nunca serve de resposta ao adulto, e vice-versa.
  */
 class RemoteFiltersRepository(
     private val client: HttpClient,
@@ -62,13 +66,14 @@ class RemoteFiltersRepository(
     // O Mutex (trava das coroutines) garante que duas chamadas simultâneas não
     // façam dois pedidos: a segunda espera a primeira e já encontra o cache.
     private val mutex = Mutex()
-    private var cached: Filters? = null
+    private val cached = mutableMapOf<Journey, Filters>()
 
-    override suspend fun get(): Result<Filters, DataError.Network> =
+    override suspend fun getFilters(audience: Journey): Result<Filters, DataError.Network> =
         mutex.withLock {
-            cached?.let { return@withLock Result.Success(it) }
-            safeCall<FiltersDto> { client.get("/v1/filters") }
-                .map { it.toDomain() }
-                .onSuccess { cached = it }
+            cached[audience]?.let { return@withLock Result.Success(it) }
+            safeCall<FiltersDto> {
+                client.get("/v1/filters") { if (audience == Journey.KIDS) parameter("audience", "kids") }
+            }.map { it.toDomain() }
+                .onSuccess { cached[audience] = it }
         }
 }

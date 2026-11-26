@@ -13,9 +13,11 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
+import assertk.assertions.isNotEmpty
 import assertk.assertions.isTrue
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.DataError
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
@@ -127,6 +129,17 @@ class DetailViewModelTest {
         favorites.ids.value = setOf(ARARA_ID)
         viewModel()
         assertThat(favorites.refreshed).containsExactly(arara.toSummary())
+    }
+
+    @Test
+    fun `os favoritos do Detalhe sao sempre os do adulto`() {
+        favorites.ids.value = setOf(ARARA_ID)
+        val vm = viewModel()
+
+        vm.onAction(DetailAction.ToggleFavorite)
+
+        assertThat(favorites.audiences).isNotEmpty()
+        assertThat(favorites.audiences.toSet()).isEqualTo(setOf(Journey.ADULT))
     }
 
     @Test
