@@ -39,8 +39,9 @@ data class WaveformBar(
 
 /**
  * Transforma os [peaks] do canto e o [progress] do player (de 0 a 1) nas [barCount] barras da
- * forma de onda. Com outra quantidade de picos, cada barra pega o pico da posição proporcional
- * (a primeira barra o primeiro pico, a última o último). Uma barra conta como tocada quando o
+ * forma de onda. Com outra quantidade de picos, a lista é dividida em [barCount] trechos iguais
+ * e cada barra fica com o maior pico do trecho dela (com mais picos que barras, nenhum trecho alto
+ * some; com menos, cada pico se estica por um trecho igual). Uma barra conta como tocada quando o
  * progresso já passou do começo dela por inteiro: com progresso 0 nenhuma acende, com 1 todas.
  */
 fun waveformBars(
@@ -54,7 +55,10 @@ fun waveformBars(
             if (peaks.isEmpty()) {
                 0f
             } else {
-                peaks[if (barCount == 1) 0 else index * (peaks.size - 1) / (barCount - 1)]
+                // O trecho da barra: do pico "from" (inclusive) ao "to" (exclusive), com pelo menos um pico.
+                val from = index * peaks.size / barCount
+                val to = maxOf(from + 1, (index + 1) * peaks.size / barCount)
+                peaks.subList(from, to).max()
             }
         WaveformBar(height = peak.coerceIn(MIN_BAR_HEIGHT, 1f), played = index < playedCount)
     }

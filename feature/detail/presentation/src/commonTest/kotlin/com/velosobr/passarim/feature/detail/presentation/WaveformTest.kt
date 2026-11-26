@@ -68,4 +68,25 @@ class WaveformTest {
         assertThat(bars.first().height).isEqualTo(0.2f)
         assertThat(bars.last().height).isEqualTo(0.8f)
     }
+
+    /**
+     * Com mais picos que barras, cada barra fica com o maior pico do trecho dela, e não com um pico
+     * qualquer: aqui, 128 picos alternando silêncio e máximo viram 64 barras cheias, e nenhum
+     * trecho alto some da forma de onda.
+     */
+    @Test
+    fun `com mais picos que barras cada barra pega o maior pico do trecho dela`() {
+        val alternating = List(128) { if (it % 2 == 1) 1f else 0f }
+        val bars = waveformBars(alternating, progress = 0f)
+        assertThat(bars).hasSize(WAVEFORM_BARS)
+        assertThat(bars).each { it.prop(WaveformBar::height).isEqualTo(1f) }
+    }
+
+    /** Com menos picos que barras, cada pico se estica por um trecho igual: metade das barras para cada um. */
+    @Test
+    fun `com menos picos que barras cada pico ocupa um trecho igual`() {
+        val bars = waveformBars(listOf(0.2f, 0.8f), progress = 0f)
+        assertThat(bars.count { it.height == 0.2f }).isEqualTo(WAVEFORM_BARS / 2)
+        assertThat(bars.count { it.height == 0.8f }).isEqualTo(WAVEFORM_BARS / 2)
+    }
 }
