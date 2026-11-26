@@ -16,7 +16,10 @@ dependencies {
     implementation(projects.feature.explore.presentation)
     implementation(projects.feature.detail.presentation)
     implementation(projects.feature.favorites.presentation)
+    implementation(projects.feature.journey.presentation)
     implementation(projects.feature.settings.presentation)
+    // O app, para fotografar a casca do Kids (app/kids/KidsTabsScreen.kt), que mora nele.
+    implementation(projects.app)
     // O Coil direto, para os snapshots trocarem a foto da rede por uma imagem falsa (a foto branca).
     implementation(libs.coil.compose)
     testImplementation(libs.junit4)

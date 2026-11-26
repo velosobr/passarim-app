@@ -2,13 +2,19 @@
 
 package com.velosobr.passarim.feature.detail.presentation
 
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.detail.domain.PlaybackState
 import com.velosobr.passarim.feature.detail.domain.SpeciesDetail
 
-/** O estado da tela: a fase do conteúdo, o favorito, os créditos abertos e o player. */
+/**
+ * O estado da tela: a fase do conteúdo, o favorito, os créditos abertos e o player. [preview] vem
+ * da rota (o card que abriu o Detalhe) e não muda: o topo a usa enquanto carrega e, depois, para a
+ * foto voltar ao mesmo card no "voltar".
+ */
 data class DetailState(
     val phase: DetailPhase = DetailPhase.Loading,
+    val preview: DetailPreview = DetailPreview(),
     val retryEnabled: Boolean = true,
     val isFavorite: Boolean = false,
     val creditsExpanded: Boolean = false,

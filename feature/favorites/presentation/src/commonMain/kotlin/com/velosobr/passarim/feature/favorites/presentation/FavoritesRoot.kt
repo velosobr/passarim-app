@@ -2,17 +2,22 @@
 
 package com.velosobr.passarim.feature.favorites.presentation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
-/** Liga a tela ao ViewModel e transforma os eventos em navegação, que fica a cargo do app. */
+/**
+ * Liga a tela ao ViewModel e transforma os eventos em navegação, que fica a cargo do app.
+ * [contentPadding] é o espaço da barra flutuante das abas, repassado à tela.
+ */
 @Composable
 fun FavoritesRoot(
     onOpenDetail: (String) -> Unit,
     onOpenExplore: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(),
     viewModel: FavoritesViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -22,5 +27,5 @@ fun FavoritesRoot(
             FavoritesEvent.NavigateToExplore -> onOpenExplore()
         }
     }
-    FavoritesScreen(state = state, onAction = viewModel::onAction)
+    FavoritesScreen(state = state, onAction = viewModel::onAction, contentPadding = contentPadding)
 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.PiuLightAndDarkPreview
+import com.velosobr.piuds.components.piuSharedPhoto
 import com.velosobr.piuds.resources.Res
 import com.velosobr.piuds.resources.favorite_add
 import com.velosobr.piuds.resources.favorite_remove
@@ -47,7 +48,9 @@ import org.jetbrains.compose.resources.vectorResource
 
 /**
  * Card do mosaico. Sem foto (ou enquanto ela carrega), o fundo é o
- * gradiente do [biome], para o card nunca ficar vazio. O nome e o nome
+ * gradiente do [biome], para o card nunca ficar vazio. Com [sharedPhotoKey],
+ * a foto viaja até a tela que tiver a mesma chave (o topo do Detalhe; veja
+ * PiuSharedPhoto.kt). O nome e o nome
  * científico ficam sobre o scrim e quebram linha em vez de cortar. O
  * coração fica num círculo translúcido de 44 dp, com alvo de toque de 48 dp,
  * e é um controle à parte: tocar nele favorita, tocar no resto abre a ave.
@@ -63,22 +66,35 @@ fun PiuMosaicCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     height: PiuMosaicHeight = PiuMosaicHeight.TALL,
+    sharedPhotoKey: String? = null,
 ) {
     Box(
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = height.minHeightDp.dp)
             .clip(RoundedCornerShape(24.dp))
-            .background(
-                PiuTheme.tokens.gradients
-                    .getValue(biome)
-                    .toBrush(),
-            )
             // Role.Button: o leitor de tela diz "botão" depois do nome da ave.
             .clickable(role = Role.Button, onClick = onClick),
     ) {
-        if (imageUrl != null) {
-            AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
+        // A camada da foto (o gradiente e a imagem por cima) é a que viaja até o Detalhe.
+        Box(
+            Modifier
+                .matchParentSize()
+                .piuSharedPhoto(sharedPhotoKey, RoundedCornerShape(24.dp))
+                .background(
+                    PiuTheme.tokens.gradients
+                        .getValue(biome)
+                        .toBrush(),
+                ),
+        ) {
+            if (imageUrl != null) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                )
+            }
         }
         // O top de 56 dp guarda o lugar do coração: um nome longo empurra o card para baixo, nunca para
         // cima dele. O scrim fica atrás do bloco de texto e já está cheio quando o nome começa.

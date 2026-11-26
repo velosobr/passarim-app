@@ -28,5 +28,13 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.kotlinx.coroutines.test)
         }
+        // Testes de Compose no host Android (Robolectric): montam o player e o topo do Detalhe e
+        // consultam a árvore de semântica (o que o leitor de tela lê e os tamanhos de toque).
+        getByName("androidHostTest").dependencies {
+            implementation(libs.compose.uiTest)
+            implementation(libs.androidx.compose.uiTestManifest)
+            implementation(libs.robolectric)
+            implementation(libs.junit4)
+        }
     }
 }

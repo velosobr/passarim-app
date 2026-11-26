@@ -6,6 +6,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import com.velosobr.passarim.core.data.MediaUrlRewriter
 import com.velosobr.passarim.core.data.createHttpClient
@@ -28,8 +29,12 @@ import io.ktor.http.Url
 import io.ktor.http.headersOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import com.velosobr.passarim.core.domain.Biome as PrimaryBiome
 
-/** full é uma resposta com todos os campos; empty, uma com os campos opcionais nulos, vazios ou em branco. */
+/**
+ * full é uma resposta com todos os campos (inclusive os da frente B: o bioma principal e os picos
+ * do canto); empty, uma com os campos opcionais nulos, vazios ou em branco.
+ */
 class RemoteDetailRepositoryTest {
     private val media = "http://localhost:8888/buckets/passarim-media/species/anodorhynchus-hyacinthinus"
 
@@ -45,7 +50,9 @@ class RemoteDetailRepositoryTest {
                     "width":900,"height":794,
                     "credit":{"author":"(c) Paul Donahue","license":"CC-BY-NC","source":"inaturalist","sourceUrl":"https://www.inaturalist.org/observations/87436377"}}],
          "audio":{"url":"$media/audio-403887.aac","durationMs":5000,
-                  "credit":{"author":"Jayrson","license":"CC-BY-NC-SA","source":"xeno-canto","sourceUrl":"https://xeno-canto.org/403887"}},
+                  "credit":{"author":"Jayrson","license":"CC-BY-NC-SA","source":"xeno-canto","sourceUrl":"https://xeno-canto.org/403887"},
+                  "peaks":[0.0,0.5,1.0]},
+         "primaryBiome":"pantanal",
          "whereToFind":{"states":["MS","MT"],"biomes":["cerrado","pantanal"],
                         "clusters":[{"lat":-19.65,"lng":-56.42,"count":197,"precision":1}]}}
         """.trimIndent()
@@ -132,8 +139,10 @@ class RemoteDetailRepositoryTest {
                                 "$media/audio-403887.aac",
                                 5000,
                                 Credit("Jayrson", "CC BY-NC-SA", "xeno-canto", "https://xeno-canto.org/403887"),
+                                peaks = listOf(0f, 0.5f, 1f),
                             ),
                         whereToFind = WhereToFind(listOf("MS", "MT"), listOf("cerrado", "pantanal"), listOf(Cluster(-19.65, -56.42, 197))),
+                        primaryBiome = PrimaryBiome.PANTANAL,
                     ),
                 ),
             )
@@ -160,6 +169,31 @@ class RemoteDetailRepositoryTest {
             assertThat((repo(body = conservationJson("EX")).get("x") as Result.Success).data.conservation).isEqualTo(ConservationStatus.EX)
             assertThat((repo(body = conservationJson("DD")).get("x") as Result.Success).data.conservation).isEqualTo(ConservationStatus.DD)
             assertThat((repo(body = conservationJson("ZZ")).get("x") as Result.Success).data.conservation).isNull()
+        }
+
+    /** Um BFF de antes da frente B não manda o bioma principal nem os picos: o Detalhe abre do mesmo jeito. */
+    @Test
+    fun `sem bioma principal e sem picos a especie continua sendo lida`() =
+        runTest {
+            val old = full.replace(Regex(""",\s*"peaks":\[[^\]]*]"""), "").replace(Regex(""""primaryBiome":"pantanal","""), "")
+            assertThat(old.contains("peaks") || old.contains("primaryBiome")).isFalse()
+            val detail = (repo(body = old).get("x") as Result.Success).data
+            assertThat(detail.primaryBiome).isNull()
+            assertThat(detail.audio?.peaks).isEqualTo(emptyList())
+        }
+
+    @Test
+    fun `bioma principal desconhecido vira ausente`() =
+        runTest {
+            val body = full.replace("\"primaryBiome\":\"pantanal\"", "\"primaryBiome\":\"tundra\"")
+            assertThat((repo(body = body).get("x") as Result.Success).data.primaryBiome).isNull()
+        }
+
+    @Test
+    fun `picos fora de 0 a 1 sao limitados ao intervalo`() =
+        runTest {
+            val body = full.replace("[0.0,0.5,1.0]", "[-0.2,0.5,1.7]")
+            assertThat((repo(body = body).get("x") as Result.Success).data.audio?.peaks).isEqualTo(listOf(0f, 0.5f, 1f))
         }
 
     @Test

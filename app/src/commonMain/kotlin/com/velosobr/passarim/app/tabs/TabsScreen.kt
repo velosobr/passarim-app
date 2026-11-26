@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.velosobr.passarim.app.navigation.ExploreRoute
 import com.velosobr.passarim.app.navigation.FavoritesRoute
 import com.velosobr.passarim.app.navigation.SettingsRoute
+import com.velosobr.passarim.core.presentation.DetailOpening
 import com.velosobr.passarim.feature.explore.presentation.ExploreRoot
 import com.velosobr.passarim.feature.favorites.presentation.FavoritesRoot
 import com.velosobr.passarim.feature.settings.presentation.SettingsRoot
@@ -49,7 +50,7 @@ private val FloatingBarSpace = 92.dp
  */
 @Composable
 fun TabsScreen(
-    onOpenDetail: (id: String, autoPlay: Boolean) -> Unit,
+    onOpenDetail: (DetailOpening) -> Unit,
     onOpenStorage: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
@@ -71,17 +72,17 @@ fun TabsScreen(
                     contentPadding = barPadding,
                 )
             }
-            // Favoritos e Configurações ganham o visual novo na frente E3; até lá, só reservam o espaço da barra.
             composable<FavoritesRoute> {
-                Box(Modifier.padding(barPadding)) {
-                    FavoritesRoot(
-                        onOpenDetail = { id -> onOpenDetail(id, false) },
-                        onOpenExplore = { navController.navigateToTab(Tab.Explore) },
-                    )
-                }
+                // Favoritos recebe o espaço da barra flutuante como contentPadding (a lista rola por baixo
+                // dela) e abre o Detalhe com um DetailOpening, o pacote que leva a transição compartilhada.
+                FavoritesRoot(
+                    onOpenDetail = { id -> onOpenDetail(DetailOpening(id)) },
+                    onOpenExplore = { navController.navigateToTab(Tab.Explore) },
+                    contentPadding = barPadding,
+                )
             }
             composable<SettingsRoute> {
-                Box(Modifier.padding(barPadding)) { SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout) }
+                SettingsRoot(onOpenStorage = onOpenStorage, onOpenAbout = onOpenAbout, contentPadding = barPadding)
             }
         }
         val tabs = Tab.entries

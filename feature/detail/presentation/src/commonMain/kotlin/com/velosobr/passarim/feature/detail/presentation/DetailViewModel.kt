@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
 import com.velosobr.passarim.core.domain.SettingsRepository
+import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.domain.onFailure
 import com.velosobr.passarim.core.domain.onSuccess
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.core.presentation.toScreenError
 import com.velosobr.passarim.feature.detail.domain.AudioPlayer
@@ -42,6 +44,15 @@ const val KEY_SPECIES_ID = "id"
  */
 const val KEY_AUTO_PLAY = "autoPlay"
 
+/** Argumento da rota com a chave da foto que viaja do card tocado (nulo: a foto não viaja). */
+const val KEY_PHOTO_KEY = "photoKey"
+
+/** Argumento da rota com a miniatura do card tocado, desenhada no topo enquanto a ave carrega. */
+const val KEY_THUMBNAIL_URL = "thumbnailUrl"
+
+/** Argumento da rota com o código do bioma principal ("pantanal"), o gradiente atrás da foto. */
+const val KEY_PRIMARY_BIOME = "primaryBiome"
+
 /**
  * Carrega a espécie, acompanha o favorito e o player, e trata as ações da
  * tela. Ao carregar, se a espécie já é favorita, atualiza o resumo guardado;
@@ -58,7 +69,18 @@ class DetailViewModel(
     private val id: String = savedState[KEY_SPECIES_ID] ?: ""
     private val autoPlayRequested: Boolean = savedState[KEY_AUTO_PLAY] ?: false
 
-    private val _state = MutableStateFlow(DetailState())
+    // A prévia do topo (chave da foto, miniatura e bioma) chega pela rota e já vale no primeiro quadro.
+    private val _state =
+        MutableStateFlow(
+            DetailState(
+                preview =
+                    DetailPreview(
+                        photoKey = savedState[KEY_PHOTO_KEY],
+                        thumbnailUrl = savedState[KEY_THUMBNAIL_URL],
+                        biome = biomeOf(savedState[KEY_PRIMARY_BIOME]),
+                    ),
+            ),
+        )
     val state: StateFlow<DetailState> = _state.asStateFlow()
 
     private val eventChannel = Channel<DetailEvent>(Channel.BUFFERED)
