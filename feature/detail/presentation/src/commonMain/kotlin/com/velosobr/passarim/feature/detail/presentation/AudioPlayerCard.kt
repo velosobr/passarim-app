@@ -92,14 +92,17 @@ fun AudioPlayerCard(
     ) {
         PlayButton(playback, onTogglePlay)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // O que a forma de onda mostra: a posição do dedo durante um arrasto, senão a do player.
+            val shownProgress = dragging ?: (position.toFloat() / duration).coerceIn(0f, 1f)
             Waveform(
                 peaks = peaks,
-                progress = dragging ?: (position.toFloat() / duration).coerceIn(0f, 1f),
+                progress = shownProgress,
                 modifier =
                     Modifier.seekable(
                         label = stringResource(Res.string.audio_progress),
-                        progress = (position.toFloat() / duration).coerceIn(0f, 1f),
+                        progress = shownProgress,
                         onDrag = { dragging = it },
+                        onDragCancel = { dragging = null },
                         onSeek = { fraction ->
                             dragging = null
                             onSeek((fraction * duration).toLong())
@@ -124,7 +127,9 @@ fun AudioPlayerCard(
 
 /**
  * Deixa pular a posição do canto pela forma de onda, de três jeitos: tocando num ponto, arrastando
- * (a forma de onda acompanha o dedo por [onDrag] e só pula ao soltar) e pelo leitor de tela.
+ * (a forma de onda acompanha o dedo por [onDrag] e só pula ao soltar) e pelo leitor de tela. Um
+ * arrasto cancelado (outro gesto, como a rolagem da tela, tomou o dedo) chama [onDragCancel] e não
+ * pula: a forma de onda volta à posição do player em vez de ficar presa onde o dedo parou.
  * pointerInput recebe os toques crus; a fração é a posição do dedo dividida pela largura.
  * Na semântica, progressBarRangeInfo diz ao leitor de tela quanto já tocou ("50%"), e setProgress
  * é a ação que ele usa para mudar a posição (o gesto de deslizar para cima ou para baixo no
@@ -135,9 +140,11 @@ private fun Modifier.seekable(
     label: String,
     progress: Float,
     onDrag: (Float) -> Unit,
+    onDragCancel: () -> Unit,
     onSeek: (Float) -> Unit,
 ): Modifier {
     val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
     val currentOnSeek by rememberUpdatedState(onSeek)
     var lastDrag by remember { mutableStateOf(0f) }
     return this
@@ -146,6 +153,7 @@ private fun Modifier.seekable(
         }.pointerInput(Unit) {
             detectHorizontalDragGestures(
                 onDragEnd = { currentOnSeek(lastDrag) },
+                onDragCancel = { currentOnDragCancel() },
                 onHorizontalDrag = { change, _ ->
                     lastDrag = (change.position.x / size.width).coerceIn(0f, 1f)
                     currentOnDrag(lastDrag)

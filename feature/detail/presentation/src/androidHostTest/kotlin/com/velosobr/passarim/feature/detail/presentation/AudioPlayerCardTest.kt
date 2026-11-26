@@ -24,6 +24,7 @@ import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import com.velosobr.passarim.feature.detail.domain.PlaybackState
 import com.velosobr.piuds.theme.PiuTheme
 import org.junit.Test
@@ -102,5 +103,55 @@ class AudioPlayerCardTest {
             }
             onNodeWithContentDescription("Progresso do canto").performTouchInput { click(Offset(width * 0.75f, height / 2f)) }
             assertThat(seekMs).isNotNull().isBetween(22_000L, 24_500L)
+        }
+
+    /** O que a forma de onda diz ao leitor de tela: a fração do canto que ela mostra como tocada. */
+    private fun progressOf(fraction: Float) =
+        SemanticsMatcher.expectValue(SemanticsProperties.ProgressBarRangeInfo, ProgressBarRangeInfo(fraction, 0f..1f))
+
+    @Test
+    fun `arrastar na forma de onda segue o dedo e pula ao soltar`() =
+        runComposeUiTest {
+            var seekMs: Long? = null
+            setContent {
+                PiuTheme {
+                    AudioPlayerCard(duration, List(64) { 0.5f }, "Gravação: autor", PlaybackState.Paused(0), {}, { seekMs = it })
+                }
+            }
+            val waveform = onNodeWithContentDescription("Progresso do canto")
+            waveform.performTouchInput {
+                down(Offset(width * 0.25f, height / 2f))
+                moveTo(Offset(width * 0.5f, height / 2f))
+                moveTo(Offset(width * 0.75f, height / 2f))
+            }
+            // Enquanto o dedo arrasta, a forma de onda mostra a posição dele, e o player ainda não pulou.
+            waveform.assert(progressOf(0.75f))
+            assertThat(seekMs).isNull()
+            waveform.performTouchInput { up() }
+            assertThat(seekMs).isNotNull().isBetween(22_000L, 24_500L)
+        }
+
+    /**
+     * Um arrasto cancelado (outro gesto, como a rolagem da tela, toma o dedo) não pula a posição, e
+     * a forma de onda volta a mostrar onde o player está, em vez de ficar presa onde o dedo parou.
+     */
+    @Test
+    fun `arrasto cancelado devolve a forma de onda a posicao do player`() =
+        runComposeUiTest {
+            var seekMs: Long? = null
+            setContent {
+                PiuTheme {
+                    AudioPlayerCard(duration, List(64) { 0.5f }, "Gravação: autor", PlaybackState.Paused(0), {}, { seekMs = it })
+                }
+            }
+            val waveform = onNodeWithContentDescription("Progresso do canto")
+            waveform.performTouchInput {
+                down(Offset(width * 0.25f, height / 2f))
+                moveTo(Offset(width * 0.5f, height / 2f))
+                moveTo(Offset(width * 0.75f, height / 2f))
+                cancel()
+            }
+            waveform.assert(progressOf(0f))
+            assertThat(seekMs).isNull()
         }
 }
