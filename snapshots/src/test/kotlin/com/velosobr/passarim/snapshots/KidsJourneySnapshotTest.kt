@@ -22,6 +22,5 @@ class KidsJourneySnapshotTest(
 
     /** Depois de errar: a mensagem e a conta nova, sem algarismos. */
     @Test
-    fun gateWrong() =
-        snap("kids-gate-wrong") { KidsGateScreen(KidsGateState(GateQuestion(18, 6), wrongAnswer = true), onAction = {}) }
+    fun gateWrong() = snap("kids-gate-wrong") { KidsGateScreen(KidsGateState(GateQuestion(18, 6), wrongAnswer = true), onAction = {}) }
 }
