@@ -1,5 +1,5 @@
 <resources>
-    <!-- Os números por extenso da trava para adultos (NumberInWords.kt). A ordem importa: o índice é o número. -->
+    <!-- Os números por extenso da trava para adultos (NumberWords.kt). A ordem importa: o índice é o número. -->
     <string-array name="number_units">
         <item>zero</item>
         <item>um</item>
@@ -45,4 +45,13 @@
     </string-array>
     <string name="number_exact_hundred">cem</string>
     <string name="number_and">e</string>
+    <!-- A trava para adultos (KidsGateScreen.kt). -->
+    <string name="gate_back">Voltar</string>
+    <string name="gate_only_adults">Só para adultos</string>
+    <string name="gate_question">Quanto é %1$s vezes %2$s?</string>
+    <string name="gate_wrong">Ops, essa não. Tente esta!</string>
+    <string name="gate_erase">Apagar</string>
+    <string name="gate_erase_key">⌫</string>
+    <string name="gate_confirm">Confirmar</string>
+    <string name="gate_confirm_key">OK</string>
 </resources>

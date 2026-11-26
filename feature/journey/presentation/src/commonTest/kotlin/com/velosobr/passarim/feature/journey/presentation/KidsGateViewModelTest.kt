@@ -62,7 +62,10 @@ class KidsGateViewModelTest {
 
     @Test
     fun `acertar grava a jornada do adulto`() {
-        type(viewModel.state.value.question.answer.toString())
+        type(
+            viewModel.state.value.question.answer
+                .toString(),
+        )
         viewModel.onAction(KidsGateAction.Confirm)
         assertThat(repository.settings.value.journey).isEqualTo(Journey.ADULT)
     }
@@ -86,7 +89,10 @@ class KidsGateViewModelTest {
             type("1")
             viewModel.onAction(KidsGateAction.Confirm)
         }
-        type(viewModel.state.value.question.answer.toString())
+        type(
+            viewModel.state.value.question.answer
+                .toString(),
+        )
         viewModel.onAction(KidsGateAction.Confirm)
         assertThat(repository.settings.value.journey).isEqualTo(Journey.ADULT)
     }
