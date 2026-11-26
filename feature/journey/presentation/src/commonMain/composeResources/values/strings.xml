@@ -54,4 +54,15 @@
     <string name="gate_erase_key">⌫</string>
     <string name="gate_confirm">Confirmar</string>
     <string name="gate_confirm_key">OK</string>
+    <!-- A Escolha de jornada (JourneyChoiceScreen.kt). -->
+    <string name="choice_welcome">Bem-vindo ao Passarim</string>
+    <string name="choice_title">Quem vai explorar as aves?</string>
+    <string name="choice_hint">Dá para trocar depois, nas Configurações.</string>
+    <string name="choice_adult_title">Passarim</string>
+    <string name="choice_adult_body">Para adultos: fotos, cantos, mapa e as fontes de cada informação.</string>
+    <string name="choice_kids_title">Passarim Kids</string>
+    <string name="choice_kids_body">Para crianças de 8 a 12 anos: mundos, figurinhas e cantos.</string>
+    <string name="choice_kids_hello">Oi! Eu sou o Pipo.</string>
+    <string name="choice_kids_offline">Precisa de internet na primeira vez</string>
+    <string name="choice_kids_retry">Tentar de novo</string>
 </resources>
