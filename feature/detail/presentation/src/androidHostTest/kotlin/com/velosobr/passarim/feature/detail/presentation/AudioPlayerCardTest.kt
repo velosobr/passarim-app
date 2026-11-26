@@ -63,6 +63,21 @@ class AudioPlayerCardTest {
                 .assert(SemanticsMatcher.expectValue(SemanticsProperties.ProgressBarRangeInfo, ProgressBarRangeInfo(0.5f, 0f..1f)))
         }
 
+    /**
+     * A forma de onda é o controle de posição do canto: a área de toque dela tem pelo menos 48 dp
+     * de altura (a mínima de um alvo de toque no Android), mesmo com o desenho de 32 dp.
+     */
+    @Test
+    fun `a forma de onda tem area de toque de 48 dp`() =
+        runComposeUiTest {
+            setContent {
+                PiuTheme {
+                    AudioPlayerCard(duration, List(64) { 0.5f }, "Gravação: autor", PlaybackState.Paused(0), {}, {})
+                }
+            }
+            onNodeWithContentDescription("Progresso do canto").assertHeightIsAtLeast(48.dp)
+        }
+
     @Test
     fun `o leitor de tela pula a posicao do canto pela forma de onda`() =
         runComposeUiTest {

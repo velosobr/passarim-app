@@ -8,10 +8,13 @@
 package com.velosobr.passarim.feature.detail.presentation
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -57,9 +60,20 @@ fun waveformBars(
     }
 }
 
+/** A altura do desenho das barras, como na prancheta. */
+private val WaveformDrawingHeight = 32.dp
+
+/**
+ * A altura mínima da forma de onda inteira: ela é o controle de posição do canto, e 48 dp é a
+ * altura mínima de um alvo de toque no Android. O desenho de 32 dp fica centralizado nela.
+ */
+private val WaveformTouchHeight = 48.dp
+
 /**
  * Desenha a forma de onda: as barras centralizadas na vertical, com cantos arredondados e um
- * espaço entre elas. Canvas é a área de desenho livre do Compose: o bloco roda a cada quadro em
+ * espaço entre elas. O [modifier] (com os gestos de tocar e arrastar) vale para a caixa de 48 dp,
+ * e não só para o desenho: assim o dedo acerta a forma de onda mesmo um pouco acima ou abaixo
+ * dela. Canvas é a área de desenho livre do Compose: o bloco roda a cada quadro em
  * que algo que ele lê muda (aqui, o progresso), e desenhar é barato, então não há nada a guardar
  * entre um quadro e outro. A parte tocada usa [playedColor] (a primária do tema) e o resto
  * [idleColor] (outlineVariant, o cinza das bordas).
@@ -72,7 +86,20 @@ fun Waveform(
     playedColor: Color = MaterialTheme.colorScheme.primary,
     idleColor: Color = MaterialTheme.colorScheme.outlineVariant,
 ) {
-    Canvas(modifier.fillMaxWidth().height(32.dp)) {
+    Box(modifier.fillMaxWidth().heightIn(min = WaveformTouchHeight), contentAlignment = Alignment.Center) {
+        WaveformBars(peaks, progress, playedColor, idleColor)
+    }
+}
+
+/** O desenho das barras em si, com [WaveformDrawingHeight] de altura. */
+@Composable
+private fun WaveformBars(
+    peaks: List<Float>,
+    progress: Float,
+    playedColor: Color,
+    idleColor: Color,
+) {
+    Canvas(Modifier.fillMaxWidth().height(WaveformDrawingHeight)) {
         val bars = waveformBars(peaks, progress)
         val gap = 2.dp.toPx()
         val barWidth = ((size.width - gap * (bars.size - 1)) / bars.size).coerceAtLeast(1f)
