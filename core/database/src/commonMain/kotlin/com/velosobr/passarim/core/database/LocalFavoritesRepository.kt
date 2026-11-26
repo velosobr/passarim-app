@@ -3,6 +3,7 @@
 package com.velosobr.passarim.core.database
 
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -22,7 +23,7 @@ class LocalFavoritesRepository(
 
     override fun observeAll(): Flow<List<SpeciesSummary>> = dao.observeAll().map { favorites -> favorites.map { it.toSummary() } }
 
-    override suspend fun toggle(summary: SpeciesSummary) = dao.toggle(summary.toEntity(addedAt = now()))
+    override suspend fun toggle(summary: SpeciesSummary) = dao.toggle(summary.toEntity(addedAt = now(), audience = Journey.ADULT))
 
     override suspend fun refresh(summary: SpeciesSummary) =
         dao.updateSummary(summary.id, summary.commonName, summary.scientificName, summary.thumbnailUrl)
