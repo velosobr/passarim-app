@@ -15,10 +15,13 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.StateFilter
+import com.velosobr.passarim.core.presentation.DetailOpening
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.explore.domain.SpeciesPage
 import kotlinx.coroutines.CompletableDeferred
@@ -430,13 +433,25 @@ class ExploreViewModelTest {
             assertThat(vm.state.value.favoriteIds).isEmpty()
         }
 
+    /**
+     * O card leva para o Detalhe a chave da foto do mosaico, a miniatura e o bioma: o topo do Detalhe
+     * já nasce com eles, enquanto a ave ainda carrega, e a foto tem par para viajar.
+     */
     @Test
     fun `tocar no card e em Ver favoritos emite os eventos de navegacao`() =
         runTest {
             val vm = viewModel()
+            val card = bird("bem-te-vi").copy(thumbnailUrl = "https://thumb/bem-te-vi.jpg", primaryBiome = Biome.CERRADO)
             vm.events.test {
-                vm.onAction(ExploreAction.OpenDetail("bem-te-vi"))
-                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail("bem-te-vi"))
+                vm.onAction(ExploreAction.OpenDetail(card))
+                assertThat(awaitItem()).isEqualTo(
+                    ExploreEvent.NavigateToDetail(
+                        DetailOpening(
+                            id = "bem-te-vi",
+                            preview = DetailPreview("foto-bem-te-vi", "https://thumb/bem-te-vi.jpg", Biome.CERRADO),
+                        ),
+                    ),
+                )
                 vm.onAction(ExploreAction.OpenFavorites)
                 assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToFavorites)
             }
@@ -491,15 +506,28 @@ class ExploreViewModelTest {
             assertThat(vm.state.value.phase).isEqualTo(ExplorePhase.Content)
         }
 
+    /**
+     * A "Ave do dia" leva a miniatura, o bioma e a chave da foto dela ("foto-destaque-<id>"), e não a
+     * do mosaico: a mesma ave costuma estar também no mosaico, e a foto partiria do card errado.
+     */
+    private val featuredPreview =
+        DetailPreview(
+            photoKey = "foto-destaque-tuiuiu",
+            thumbnailUrl = sampleFeatured.species.thumbnailUrl,
+            biome = sampleFeatured.species.primaryBiome,
+        )
+
     @Test
     fun `tocar na ave do dia abre o detalhe e o canto abre tocando`() =
         runTest {
             val vm = viewModel()
             vm.events.test {
                 vm.onAction(ExploreAction.OpenFeatured)
-                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail("tuiuiu"))
+                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail(DetailOpening("tuiuiu", preview = featuredPreview)))
                 vm.onAction(ExploreAction.PlayFeatured)
-                assertThat(awaitItem()).isEqualTo(ExploreEvent.NavigateToDetail("tuiuiu", autoPlay = true))
+                assertThat(awaitItem()).isEqualTo(
+                    ExploreEvent.NavigateToDetail(DetailOpening("tuiuiu", autoPlay = true, preview = featuredPreview)),
+                )
             }
         }
 

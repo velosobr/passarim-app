@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.velosobr.passarim.app.navigation.ExploreRoute
 import com.velosobr.passarim.app.navigation.FavoritesRoute
 import com.velosobr.passarim.app.navigation.SettingsRoute
+import com.velosobr.passarim.core.presentation.DetailOpening
 import com.velosobr.passarim.feature.explore.presentation.ExploreRoot
 import com.velosobr.passarim.feature.favorites.presentation.FavoritesRoot
 import com.velosobr.passarim.feature.settings.presentation.SettingsRoot
@@ -49,7 +50,7 @@ private val FloatingBarSpace = 92.dp
  */
 @Composable
 fun TabsScreen(
-    onOpenDetail: (id: String, autoPlay: Boolean) -> Unit,
+    onOpenDetail: (DetailOpening) -> Unit,
     onOpenStorage: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
@@ -75,7 +76,7 @@ fun TabsScreen(
             composable<FavoritesRoute> {
                 Box(Modifier.padding(barPadding)) {
                     FavoritesRoot(
-                        onOpenDetail = { id -> onOpenDetail(id, false) },
+                        onOpenDetail = { id -> onOpenDetail(DetailOpening(id)) },
                         onOpenExplore = { navController.navigateToTab(Tab.Explore) },
                     )
                 }

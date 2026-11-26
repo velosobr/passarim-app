@@ -42,5 +42,13 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.kotlinx.coroutines.test)
         }
+        // Testes de Compose no host Android (Robolectric): a foto que viaja entre os dois NavHosts
+        // do app (o das abas e o da raiz), quadro a quadro.
+        getByName("androidHostTest").dependencies {
+            implementation(libs.compose.uiTest)
+            implementation(libs.androidx.compose.uiTestManifest)
+            implementation(libs.robolectric)
+            implementation(libs.junit4)
+        }
     }
 }

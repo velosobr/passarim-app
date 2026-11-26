@@ -14,8 +14,10 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Result
+import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.passarim.feature.detail.domain.PlaybackState
 import com.velosobr.passarim.feature.detail.domain.toSummary
@@ -220,6 +222,35 @@ class DetailViewModelTest {
             player,
         )
         assertThat(player.calls).containsExactly("play:$AUDIO_URL")
+    }
+
+    /**
+     * A rota aberta pelo mosaico traz a chave da foto, a miniatura e o código do bioma: o ViewModel
+     * os entrega ao estado desde o primeiro quadro, para o topo do esqueleto já ter o par da foto.
+     */
+    @Test
+    fun `a previa do topo vem da rota`() {
+        val vm =
+            DetailViewModel(
+                SavedStateHandle(
+                    mapOf(
+                        KEY_SPECIES_ID to ARARA_ID,
+                        KEY_PHOTO_KEY to "foto-$ARARA_ID",
+                        KEY_THUMBNAIL_URL to "https://thumb/arara.jpg",
+                        KEY_PRIMARY_BIOME to "pantanal",
+                    ),
+                ),
+                repo,
+                favorites,
+                FakeSettingsRepository(autoPlay = false),
+                player,
+            )
+        assertThat(vm.state.value.preview).isEqualTo(DetailPreview("foto-$ARARA_ID", "https://thumb/arara.jpg", Biome.PANTANAL))
+    }
+
+    @Test
+    fun `sem previa na rota o topo fica sem chave`() {
+        assertThat(viewModel().state.value.preview).isEqualTo(DetailPreview())
     }
 
     @Test

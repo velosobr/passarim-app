@@ -5,6 +5,7 @@
 package com.velosobr.passarim.feature.explore.presentation
 
 import com.velosobr.passarim.core.domain.SpeciesSummary
+import com.velosobr.passarim.core.presentation.DetailOpening
 
 /** Tudo o que o usuário pode fazer no Explorar. */
 sealed interface ExploreAction {
@@ -64,9 +65,9 @@ sealed interface ExploreAction {
         val summary: SpeciesSummary,
     ) : ExploreAction
 
-    /** Toque num card. */
+    /** Toque num card: leva a ave inteira, para o Detalhe já nascer com a miniatura e o bioma dela. */
     data class OpenDetail(
-        val id: String,
+        val summary: SpeciesSummary,
     ) : ExploreAction
 
     /** "Ver favoritos" da tela sem conexão. */
@@ -92,10 +93,9 @@ sealed interface ExploreAction {
  * não se repetirem ao girar a tela.
  */
 sealed interface ExploreEvent {
-    /** Abrir o Detalhe da ave [id]; com [autoPlay], o canto começa ao abrir. */
+    /** Abrir o Detalhe: a ave, se o canto começa ao abrir e o que o card já mostra (veja DetailOpening). */
     data class NavigateToDetail(
-        val id: String,
-        val autoPlay: Boolean = false,
+        val opening: DetailOpening,
     ) : ExploreEvent
 
     data object NavigateToFavorites : ExploreEvent

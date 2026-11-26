@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.velosobr.passarim.core.presentation.DetailOpening
 import com.velosobr.passarim.core.presentation.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -15,7 +16,7 @@ import org.koin.compose.viewmodel.koinViewModel
  */
 @Composable
 fun ExploreRoot(
-    onOpenDetail: (id: String, autoPlay: Boolean) -> Unit,
+    onOpenDetail: (DetailOpening) -> Unit,
     onOpenFavorites: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: ExploreViewModel = koinViewModel(),
@@ -23,7 +24,7 @@ fun ExploreRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            is ExploreEvent.NavigateToDetail -> onOpenDetail(event.id, event.autoPlay)
+            is ExploreEvent.NavigateToDetail -> onOpenDetail(event.opening)
             ExploreEvent.NavigateToFavorites -> onOpenFavorites()
         }
     }

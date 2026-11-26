@@ -1,6 +1,7 @@
 // A tela Explorar (frente E): título com o total de aves, busca, chips de
 // bioma, a "Ave do dia" e o mosaico de espécies, mais os estados de
-// carregando, vazio e erro. Os componentes visuais vêm do PiuDS.
+// carregando, vazio e erro, tudo numa grade só que rola inteira. Os
+// componentes visuais vêm do PiuDS; os itens do mosaico, de ExploreMosaic.kt.
 
 package com.velosobr.passarim.feature.explore.presentation
 
@@ -14,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -31,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.presentation.ScreenError
@@ -55,13 +60,10 @@ import com.velosobr.passarim.feature.explore.presentation.resources.search_place
 import com.velosobr.passarim.feature.explore.presentation.resources.see_favorites
 import com.velosobr.passarim.feature.explore.presentation.resources.species_count
 import com.velosobr.piuds.components.PiuFilterChip
-import com.velosobr.piuds.components.PiuScreenTitle
 import com.velosobr.piuds.components.PiuSearchField
-import com.velosobr.piuds.components.PiuSkeletonBox
 import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
 import com.velosobr.piuds.components.adult.PiuBiomeChip
-import com.velosobr.piuds.components.adult.PiuMosaicHeight
 import com.velosobr.piuds.resources.ic_cloud_off
 import com.velosobr.piuds.resources.ic_search
 import com.velosobr.piuds.resources.ic_wifi_off
@@ -80,9 +82,18 @@ fun exploreGridColumns(fontScale: Float): Int = if (fontScale >= SINGLE_COLUMN_F
 
 /**
  * Explorar, sem estado próprio: tudo vem de [state] e cada interação vira uma [ExploreAction].
- * O título, a busca e os chips ficam visíveis em todas as fases, para que digitar nunca seja
- * interrompido. [contentPadding] é o espaço que a barra flutuante ocupa embaixo: a grade rola por
- * baixo dela (o desfoque precisa do conteúdo atrás) e termina acima dela.
+ * A tela inteira é uma grade só (LazyVerticalStaggeredGrid): o título, a busca e os chips são os
+ * primeiros itens dela, em largura cheia, e sobem junto com o mosaico ao rolar, em vez de ficarem
+ * presos no topo. Abaixo deles, cada fase põe os próprios itens: o esqueleto, o mosaico ou o
+ * estado de vazio ou de erro.
+ *
+ * A grade é a mesma em todas as fases, e cada item do topo tem uma chave fixa ("title",
+ * "search", "chips"): digitar muda a fase (a busca recomeça), mas o campo continua o mesmo item
+ * da mesma grade, e por isso não perde o foco nem fecha o teclado. Se cada fase tivesse a sua
+ * grade, o campo seria criado de novo a cada letra.
+ *
+ * [contentPadding] é o espaço que a barra flutuante ocupa embaixo: a grade rola por baixo dela
+ * (o desfoque precisa do conteúdo atrás) e termina acima dela.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,22 +102,37 @@ fun ExploreScreen(
     onAction: (ExploreAction) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    gridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
 ) {
     val columns = exploreGridColumns(LocalDensity.current.fontScale)
-    Column(modifier.fillMaxSize()) {
-        Header(state)
-        PiuSearchField(
-            value = state.query,
-            onValueChange = { onAction(ExploreAction.QueryChange(it)) },
-            placeholder = stringResource(Res.string.search_placeholder),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        )
-        BiomeChips(state, onAction)
+    LoadMoreEffect(gridState, onAction)
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(columns),
+        state = gridState,
+        modifier = modifier.fillMaxSize(),
+        contentPadding = contentPadding.plusMargins(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalItemSpacing = 12.dp,
+    ) {
+        item(key = "title", span = StaggeredGridItemSpan.FullLine, contentType = "title") {
+            Header(state, Modifier.fullBleed())
+        }
+        item(key = "search", span = StaggeredGridItemSpan.FullLine, contentType = "search") {
+            PiuSearchField(
+                value = state.query,
+                onValueChange = { onAction(ExploreAction.QueryChange(it)) },
+                placeholder = stringResource(Res.string.search_placeholder),
+                modifier = Modifier.fullBleed().fillMaxWidth().padding(horizontal = 16.dp),
+            )
+        }
+        item(key = "chips", span = StaggeredGridItemSpan.FullLine, contentType = "chips") {
+            BiomeChips(state, onAction, Modifier.fullBleed())
+        }
         when (val phase = state.phase) {
-            ExplorePhase.Loading -> SkeletonGrid(columns)
-            ExplorePhase.Content -> SpeciesMosaic(state, columns, onAction, contentPadding)
-            ExplorePhase.Empty -> CenteredState(contentPadding) { EmptyState(state, onAction) }
-            is ExplorePhase.Error -> CenteredState(contentPadding) { ErrorState(phase.error, state.retryEnabled, onAction) }
+            ExplorePhase.Loading -> skeletonItems()
+            ExplorePhase.Content -> mosaicItems(state, onAction)
+            ExplorePhase.Empty -> stateItem { EmptyState(state, onAction) }
+            is ExplorePhase.Error -> stateItem { ErrorState(phase.error, state.retryEnabled, onAction) }
         }
     }
     if (state.sheet != null) {
@@ -120,11 +146,27 @@ fun ExploreScreen(
     }
 }
 
-/** O título da tela e, quando os filtros já chegaram, o total de aves do catálogo. */
+/** O espaço a mais embaixo do cabeçalho: somado aos 12 dp entre os itens da grade, dá os 18 dp da prancheta até a busca. */
+private val HeaderBottomSpace = 6.dp
+
+/**
+ * O título da tela e, quando os filtros já chegaram, o total de aves do catálogo, colado embaixo
+ * dele. O título tem o estilo do PiuScreenTitle, mas sem os 8 dp que ele põe embaixo por dentro: o
+ * espaço até a busca é só o [HeaderBottomSpace] mais o espaço entre os itens da grade.
+ */
 @Composable
-private fun Header(state: ExploreState) {
-    Column(Modifier.padding(bottom = 8.dp)) {
-        PiuScreenTitle(stringResource(Res.string.explore_title), Modifier.padding(bottom = 0.dp))
+private fun Header(
+    state: ExploreState,
+    modifier: Modifier,
+) {
+    Column(modifier.padding(bottom = HeaderBottomSpace)) {
+        Text(
+            stringResource(Res.string.explore_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            // heading(): o leitor de tela anuncia o título como cabeçalho e deixa pular até ele.
+            modifier = Modifier.padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin).semantics { heading() },
+        )
         state.speciesTotal?.let { total ->
             Text(
                 stringResource(Res.string.species_count, total),
@@ -145,10 +187,12 @@ private fun Header(state: ExploreState) {
 private fun BiomeChips(
     state: ExploreState,
     onAction: (ExploreAction) -> Unit,
+    modifier: Modifier,
 ) {
     val biomes = (state.filters as? FiltersPhase.Loaded)?.filters?.biomes.orEmpty()
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item(key = "all") {
@@ -188,36 +232,6 @@ private fun BiomeChips(
     }
 }
 
-/** O "esqueleto" do carregamento: quatro blocos cinzas no desenho do mosaico, sem rolagem. */
-@Composable
-private fun SkeletonGrid(columns: Int) {
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(columns),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalItemSpacing = 12.dp,
-        userScrollEnabled = false,
-    ) {
-        items(4) { index ->
-            PiuSkeletonBox(
-                Modifier.fillMaxWidth().height(
-                    mosaicHeightFor(index).let {
-                        if (it ==
-                            PiuMosaicHeight.TALL
-                        ) {
-                            220.dp
-                        } else {
-                            168.dp
-                        }
-                    },
-                ),
-                shape = MaterialTheme.shapes.large,
-            )
-        }
-    }
-}
-
 /** Nenhuma ave encontrada: o texto cita a busca (se houver) e oferece limpar os filtros. */
 @Composable
 private fun EmptyState(
@@ -225,24 +239,22 @@ private fun EmptyState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val query = state.query.trim()
-    run {
-        PiuStateScreen(
-            icon = painterResource(DesignRes.drawable.ic_search),
-            title = stringResource(Res.string.empty_title),
-            body =
-                if (query.isNotEmpty()) {
-                    stringResource(Res.string.empty_body_query, query)
-                } else {
-                    stringResource(Res.string.empty_body_filters)
-                },
-        ) {
-            if (state.hasFilters) {
-                FilledTonalButton(
-                    onClick = { onAction(ExploreAction.ClearFilters) },
-                    modifier = Modifier.height(PiuDimens.touchTarget),
-                ) {
-                    Text(stringResource(Res.string.clear_filters))
-                }
+    PiuStateScreen(
+        icon = painterResource(DesignRes.drawable.ic_search),
+        title = stringResource(Res.string.empty_title),
+        body =
+            if (query.isNotEmpty()) {
+                stringResource(Res.string.empty_body_query, query)
+            } else {
+                stringResource(Res.string.empty_body_filters)
+            },
+    ) {
+        if (state.hasFilters) {
+            FilledTonalButton(
+                onClick = { onAction(ExploreAction.ClearFilters) },
+                modifier = Modifier.height(PiuDimens.touchTarget),
+            ) {
+                Text(stringResource(Res.string.clear_filters))
             }
         }
     }
@@ -279,37 +291,31 @@ private fun ErrorState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val copy = error.copy()
-    run {
-        PiuStateScreen(
-            icon = painterResource(copy.icon),
-            title = stringResource(copy.title),
-            body = stringResource(copy.body),
-            tone = StateTone.Error,
-        ) {
-            Button(
-                onClick = { onAction(ExploreAction.Retry) },
-                enabled = retryEnabled,
-                modifier = Modifier.height(PiuDimens.touchTarget),
-            ) { Text(stringResource(Res.string.retry)) }
-            if (error == ScreenError.NoConnection) {
-                TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
-                    Text(stringResource(Res.string.see_favorites))
-                }
+    PiuStateScreen(
+        icon = painterResource(copy.icon),
+        title = stringResource(copy.title),
+        body = stringResource(copy.body),
+        tone = StateTone.Error,
+    ) {
+        Button(
+            onClick = { onAction(ExploreAction.Retry) },
+            enabled = retryEnabled,
+            modifier = Modifier.height(PiuDimens.touchTarget),
+        ) { Text(stringResource(Res.string.retry)) }
+        if (error == ScreenError.NoConnection) {
+            TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
+                Text(stringResource(Res.string.see_favorites))
             }
         }
     }
 }
 
 /**
- * Centraliza o estado no espaço que sobra (acima da barra flutuante) e rola se a fonte grande não
- * couber na tela.
+ * O vazio ou o erro, como um item de largura cheia logo abaixo dos chips. É um item da grade, e
+ * não uma tela à parte, para o título e a busca continuarem em cima dele.
  */
-@Composable
-private fun CenteredState(
-    contentPadding: PaddingValues,
-    content: @Composable () -> Unit,
-) {
-    Box(Modifier.fillMaxSize().padding(bottom = contentPadding.calculateBottomPadding()), contentAlignment = Alignment.Center) {
-        Box(Modifier.verticalScroll(rememberScrollState()).padding(vertical = 24.dp)) { content() }
+private fun LazyStaggeredGridScope.stateItem(content: @Composable () -> Unit) {
+    item(key = "state", span = StaggeredGridItemSpan.FullLine, contentType = "state") {
+        Box(Modifier.fillMaxWidth().padding(vertical = 48.dp), contentAlignment = Alignment.Center) { content() }
     }
 }
