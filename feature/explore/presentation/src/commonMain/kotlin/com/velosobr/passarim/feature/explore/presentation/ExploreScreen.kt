@@ -239,24 +239,22 @@ private fun EmptyState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val query = state.query.trim()
-    run {
-        PiuStateScreen(
-            icon = painterResource(DesignRes.drawable.ic_search),
-            title = stringResource(Res.string.empty_title),
-            body =
-                if (query.isNotEmpty()) {
-                    stringResource(Res.string.empty_body_query, query)
-                } else {
-                    stringResource(Res.string.empty_body_filters)
-                },
-        ) {
-            if (state.hasFilters) {
-                FilledTonalButton(
-                    onClick = { onAction(ExploreAction.ClearFilters) },
-                    modifier = Modifier.height(PiuDimens.touchTarget),
-                ) {
-                    Text(stringResource(Res.string.clear_filters))
-                }
+    PiuStateScreen(
+        icon = painterResource(DesignRes.drawable.ic_search),
+        title = stringResource(Res.string.empty_title),
+        body =
+            if (query.isNotEmpty()) {
+                stringResource(Res.string.empty_body_query, query)
+            } else {
+                stringResource(Res.string.empty_body_filters)
+            },
+    ) {
+        if (state.hasFilters) {
+            FilledTonalButton(
+                onClick = { onAction(ExploreAction.ClearFilters) },
+                modifier = Modifier.height(PiuDimens.touchTarget),
+            ) {
+                Text(stringResource(Res.string.clear_filters))
             }
         }
     }
@@ -293,22 +291,20 @@ private fun ErrorState(
     onAction: (ExploreAction) -> Unit,
 ) {
     val copy = error.copy()
-    run {
-        PiuStateScreen(
-            icon = painterResource(copy.icon),
-            title = stringResource(copy.title),
-            body = stringResource(copy.body),
-            tone = StateTone.Error,
-        ) {
-            Button(
-                onClick = { onAction(ExploreAction.Retry) },
-                enabled = retryEnabled,
-                modifier = Modifier.height(PiuDimens.touchTarget),
-            ) { Text(stringResource(Res.string.retry)) }
-            if (error == ScreenError.NoConnection) {
-                TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
-                    Text(stringResource(Res.string.see_favorites))
-                }
+    PiuStateScreen(
+        icon = painterResource(copy.icon),
+        title = stringResource(copy.title),
+        body = stringResource(copy.body),
+        tone = StateTone.Error,
+    ) {
+        Button(
+            onClick = { onAction(ExploreAction.Retry) },
+            enabled = retryEnabled,
+            modifier = Modifier.height(PiuDimens.touchTarget),
+        ) { Text(stringResource(Res.string.retry)) }
+        if (error == ScreenError.NoConnection) {
+            TextButton(onClick = { onAction(ExploreAction.OpenFavorites) }, modifier = Modifier.height(PiuDimens.touchTarget)) {
+                Text(stringResource(Res.string.see_favorites))
             }
         }
     }
