@@ -58,7 +58,9 @@ fun PiuSharedTransitionLayout(
 /**
  * Entrega às fotos de uma tela o [scope] de animação dela: no NavHost, o `this` de cada
  * `composable<Rota> { }`. As telas de dentro de outro NavHost (as abas) herdam o escopo da tela
- * da raiz que as contém, e é isso que deixa a foto atravessar dos dois NavHosts.
+ * da raiz que as contém, e é isso que deixa a foto atravessar dos dois NavHosts. O escopo desce
+ * para todas as abas, e não só para a que abriu o Detalhe: uma foto marcada em qualquer aba com a
+ * mesma chave também viajaria, então cada chave deve existir numa aba só.
  */
 @Composable
 fun PiuSharedScope(
