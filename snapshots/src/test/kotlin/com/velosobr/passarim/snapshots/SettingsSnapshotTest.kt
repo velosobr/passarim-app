@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.ThemeMode
+import com.velosobr.passarim.core.presentation.KidsAvailabilityState
 import com.velosobr.passarim.feature.settings.presentation.AboutScreen
 import com.velosobr.passarim.feature.settings.presentation.AboutState
 import com.velosobr.passarim.feature.settings.presentation.SettingsScreen
@@ -51,6 +52,14 @@ class SettingsSnapshotTest(
 
     @Test
     fun withoutDynamicColors() = settings("settings-ios", defaults.copy(dynamicColorsSupported = false))
+
+    /** A seção "Para crianças" no topo (frente D), com o Kids disponível. */
+    @Test
+    fun withKids() = settings("settings-kids", defaults.copy(kids = KidsAvailabilityState.AVAILABLE))
+
+    /** A mesma seção sem rede: o subtítulo vira "Precisa de internet". */
+    @Test
+    fun withKidsOffline() = settings("settings-kids-offline", defaults.copy(kids = KidsAvailabilityState.OFFLINE))
 
     @Test
     fun storage() = snap("storage") { StorageScreen(state = StorageState.Idle, onAction = {}) }
