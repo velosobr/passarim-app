@@ -5,7 +5,6 @@
 
 package com.velosobr.passarim.feature.detail.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -39,7 +39,6 @@ import com.velosobr.passarim.feature.detail.presentation.resources.back
 import com.velosobr.piuds.components.PiuBlurState
 import com.velosobr.piuds.components.PiuBlurSurface
 import com.velosobr.piuds.components.PiuHeroPhoto
-import com.velosobr.piuds.components.adult.photoTextScrim
 import com.velosobr.piuds.components.piuBlurSource
 import com.velosobr.piuds.components.rememberPiuBlurState
 import com.velosobr.piuds.resources.favorite_add
@@ -70,10 +69,10 @@ private val FadeHeight = 32.dp
  * card fica por baixo até a foto grande baixar. Ela fica numa camada à parte dos
  * botões porque uma superfície não pode desfocar a si mesma.
  *
- * O nome fica num bloco com o photoTextScrim, o degradê escuro do PiuDS que garante o contraste
- * do branco sobre qualquer foto (inclusive uma foto toda branca). Embaixo dele, uma faixa vai da
- * cor do scrim à cor do fundo do tema, e a foto se funde à página: no tema escuro a emenda some,
- * no claro vira uma transição curta do escuro para o claro.
+ * O nome fica sobre um degradê escuro (heroScrim, com a cor do scrim do PiuDS) que garante o
+ * contraste do branco sobre qualquer foto (inclusive uma foto toda branca), e o degradê termina na
+ * cor do fundo do tema: a foto se funde à página. No escuro ele escurece sem parar até o fundo,
+ * como na prancheta; no claro vira uma transição curta do escuro para o claro, depois do texto.
  */
 @Composable
 internal fun DetailHero(
@@ -96,32 +95,27 @@ internal fun DetailHero(
         Column(Modifier.align(Alignment.BottomStart).fillMaxWidth()) {
             // Guarda o lugar da barra de status e dos botões: um nome longo nunca sobe para baixo deles.
             Spacer(Modifier.statusBarsPadding().height(PiuDimens.touchTarget + 32.dp))
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .photoTextScrim(scrim, fade = 48.dp)
-                    .padding(start = 20.dp, end = 20.dp, top = 56.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    detail.commonName,
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color.White,
-                )
-                Text(
-                    detail.scientificName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.White.copy(alpha = 0.9f),
-                )
+            Column(Modifier.fillMaxWidth().heroScrim(scrim, MaterialTheme.colorScheme.background, PiuTheme.isDark)) {
+                Column(
+                    Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 56.dp, bottom = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        detail.commonName,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                    )
+                    Text(
+                        detail.scientificName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontStyle = FontStyle.Italic,
+                        color = Color.White.copy(alpha = 0.9f),
+                    )
+                }
+                // A faixa que funde a base da foto ao fundo da tela: só espaço, o degradê é o do heroScrim.
+                Spacer(Modifier.height(FadeHeight))
             }
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(FadeHeight)
-                    .background(Brush.verticalGradient(listOf(scrim, MaterialTheme.colorScheme.background))),
-            )
         }
         Row(
             Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -132,6 +126,52 @@ internal fun DetailHero(
         }
     }
 }
+
+/** Até onde o degradê sobe transparente, no alto do bloco do nome, antes de chegar ao scrim cheio. */
+private val ScrimFade = 48.dp
+
+/**
+ * As paradas de cor (posição de 0 a 1 na altura, cor) do degradê atrás do nome e da faixa de
+ * baixo. Sobe transparente até [fadeEnd], onde chega ao [scrim] cheio. No [dark], segue direto do
+ * scrim até o [background]: o scrim escuro e o fundo escuro são quase a mesma cor, então o texto
+ * fica sempre sobre algo pelo menos tão escuro quanto o scrim, e não sobra uma faixa de cor parada
+ * (cinza, sobre uma foto clara) com a borda dura no fim. No claro, o fundo é claro: o scrim fica
+ * cheio até [textEnd], o fim do texto, e só a faixa de baixo vai até o fundo.
+ */
+internal fun heroScrimStops(
+    scrim: Color,
+    background: Color,
+    dark: Boolean,
+    fadeEnd: Float,
+    textEnd: Float,
+): List<Pair<Float, Color>> {
+    val start = 0f to scrim.copy(alpha = 0f)
+    val full = fadeEnd to scrim
+    val end = 1f to background
+    return if (dark) listOf(start, full, end) else listOf(start, full, textEnd to scrim, end)
+}
+
+/**
+ * Pinta o degradê de [heroScrimStops] atrás do bloco do nome e da faixa de [FadeHeight] embaixo
+ * dele. drawBehind desenha antes do conteúdo, no tamanho do bloco; as posições das paradas são
+ * frações da altura, calculadas a cada desenho, porque o bloco cresce com fonte grande.
+ */
+private fun Modifier.heroScrim(
+    scrim: Color,
+    background: Color,
+    dark: Boolean,
+): Modifier =
+    drawBehind {
+        val stops =
+            heroScrimStops(
+                scrim = scrim,
+                background = background,
+                dark = dark,
+                fadeEnd = (ScrimFade.toPx() / size.height).coerceIn(0f, 1f),
+                textEnd = ((size.height - FadeHeight.toPx()) / size.height).coerceIn(0f, 1f),
+            )
+        drawRect(Brush.verticalGradient(*stops.toTypedArray()))
+    }
 
 /**
  * O botão de voltar: um círculo de vidro fosco de 48 dp (PiuBlurSurface) com a tinta translúcida
