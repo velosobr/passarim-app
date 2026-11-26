@@ -132,12 +132,24 @@ internal fun GroupRow(
     subtitle: String? = null,
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
+    GroupRow(title = title, leading = { RowIcon(icon) }, modifier = modifier, subtitle = subtitle, trailing = trailing)
+}
+
+/** A mesma linha, com qualquer desenho à esquerda no lugar do ícone ([leading]; o Pipo, no item do Kids). */
+@Composable
+internal fun GroupRow(
+    title: String,
+    leading: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    trailing: @Composable RowScope.() -> Unit = {},
+) {
     Row(
         modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        RowIcon(icon)
+        leading()
         RowTexts(title, subtitle, Modifier.weight(1f))
         trailing()
     }

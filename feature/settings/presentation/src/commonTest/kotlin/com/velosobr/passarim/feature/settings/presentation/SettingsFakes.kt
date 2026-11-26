@@ -2,8 +2,11 @@
 
 package com.velosobr.passarim.feature.settings.presentation
 
+import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.ImageCacheCleaner
 import com.velosobr.passarim.core.domain.Journey
+import com.velosobr.passarim.core.domain.KidsAvailabilityRepository
+import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.ThemeMode
@@ -37,5 +40,19 @@ class FakeImageCacheCleaner : ImageCacheCleaner {
     override suspend fun clearImageCache() {
         calls++
         gate?.await()
+    }
+}
+
+/** Checagem do Kids falsa: devolve [result], conta as chamadas e, com [gate], espera o teste liberar. */
+class FakeKidsAvailabilityRepository(
+    var result: Result<Boolean, DataError.Network> = Result.Success(true),
+) : KidsAvailabilityRepository {
+    var calls = 0
+    var gate: CompletableDeferred<Unit>? = null
+
+    override suspend fun checkKidsAvailability(): Result<Boolean, DataError.Network> {
+        calls++
+        gate?.await()
+        return result
     }
 }

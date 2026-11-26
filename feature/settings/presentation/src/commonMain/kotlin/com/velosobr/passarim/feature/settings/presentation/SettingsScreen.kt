@@ -1,30 +1,39 @@
 // A aba Configurações (frente E3): as seções Aparência, Reprodução, Dados e
-// Sobre, cada uma num cartão de cantos arredondados (SettingsCards.kt). A seção
-// "Para crianças" entra com a frente D.
+// Sobre, cada uma num cartão de cantos arredondados (SettingsCards.kt). No
+// topo, quando o BFF tem o Passarim Kids, a seção "Para crianças" (frente D).
 
 package com.velosobr.passarim.feature.settings.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.ThemeMode
+import com.velosobr.passarim.core.presentation.KidsAvailabilityState
 import com.velosobr.passarim.feature.settings.presentation.resources.Res
 import com.velosobr.passarim.feature.settings.presentation.resources.about_row
 import com.velosobr.passarim.feature.settings.presentation.resources.about_row_body
@@ -32,9 +41,13 @@ import com.velosobr.passarim.feature.settings.presentation.resources.autoplay
 import com.velosobr.passarim.feature.settings.presentation.resources.autoplay_body
 import com.velosobr.passarim.feature.settings.presentation.resources.dynamic_colors
 import com.velosobr.passarim.feature.settings.presentation.resources.dynamic_colors_body
+import com.velosobr.passarim.feature.settings.presentation.resources.kids_row
+import com.velosobr.passarim.feature.settings.presentation.resources.kids_row_body
+import com.velosobr.passarim.feature.settings.presentation.resources.kids_row_offline
 import com.velosobr.passarim.feature.settings.presentation.resources.section_about
 import com.velosobr.passarim.feature.settings.presentation.resources.section_appearance
 import com.velosobr.passarim.feature.settings.presentation.resources.section_data
+import com.velosobr.passarim.feature.settings.presentation.resources.section_kids
 import com.velosobr.passarim.feature.settings.presentation.resources.section_playback
 import com.velosobr.passarim.feature.settings.presentation.resources.settings_title
 import com.velosobr.passarim.feature.settings.presentation.resources.storage_body
@@ -44,6 +57,7 @@ import com.velosobr.passarim.feature.settings.presentation.resources.theme_dark
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_light
 import com.velosobr.passarim.feature.settings.presentation.resources.theme_system
 import com.velosobr.piuds.components.adult.PIU_STACK_FONT_SCALE
+import com.velosobr.piuds.components.kids.PiuPipo
 import com.velosobr.piuds.resources.ic_info
 import com.velosobr.piuds.resources.ic_palette
 import com.velosobr.piuds.resources.ic_storage
@@ -54,6 +68,9 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import com.velosobr.piuds.resources.Res as DesignRes
+
+/** O amarelo do Pipo (#FFC93C, da prancheta Escolha), o fundo do ícone do item do Kids. */
+private val PiuPipoYellow = Color(0xFFFFC93C)
 
 /** O rótulo traduzível de cada opção de tema. */
 private val ThemeMode.label: StringResource
@@ -93,6 +110,9 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin).semantics { heading() },
         )
+        if (state.kids != KidsAvailabilityState.HIDDEN) {
+            SettingsGroup(stringResource(Res.string.section_kids)) { KidsRow(state.kids, onAction) }
+        }
         SettingsGroup(stringResource(Res.string.section_appearance)) {
             GroupFlowRow(title = stringResource(Res.string.theme), icon = DesignRes.drawable.ic_theme) {
                 ThemeSegments(state.settings.theme, onAction)
@@ -134,6 +154,35 @@ fun SettingsScreen(
             ) { Chevron() }
         }
     }
+}
+
+/**
+ * O item "Passarim Kids": o Pipo num círculo amarelo, o subtítulo que explica a volta (ou "Precisa de
+ * internet", sem rede) e a seta. Troca na hora, sem confirmação: o toque vira OpenKids, e o
+ * ViewModel grava KIDS (ou confere de novo, sem rede). Conferindo, o item fica desabilitado.
+ */
+@Composable
+private fun KidsRow(
+    kids: KidsAvailabilityState,
+    onAction: (SettingsAction) -> Unit,
+) {
+    val subtitle = if (kids == KidsAvailabilityState.OFFLINE) Res.string.kids_row_offline else Res.string.kids_row_body
+    val enabled = kids != KidsAvailabilityState.CHECKING
+    GroupRow(
+        title = stringResource(Res.string.kids_row),
+        subtitle = stringResource(subtitle),
+        leading = {
+            // O amarelo do Pipo é o inversePrimary do tema Kids; aqui ele é fixo, igual no claro e no escuro.
+            Box(Modifier.size(36.dp).background(PiuPipoYellow, CircleShape), contentAlignment = Alignment.Center) {
+                Image(PiuPipo, contentDescription = null, modifier = Modifier.size(28.dp))
+            }
+        },
+        modifier =
+            Modifier
+                .alpha(
+                    if (enabled) 1f else 0.5f,
+                ).clickable(enabled = enabled, role = Role.Button) { onAction(SettingsAction.OpenKids) },
+    ) { Chevron() }
 }
 
 /**

@@ -1,5 +1,9 @@
 <resources>
     <string name="settings_title">Configurações</string>
+    <string name="section_kids">Para crianças</string>
+    <string name="kids_row">Passarim Kids</string>
+    <string name="kids_row_body">Abre a versão para crianças. Para voltar, um adulto resolve uma conta.</string>
+    <string name="kids_row_offline">Precisa de internet</string>
     <string name="section_appearance">Aparência</string>
     <string name="theme">Tema</string>
     <string name="theme_system">Sistema</string>
