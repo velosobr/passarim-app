@@ -1,8 +1,10 @@
-// Testes do repositório da lista com o MockEngine do Ktor no lugar do BFF.
+// Testes do repositório da lista com o MockEngine do Ktor no lugar do BFF,
+// para o adulto e para o Kids (audience=kids e o mundo da ave).
 
 package com.velosobr.passarim.feature.explore.data
 
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.velosobr.passarim.core.data.MediaUrlRewriter
@@ -10,6 +12,7 @@ import com.velosobr.passarim.core.data.createHttpClient
 import com.velosobr.passarim.core.domain.AppConfig
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.DataError
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.feature.explore.domain.SpeciesPage
@@ -121,5 +124,42 @@ class RemoteExploreRepositoryTest {
                 MockEngine { respond("404 page not found", HttpStatusCode.NotFound, headersOf(HttpHeaders.ContentType, "text/plain")) }
             val result = RemoteExploreRepository(createHttpClient(engine, config), MediaUrlRewriter(config)).list("", null, null, null)
             assertThat(result).isEqualTo(Result.Failure(DataError.Network.ServiceUnavailable))
+        }
+
+    @Test
+    fun `o adulto nao manda audience nem primaryBiome`() =
+        runTest {
+            var url: Url? = null
+            repo { url = it }.list(query = "azul", biome = "cerrado", state = null, cursor = null)
+
+            assertThat(url!!.parameters["audience"]).isNull()
+            assertThat(url!!.parameters["primaryBiome"]).isNull()
+        }
+
+    @Test
+    fun `o Kids manda audience=kids e o codigo do mundo`() =
+        runTest {
+            var url: Url? = null
+            repo { url = it }.list(
+                query = "",
+                biome = null,
+                state = null,
+                cursor = "c1",
+                audience = Journey.KIDS,
+                primaryBiome = Biome.CAATINGA,
+            )
+
+            assertThat(url.toString())
+                .isEqualTo("http://localhost:8080/v1/species?cursor=c1&limit=20&audience=kids&primaryBiome=caatinga")
+        }
+
+    @Test
+    fun `a lista do Kids descarta as aves sem mundo conhecido`() =
+        runTest {
+            val result = repo().list(query = "", biome = null, state = null, cursor = null, audience = Journey.KIDS)
+
+            val page = (result as Result.Success).data
+            assertThat(page.items.map { it.id }).containsExactly("bem-te-vi")
+            assertThat(page.nextCursor).isEqualTo("c2")
         }
 }

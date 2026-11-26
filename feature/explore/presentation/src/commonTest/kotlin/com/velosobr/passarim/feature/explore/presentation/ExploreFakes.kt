@@ -2,6 +2,7 @@
 
 package com.velosobr.passarim.feature.explore.presentation
 
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.FavoritesRepository
@@ -53,6 +54,8 @@ class FakeExploreRepository : ExploreRepository {
         state: String?,
         cursor: String?,
         limit: Int,
+        audience: Journey,
+        primaryBiome: Biome?,
     ): Result<SpeciesPage, DataError.Network> {
         val index = calls.size
         calls += ListCall(query, biome, state, cursor)

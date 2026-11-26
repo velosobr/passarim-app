@@ -5,7 +5,9 @@ package com.velosobr.passarim.feature.explore.data
 
 import com.velosobr.passarim.core.data.MediaUrlRewriter
 import com.velosobr.passarim.core.data.safeCall
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.DataError
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.biomeOf
@@ -54,6 +56,14 @@ internal fun SpeciesPageDto.toDomain(rewriter: MediaUrlRewriter) =
 /**
  * `GET /v1/species`. Parâmetros nulos ficam fora da URL: o `parameter` do Ktor ignora null (o BFF recusa `biome=` vazio).
  * A busca nunca é nula, por isso é a única que precisa do if para ficar fora quando está em branco.
+ *
+ * No Kids vão também `audience=kids` e, na tela de mundo, `primaryBiome=<código>`; o adulto não manda nenhum
+ * dos dois, e a URL dele fica como sempre foi.
+ *
+ * Conferência da resposta do Kids: toda ave com conteúdo Kids tem bioma principal (o catalog grava os dois
+ * juntos), então um item sem ele (ou com um bioma que o app não conhece) quer dizer um BFF que ignorou o
+ * `audience` e mandou a lista do adulto. Esse item é descartado: sem mundo, ele não teria cor nem lugar no
+ * álbum. O cursor segue o do BFF, e a próxima página continua de onde a lista parou.
  */
 class RemoteExploreRepository(
     private val client: HttpClient,
@@ -65,6 +75,8 @@ class RemoteExploreRepository(
         state: String?,
         cursor: String?,
         limit: Int,
+        audience: Journey,
+        primaryBiome: Biome?,
     ): Result<SpeciesPage, DataError.Network> =
         safeCall<SpeciesPageDto> {
             client.get("/v1/species") {
@@ -73,6 +85,11 @@ class RemoteExploreRepository(
                 parameter("state", state)
                 parameter("cursor", cursor)
                 parameter("limit", limit)
+                if (audience == Journey.KIDS) parameter("audience", "kids")
+                parameter("primaryBiome", primaryBiome?.code)
             }
-        }.map { it.toDomain(rewriter) }
+        }.map { dto ->
+            val page = dto.toDomain(rewriter)
+            if (audience == Journey.KIDS) page.copy(items = page.items.filter { it.primaryBiome != null }) else page
+        }
 }
