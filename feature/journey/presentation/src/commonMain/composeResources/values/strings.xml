@@ -1,0 +1,48 @@
+<resources>
+    <!-- Os números por extenso da trava para adultos (NumberInWords.kt). A ordem importa: o índice é o número. -->
+    <string-array name="number_units">
+        <item>zero</item>
+        <item>um</item>
+        <item>dois</item>
+        <item>três</item>
+        <item>quatro</item>
+        <item>cinco</item>
+        <item>seis</item>
+        <item>sete</item>
+        <item>oito</item>
+        <item>nove</item>
+        <item>dez</item>
+        <item>onze</item>
+        <item>doze</item>
+        <item>treze</item>
+        <item>quatorze</item>
+        <item>quinze</item>
+        <item>dezesseis</item>
+        <item>dezessete</item>
+        <item>dezoito</item>
+        <item>dezenove</item>
+    </string-array>
+    <string-array name="number_tens">
+        <item>vinte</item>
+        <item>trinta</item>
+        <item>quarenta</item>
+        <item>cinquenta</item>
+        <item>sessenta</item>
+        <item>setenta</item>
+        <item>oitenta</item>
+        <item>noventa</item>
+    </string-array>
+    <string-array name="number_hundreds">
+        <item>cento</item>
+        <item>duzentos</item>
+        <item>trezentos</item>
+        <item>quatrocentos</item>
+        <item>quinhentos</item>
+        <item>seiscentos</item>
+        <item>setecentos</item>
+        <item>oitocentos</item>
+        <item>novecentos</item>
+    </string-array>
+    <string name="number_exact_hundred">cem</string>
+    <string name="number_and">e</string>
+</resources>
