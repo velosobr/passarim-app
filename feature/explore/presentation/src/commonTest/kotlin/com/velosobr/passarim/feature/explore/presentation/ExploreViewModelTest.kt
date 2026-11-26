@@ -506,9 +506,16 @@ class ExploreViewModelTest {
             assertThat(vm.state.value.phase).isEqualTo(ExplorePhase.Content)
         }
 
-    /** A "Ave do dia" leva a miniatura e o bioma dela, mas nenhuma chave: a foto não viaja de um card que não foi tocado. */
+    /**
+     * A "Ave do dia" leva a miniatura, o bioma e a chave da foto dela ("foto-destaque-<id>"), e não a
+     * do mosaico: a mesma ave costuma estar também no mosaico, e a foto partiria do card errado.
+     */
     private val featuredPreview =
-        DetailPreview(photoKey = null, thumbnailUrl = sampleFeatured.species.thumbnailUrl, biome = sampleFeatured.species.primaryBiome)
+        DetailPreview(
+            photoKey = "foto-destaque-tuiuiu",
+            thumbnailUrl = sampleFeatured.species.thumbnailUrl,
+            biome = sampleFeatured.species.primaryBiome,
+        )
 
     @Test
     fun `tocar na ave do dia abre o detalhe e o canto abre tocando`() =

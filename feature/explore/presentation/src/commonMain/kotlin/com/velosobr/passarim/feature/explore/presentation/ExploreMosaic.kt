@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.passarim.core.presentation.featuredPhotoKey
 import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.feature.explore.presentation.resources.Res
 import com.velosobr.passarim.feature.explore.presentation.resources.featured_badge
@@ -157,6 +158,8 @@ private fun FeaturedCard(
         imageUrl = bird.thumbnailUrl,
         biome = bird.primaryBiome ?: FallbackBiome,
         onClick = { onAction(ExploreAction.OpenFeatured) },
+        // A chave própria da "Ave do dia": a mesma ave pode estar no mosaico, com a chave do mosaico.
+        sharedPhotoKey = featuredPhotoKey(bird.id),
         play =
             if (hasSong) {
                 PiuPlayAction(

@@ -20,6 +20,7 @@ import com.velosobr.passarim.core.domain.onSuccess
 import com.velosobr.passarim.core.presentation.DetailOpening
 import com.velosobr.passarim.core.presentation.DetailPreview
 import com.velosobr.passarim.core.presentation.ScreenError
+import com.velosobr.passarim.core.presentation.featuredPhotoKey
 import com.velosobr.passarim.core.presentation.speciesPhotoKey
 import com.velosobr.passarim.core.presentation.toScreenError
 import com.velosobr.passarim.feature.explore.domain.ExploreRepository
@@ -155,11 +156,12 @@ class ExploreViewModel(
             ExploreAction.OpenFavorites -> eventChannel.trySend(ExploreEvent.NavigateToFavorites)
             is ExploreAction.SelectBiome ->
                 setFilters(biome = action.code.takeIf { it != _state.value.biome }, state = _state.value.state)
-            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay). Sem chave de foto: a mesma ave
-            // costuma estar também no mosaico, e a foto viajaria do card dela, que ninguém tocou.
+            // O canto da "Ave do dia" abre o Detalhe já tocando (autoPlay). A chave da foto é a do card da
+            // "Ave do dia" (featuredPhotoKey), e não a do mosaico, onde a mesma ave costuma estar também.
             ExploreAction.OpenFeatured, ExploreAction.PlayFeatured ->
                 _state.value.featured?.let {
-                    val opening = it.species.opening(photoKey = null, autoPlay = action == ExploreAction.PlayFeatured)
+                    val opening =
+                        it.species.opening(photoKey = featuredPhotoKey(it.species.id), autoPlay = action == ExploreAction.PlayFeatured)
                     eventChannel.trySend(ExploreEvent.NavigateToDetail(opening))
                 }
         }

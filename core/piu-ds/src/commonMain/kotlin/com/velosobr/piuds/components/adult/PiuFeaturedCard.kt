@@ -33,6 +33,7 @@ import coil3.compose.AsyncImage
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.PiuCookieShape
 import com.velosobr.piuds.components.PiuLightAndDarkPreview
+import com.velosobr.piuds.components.piuSharedPhoto
 import com.velosobr.piuds.resources.Res
 import com.velosobr.piuds.resources.ic_pause
 import com.velosobr.piuds.resources.ic_play
@@ -44,7 +45,8 @@ import org.jetbrains.compose.resources.vectorResource
  * O card da "Ave do dia". [badge] é o texto do selo ("AVE DO DIA ·
  * PANTANAL"), já pronto. Sem canto ([play] nulo), o botão some: a ave do
  * dia pode não ter canto numa linha antiga do catalog. O card cresce para caber nomes longos e fonte grande (no mínimo
- * 196 dp, como na prancheta).
+ * 196 dp, como na prancheta). Com [sharedPhotoKey], a foto (o gradiente e a
+ * imagem) viaja até o topo do Detalhe ao tocar no card (veja PiuSharedPhoto.kt).
  */
 @Composable
 fun PiuFeaturedCard(
@@ -56,22 +58,36 @@ fun PiuFeaturedCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     play: PiuPlayAction? = null,
+    sharedPhotoKey: String? = null,
 ) {
     Box(
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 196.dp)
             .clip(RoundedCornerShape(28.dp))
-            .background(
-                PiuTheme.tokens.gradients
-                    .getValue(biome)
-                    .toBrush(),
-            )
             // Role.Button: o leitor de tela diz "botão" depois do nome da ave.
             .clickable(role = Role.Button, onClick = onClick),
     ) {
-        if (imageUrl != null) {
-            AsyncImage(model = imageUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
+        // A camada da foto (o gradiente e a imagem por cima) é a que viaja até o Detalhe; o selo, o
+        // nome e o botão de canto ficam no card.
+        Box(
+            Modifier
+                .matchParentSize()
+                .piuSharedPhoto(sharedPhotoKey, RoundedCornerShape(28.dp))
+                .background(
+                    PiuTheme.tokens.gradients
+                        .getValue(biome)
+                        .toBrush(),
+                ),
+        ) {
+            if (imageUrl != null) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                )
+            }
         }
         // O selo fica no alto, fora do scrim: o fundo dele é a própria cor do scrim, e não o branco
         // translúcido da prancheta, para o texto branco passar no contraste sobre uma foto clara.

@@ -35,8 +35,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
+import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.piuds.components.PiuSharedScope
 import com.velosobr.piuds.components.PiuSharedTransitionLayout
+import com.velosobr.piuds.components.adult.PiuFeaturedCard
 import com.velosobr.piuds.components.piuSharedPhoto
 import com.velosobr.piuds.theme.LocalPiuReduceMotion
 import com.velosobr.piuds.theme.PiuTheme
@@ -60,7 +62,7 @@ class PiuSharedPhotoTest {
      * só a foto compartilhada muda de tamanho no meio da troca.
      */
     @Composable
-    private fun TwoScreens() {
+    private fun TwoScreens(card: @Composable (onOpen: () -> Unit) -> Unit) {
         PiuSharedTransitionLayout {
             AnimatedContent(
                 targetState = detail,
@@ -78,36 +80,40 @@ class PiuSharedPhotoTest {
                                 .testTag("hero"),
                         )
                     } else {
-                        Box(
-                            Modifier
-                                .offset(
-                                    40.dp,
-                                    300.dp,
-                                ).size(100.dp)
-                                .piuSharedPhoto("foto-1")
-                                .background(Color.Red)
-                                .testTag("card")
-                                .clickable {
-                                    detail =
-                                        true
-                                },
-                        )
+                        card { detail = true }
                     }
                 }
             }
         }
     }
 
+    /** O card mais simples: um quadrado vermelho de 100 dp, 300 dp abaixo do topo, com a foto "foto-1". */
+    @Composable
+    private fun PlainCard(onOpen: () -> Unit) {
+        Box(
+            Modifier
+                .offset(40.dp, 300.dp)
+                .size(100.dp)
+                .piuSharedPhoto("foto-1")
+                .background(Color.Red)
+                .testTag("card")
+                .clickable(onClick = onOpen),
+        )
+    }
+
     /**
      * Onde o topo do Detalhe começa (a borda de cima, em pixels), quadro a quadro, depois de tocar
      * no card. O card começa 300 dp abaixo do topo da tela; o topo do Detalhe, no 0.
      */
-    private fun heroTopsAfterOpening(reduceMotion: Boolean): List<Float> {
+    private fun heroTopsAfterOpening(
+        reduceMotion: Boolean = false,
+        card: @Composable (onOpen: () -> Unit) -> Unit = { PlainCard(it) },
+    ): List<Float> {
         val tops = mutableListOf<Float>()
         runComposeUiTest {
             mainClock.autoAdvance = false
             setContent {
-                CompositionLocalProvider(LocalPiuReduceMotion provides reduceMotion) { PiuTheme { TwoScreens() } }
+                CompositionLocalProvider(LocalPiuReduceMotion provides reduceMotion) { PiuTheme { TwoScreens(card) } }
             }
             mainClock.advanceTimeBy(1_000)
             onNodeWithTag("card").performClick()
@@ -124,6 +130,28 @@ class PiuSharedPhotoTest {
         // Em algum quadro, a foto está no meio do caminho entre o card e o topo: ela viajou.
         // No Robolectric a densidade padrão é 1, então pixels e dp coincidem.
         assertThat(heroTopsAfterOpening(reduceMotion = false).any { it > 20 && it < 280 }).isTrue()
+    }
+
+    /**
+     * A "Ave do dia" também participa: o card dela, com a [sharedPhotoKey], é a outra ponta da foto
+     * do topo. O card fica 300 dp abaixo do topo da tela, como o quadrado dos outros testes.
+     */
+    @Test
+    fun `a foto da ave do dia tambem viaja ate o topo do detalhe`() {
+        val tops =
+            heroTopsAfterOpening { onOpen ->
+                PiuFeaturedCard(
+                    badge = "AVE DO DIA",
+                    name = "Tuiuiú",
+                    scientificName = "Jabiru mycteria",
+                    imageUrl = null,
+                    biome = Biome.PANTANAL,
+                    onClick = onOpen,
+                    modifier = Modifier.offset(0.dp, 300.dp).testTag("card"),
+                    sharedPhotoKey = "foto-1",
+                )
+            }
+        assertThat(tops.any { it > 20 && it < 280 }).isTrue()
     }
 
     @Test

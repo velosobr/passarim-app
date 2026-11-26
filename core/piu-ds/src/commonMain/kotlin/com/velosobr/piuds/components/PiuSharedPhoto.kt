@@ -69,7 +69,7 @@ fun PiuSharedScope(
 }
 
 /**
- * Marca a foto com a [key] que a liga à foto da outra tela ("foto-<id>"). Sem chave, sem a camada,
+ * Marca a foto com a [key] que a liga à foto da outra tela ("foto-<id>" ou "foto-destaque-<id>"). Sem chave, sem a camada,
  * sem escopo ou com "reduzir animações", devolve o próprio modificador, sem nada a mais.
  *
  * Usa sharedBounds, e não sharedElement: o card mostra a miniatura e o Detalhe a foto grande
