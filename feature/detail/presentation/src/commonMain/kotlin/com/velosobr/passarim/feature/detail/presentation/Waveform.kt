@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -49,8 +50,19 @@ fun waveformBars(
     progress: Float,
     barCount: Int = WAVEFORM_BARS,
 ): List<WaveformBar> {
-    val playedCount = (progress.coerceIn(0f, 1f) * barCount).toInt()
-    return List(barCount) { index ->
+    val playedCount = playedBarCount(progress, barCount)
+    return waveformHeights(peaks, barCount).mapIndexed { index, height -> WaveformBar(height, played = index < playedCount) }
+}
+
+/**
+ * Só as alturas das [barCount] barras (a parte de waveformBars que depende dos [peaks]). O desenho
+ * as guarda enquanto os picos não mudam, porque o progresso muda a cada quadro e os picos não.
+ */
+fun waveformHeights(
+    peaks: List<Float>,
+    barCount: Int = WAVEFORM_BARS,
+): List<Float> =
+    List(barCount) { index ->
         val peak =
             if (peaks.isEmpty()) {
                 0f
@@ -60,9 +72,14 @@ fun waveformBars(
                 val to = maxOf(from + 1, (index + 1) * peaks.size / barCount)
                 peaks.subList(from, to).max()
             }
-        WaveformBar(height = peak.coerceIn(MIN_BAR_HEIGHT, 1f), played = index < playedCount)
+        peak.coerceIn(MIN_BAR_HEIGHT, 1f)
     }
-}
+
+/** Quantas das [barCount] barras o canto já passou por inteiro, com o [progress] limitado de 0 a 1. */
+fun playedBarCount(
+    progress: Float,
+    barCount: Int = WAVEFORM_BARS,
+): Int = (progress.coerceIn(0f, 1f) * barCount).toInt()
 
 /** A altura do desenho das barras, como na prancheta. */
 private val WaveformDrawingHeight = 32.dp
@@ -78,8 +95,8 @@ private val WaveformTouchHeight = 48.dp
  * espaço entre elas. O [modifier] (com os gestos de tocar e arrastar) vale para a caixa de 48 dp,
  * e não só para o desenho: assim o dedo acerta a forma de onda mesmo um pouco acima ou abaixo
  * dela. Canvas é a área de desenho livre do Compose: o bloco roda a cada quadro em
- * que algo que ele lê muda (aqui, o progresso), e desenhar é barato, então não há nada a guardar
- * entre um quadro e outro. A parte tocada usa [playedColor] (a primária do tema) e o resto
+ * que algo que ele lê muda (aqui, o progresso); as alturas das barras, que só dependem dos picos,
+ * ficam guardadas de um quadro para o outro. A parte tocada usa [playedColor] (a primária do tema) e o resto
  * [idleColor] (outlineVariant, o cinza das bordas).
  */
 @Composable
@@ -103,15 +120,18 @@ private fun WaveformBars(
     playedColor: Color,
     idleColor: Color,
 ) {
+    // As alturas só mudam com os picos: remember as guarda entre as recomposições, e o desenho de cada
+    // quadro só conta as barras tocadas.
+    val heights = remember(peaks) { waveformHeights(peaks) }
     Canvas(Modifier.fillMaxWidth().height(WaveformDrawingHeight)) {
-        val bars = waveformBars(peaks, progress)
+        val playedCount = playedBarCount(progress, heights.size)
         val gap = 2.dp.toPx()
-        val barWidth = ((size.width - gap * (bars.size - 1)) / bars.size).coerceAtLeast(1f)
+        val barWidth = ((size.width - gap * (heights.size - 1)) / heights.size).coerceAtLeast(1f)
         val radius = CornerRadius(barWidth / 2)
-        bars.forEachIndexed { index, bar ->
-            val barHeight = size.height * bar.height
+        heights.forEachIndexed { index, height ->
+            val barHeight = size.height * height
             drawRoundRect(
-                color = if (bar.played) playedColor else idleColor,
+                color = if (index < playedCount) playedColor else idleColor,
                 topLeft = Offset(index * (barWidth + gap), (size.height - barHeight) / 2),
                 size = Size(barWidth, barHeight),
                 cornerRadius = radius,

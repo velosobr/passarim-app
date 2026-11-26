@@ -89,4 +89,17 @@ class WaveformTest {
         assertThat(bars.count { it.height == 0.2f }).isEqualTo(WAVEFORM_BARS / 2)
         assertThat(bars.count { it.height == 0.8f }).isEqualTo(WAVEFORM_BARS / 2)
     }
+
+    /**
+     * As alturas dependem só dos picos, e o desenho as guarda entre um quadro e outro; a cada quadro
+     * só se conta quantas barras já tocaram. As duas contas juntas dão as mesmas barras de waveformBars.
+     */
+    @Test
+    fun `alturas e barras tocadas separadas dao as mesmas barras`() {
+        val heights = waveformHeights(peaks)
+        val played = playedBarCount(progress = 0.5f, barCount = heights.size)
+        assertThat(heights.mapIndexed { index, height -> WaveformBar(height, index < played) })
+            .isEqualTo(waveformBars(peaks, progress = 0.5f))
+        assertThat(played).isEqualTo(32)
+    }
 }
