@@ -26,7 +26,7 @@ import io.ktor.client.request.parameter
  *   daria a mesma recusa e a tela mostraria um "Tentar de novo" inútil.
  *
  * De propósito, não passa pelo cache em memória do RemoteFiltersRepository:
- * aquele cache guarda os filtros do adulto (sem `audience`), e a resposta
+ * aquele cache dura o processo inteiro, e a resposta
  * daqui tem de ser a de agora, a cada abertura da Escolha ou das Configurações.
  */
 class RemoteKidsAvailabilityRepository(

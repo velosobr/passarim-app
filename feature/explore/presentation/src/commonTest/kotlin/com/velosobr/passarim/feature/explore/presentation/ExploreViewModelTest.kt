@@ -436,6 +436,14 @@ class ExploreViewModelTest {
         }
 
     @Test
+    fun `os filtros do Explorar sao os do adulto`() =
+        runTest {
+            viewModel()
+
+            assertThat(filters.audiences).containsExactly(Journey.ADULT)
+        }
+
+    @Test
     fun `os favoritos do Explorar sao sempre os do adulto`() =
         runTest {
             val vm = viewModel()

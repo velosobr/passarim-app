@@ -71,14 +71,16 @@ val sampleFilters =
         states = listOf(StateFilter("RJ", 23), StateFilter("SP", 29), StateFilter("AC", 3)),
     )
 
-/** Repositório falso de filtros, que responde o resultado configurado e conta as chamadas. */
+/** Repositório falso de filtros, que responde o resultado configurado, conta as chamadas e guarda a audiência de cada uma. */
 class FakeFiltersRepository(
     var next: Result<Filters, DataError.Network> = Result.Success(sampleFilters),
 ) : FiltersRepository {
     var calls = 0
+    val audiences = mutableListOf<Journey>()
 
-    override suspend fun get(): Result<Filters, DataError.Network> {
+    override suspend fun getFilters(audience: Journey): Result<Filters, DataError.Network> {
         calls++
+        audiences += audience
         return next
     }
 }

@@ -1,14 +1,17 @@
-// Testes do repositório de filtros: a leitura do JSON e o cache em memória.
+// Testes do repositório de filtros: a leitura do JSON e o cache em memória,
+// um por audiência (adulto e Kids).
 
 package com.velosobr.passarim.feature.explore.data
 
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.data.createHttpClient
 import com.velosobr.passarim.core.domain.AppConfig
 import com.velosobr.passarim.core.domain.BiomeFilter
 import com.velosobr.passarim.core.domain.DataError
 import com.velosobr.passarim.core.domain.Filters
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.StateFilter
 import io.ktor.client.engine.mock.MockEngine
@@ -49,7 +52,7 @@ class RemoteFiltersRepositoryTest {
                     seenMethod = request.method
                     ok()
                 }
-            val result = RemoteFiltersRepository(createHttpClient(engine, config)).get()
+            val result = RemoteFiltersRepository(createHttpClient(engine, config)).getFilters()
 
             assertThat(seenUrl).isEqualTo("http://localhost:8080/v1/filters")
             assertThat(seenMethod).isEqualTo(HttpMethod.Get)
@@ -65,7 +68,7 @@ class RemoteFiltersRepositoryTest {
                  "primaryBiomes":[{"code":"cerrado","label":"Cerrado","speciesCount":7},{"code":"pampa","label":"Pampa","speciesCount":4}]}
                 """.trimIndent()
             val engine = MockEngine { respond(withPrimary, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }
-            val result = RemoteFiltersRepository(createHttpClient(engine, config)).get() as Result.Success<Filters>
+            val result = RemoteFiltersRepository(createHttpClient(engine, config)).getFilters() as Result.Success<Filters>
             assertThat(result.data.primaryBiomes).isEqualTo(listOf(BiomeFilter("cerrado", "Cerrado", 7), BiomeFilter("pampa", "Pampa", 4)))
             assertThat(result.data.speciesTotal).isEqualTo(11)
         }
@@ -73,7 +76,7 @@ class RemoteFiltersRepositoryTest {
     @Test
     fun `propaga o erro de servidor`() =
         runTest {
-            val result = RemoteFiltersRepository(createHttpClient(MockEngine { down() }, config)).get()
+            val result = RemoteFiltersRepository(createHttpClient(MockEngine { down() }, config)).getFilters()
             assertThat(result).isEqualTo(Result.Failure(DataError.Network.ServiceUnavailable))
         }
 
@@ -92,8 +95,8 @@ class RemoteFiltersRepositoryTest {
                     ),
                 )
 
-            repo.get()
-            val second = repo.get()
+            repo.getFilters()
+            val second = repo.getFilters()
 
             assertThat(calls).isEqualTo(1)
             assertThat(second).isEqualTo(Result.Success(expected))
@@ -105,10 +108,51 @@ class RemoteFiltersRepositoryTest {
             var calls = 0
             val repo = RemoteFiltersRepository(createHttpClient(MockEngine { if (calls++ == 0) down() else ok() }, config))
 
-            repo.get()
-            val second = repo.get()
+            repo.getFilters()
+            val second = repo.getFilters()
 
             assertThat(calls).isEqualTo(2)
             assertThat(second).isEqualTo(Result.Success(expected))
+        }
+
+    @Test
+    fun `o Kids pede audience=kids`() =
+        runTest {
+            var seenUrl = ""
+            val engine =
+                MockEngine { request ->
+                    seenUrl = request.url.toString()
+                    ok()
+                }
+
+            RemoteFiltersRepository(createHttpClient(engine, config)).getFilters(Journey.KIDS)
+
+            assertThat(seenUrl).isEqualTo("http://localhost:8080/v1/filters?audience=kids")
+        }
+
+    @Test
+    fun `cada audiencia tem o proprio cache em memoria`() =
+        runTest {
+            val urls = mutableListOf<String>()
+            val repo =
+                RemoteFiltersRepository(
+                    createHttpClient(
+                        MockEngine { request ->
+                            urls += request.url.toString()
+                            ok()
+                        },
+                        config,
+                    ),
+                )
+
+            repo.getFilters(Journey.ADULT)
+            repo.getFilters(Journey.KIDS)
+            repo.getFilters(Journey.ADULT)
+            repo.getFilters(Journey.KIDS)
+
+            assertThat(urls).containsExactly(
+                "http://localhost:8080/v1/filters",
+                "http://localhost:8080/v1/filters?audience=kids",
+            )
         }
 }

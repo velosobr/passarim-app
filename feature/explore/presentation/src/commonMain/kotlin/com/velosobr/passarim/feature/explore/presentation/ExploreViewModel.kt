@@ -305,7 +305,7 @@ class ExploreViewModel(
         _state.update { it.copy(filters = FiltersPhase.Loading) }
         viewModelScope.launch {
             filtersRepository
-                .get()
+                .getFilters(Journey.ADULT)
                 .onSuccess { f -> _state.update { it.copy(filters = FiltersPhase.Loaded(f)) } }
                 .onFailure { _state.update { it.copy(filters = FiltersPhase.Error) } }
         }
