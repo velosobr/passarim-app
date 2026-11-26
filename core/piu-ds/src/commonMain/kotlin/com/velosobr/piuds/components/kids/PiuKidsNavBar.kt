@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -143,12 +144,17 @@ private fun RowScope.Tabs(
     }
 }
 
-/** O botão do fim da barra: o visual de item inativo (ícone e rótulo pequeno) com o alvo de 56 dp. */
+/**
+ * O botão do fim da barra: o visual de item inativo (ícone e rótulo pequeno) com o alvo de 56 dp. A
+ * largura vai de 72 a 96 dp (prancheta: 84): com fonte grande, o rótulo encolhe (OneLineLabel) em
+ * vez de o botão empurrar as abas e cortar os nomes delas.
+ */
 @Composable
 private fun ActionButton(action: PiuKidsNavAction) {
     val colors = MaterialTheme.colorScheme
     Column(
         Modifier
+            .widthIn(max = 96.dp)
             .defaultMinSize(minWidth = 72.dp, minHeight = PiuKidsDimens.touchTarget)
             .clip(RoundedCornerShape(28.dp))
             .clickable(role = Role.Button, onClick = action.onClick)
