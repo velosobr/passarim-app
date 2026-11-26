@@ -59,3 +59,11 @@ data object AboutRoute
 /** As licenças das bibliotecas, aberta pelo Sobre. */
 @Serializable
 data object LicensesRoute
+
+/** Camada 1 do Kids: a casca com a barra do Kids (KidsTabsScreen). É o início do NavHost do Kids. */
+@Serializable
+data object KidsTabsRoute
+
+/** A trava para adultos, empilhada sobre a casca do Kids; o voltar (do botão ou do sistema) volta à casca. */
+@Serializable
+data object KidsGateRoute

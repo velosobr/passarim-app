@@ -3,4 +3,8 @@
     <string name="tab_explore">Explorar</string>
     <string name="tab_favorites">Favoritos</string>
     <string name="tab_settings">Configurações</string>
+    <string name="kids_tab_explore">Explorar</string>
+    <string name="kids_tab_album">Álbum</string>
+    <string name="kids_for_adults">Para adultos</string>
+    <string name="kids_coming_soon">Logo, logo tem aves aqui!</string>
 </resources>
