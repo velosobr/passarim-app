@@ -5,6 +5,7 @@ package com.velosobr.passarim.feature.favorites.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.Journey
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * Observa os favoritos do banco e os transforma no estado da tela. stateIn
+ * Observa os favoritos do adulto (Journey.ADULT) no banco e os transforma no
+ * estado da tela; o álbum do Kids fica na mesma tabela, mas nunca aparece aqui. stateIn
  * converte o Flow num StateFlow com valor inicial (Loading); Eagerly começa a
  * coletar já, mesmo antes de a tela observar.
  */
@@ -24,7 +26,7 @@ class FavoritesViewModel(
 ) : ViewModel() {
     val state: StateFlow<FavoritesState> =
         favorites
-            .observeAll()
+            .observeAll(Journey.ADULT)
             .map { items -> if (items.isEmpty()) FavoritesState.Empty else FavoritesState.Content(items) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, FavoritesState.Loading)
 
@@ -35,7 +37,7 @@ class FavoritesViewModel(
     fun onAction(action: FavoritesAction) {
         when (action) {
             is FavoritesAction.OpenDetail -> eventChannel.trySend(FavoritesEvent.NavigateToDetail(action.id))
-            is FavoritesAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary) }
+            is FavoritesAction.ToggleFavorite -> viewModelScope.launch { favorites.toggle(action.summary, Journey.ADULT) }
             FavoritesAction.ExploreClick -> eventChannel.trySend(FavoritesEvent.NavigateToExplore)
         }
     }

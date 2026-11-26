@@ -7,6 +7,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.FavoritesRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,24 +29,38 @@ private val tucano = SpeciesSummary("ramphastos-toco", "Tucano-toco", "Ramphasto
 
 /**
  * Favoritos falsos num StateFlow. Começar com null simula o banco ainda sem
- * resposta (filterNotNull só deixa passar a lista quando ela chega).
+ * resposta (filterNotNull só deixa passar a lista quando ela chega). [audiences]
+ * guarda a audiência de cada chamada: a aba Favoritos é do adulto e só usa ADULT.
  */
 private class FakeFavoritesRepository(
     initial: List<SpeciesSummary>?,
 ) : FavoritesRepository {
     val favorites = MutableStateFlow(initial)
     val toggled = mutableListOf<SpeciesSummary>()
+    val audiences = mutableListOf<Journey>()
 
-    override fun observeIds(): Flow<Set<String>> = observeAll().map { list -> list.map { it.id }.toSet() }
+    override fun observeIds(audience: Journey): Flow<Set<String>> = observeAll(audience).map { list -> list.map { it.id }.toSet() }
 
-    override fun observeAll(): Flow<List<SpeciesSummary>> = favorites.filterNotNull()
+    override fun observeAll(audience: Journey): Flow<List<SpeciesSummary>> {
+        audiences += audience
+        return favorites.filterNotNull()
+    }
 
-    override suspend fun toggle(summary: SpeciesSummary) {
+    override suspend fun toggle(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
         toggled += summary
         favorites.value = favorites.value.orEmpty().filterNot { it.id == summary.id }
     }
 
-    override suspend fun refresh(summary: SpeciesSummary) = Unit
+    override suspend fun refresh(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -88,6 +103,16 @@ class FavoritesViewModelTest {
         vm.onAction(FavoritesAction.ToggleFavorite(arara))
         assertThat(vm.state.value).isEqualTo(FavoritesState.Empty)
         assertThat(repository.toggled).containsExactly(tucano, arara)
+    }
+
+    @Test
+    fun `a aba Favoritos usa so os favoritos do adulto`() {
+        val repository = FakeFavoritesRepository(initial = listOf(tucano))
+        val vm = FavoritesViewModel(repository)
+
+        vm.onAction(FavoritesAction.ToggleFavorite(tucano))
+
+        assertThat(repository.audiences).containsExactly(Journey.ADULT, Journey.ADULT)
     }
 
     @Test

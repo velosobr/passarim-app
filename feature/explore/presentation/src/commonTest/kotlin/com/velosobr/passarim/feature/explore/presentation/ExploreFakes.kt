@@ -9,6 +9,7 @@ import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FeaturedSpecies
 import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Result
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.domain.StateFilter
@@ -79,19 +80,38 @@ class FakeFiltersRepository(
     }
 }
 
-/** Favoritos falsos, em memória. */
+/**
+ * Favoritos falsos, em memória, só do adulto: o Explorar do adulto nunca deve pedir os do Kids.
+ * [audiences] guarda a audiência de cada chamada, para o teste conferir que todas foram ADULT.
+ */
 class FakeFavoritesRepository : FavoritesRepository {
     val ids = MutableStateFlow<Set<String>>(emptySet())
+    val audiences = mutableListOf<Journey>()
 
-    override fun observeIds(): Flow<Set<String>> = ids
+    override fun observeIds(audience: Journey): Flow<Set<String>> {
+        audiences += audience
+        return ids
+    }
 
-    override fun observeAll(): Flow<List<SpeciesSummary>> = flowOf(emptyList())
+    override fun observeAll(audience: Journey): Flow<List<SpeciesSummary>> {
+        audiences += audience
+        return flowOf(emptyList())
+    }
 
-    override suspend fun toggle(summary: SpeciesSummary) {
+    override suspend fun toggle(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
         ids.value = if (summary.id in ids.value) ids.value - summary.id else ids.value + summary.id
     }
 
-    override suspend fun refresh(summary: SpeciesSummary) = Unit
+    override suspend fun refresh(
+        summary: SpeciesSummary,
+        audience: Journey,
+    ) {
+        audiences += audience
+    }
 }
 
 /** sampleFeatured é uma "Ave do dia" de exemplo, com canto. */
