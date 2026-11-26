@@ -18,6 +18,7 @@ import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertWidthIsAtLeast
+import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -29,6 +30,7 @@ import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
 import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.piuds.components.PiuNavItem
+import com.velosobr.piuds.components.kids.PiuKidsNavAction
 import com.velosobr.piuds.components.kids.PiuKidsNavBar
 import com.velosobr.piuds.components.kids.PiuMissingSticker
 import com.velosobr.piuds.components.kids.PiuPipo
@@ -109,5 +111,36 @@ class PiuKidsSemanticsTest {
                 .assertWidthIsAtLeast(56.dp)
                 .performClick()
             assertThat(chosen).isEqualTo(1)
+        }
+
+    /** O grupo de abas: o nó que o leitor de tela anuncia como "lista de abas". */
+    private val isTabGroup = SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup)
+
+    @Test
+    fun `Para adultos e um botao de 56 dp fora do grupo de abas`() =
+        runComposeUiTest {
+            var adults = 0
+            var chosen = -1
+            val items = listOf(PiuNavItem(PiuPipo, "Explorar"), PiuNavItem(PiuPipo, "Álbum"))
+            setContent {
+                Kids {
+                    PiuKidsNavBar(
+                        items,
+                        selected = 0,
+                        onSelect = { chosen = it },
+                        action = PiuKidsNavAction(PiuPipo, "Para adultos", onClick = { adults++ }),
+                    )
+                }
+            }
+            onNodeWithText("Para adultos")
+                .assert(hasRole(Role.Button))
+                .assertHeightIsAtLeast(56.dp)
+                .assertWidthIsAtLeast(56.dp)
+                .performClick()
+            assertThat(adults).isEqualTo(1)
+            assertThat(chosen).isEqualTo(-1)
+            onNode(isTabGroup and hasAnyDescendant(hasText("Explorar"))).assertExists()
+            onNode(isTabGroup and hasAnyDescendant(hasText("Para adultos"))).assertDoesNotExist()
+            onNodeWithText("Álbum").assert(hasRole(Role.Tab))
         }
 }
