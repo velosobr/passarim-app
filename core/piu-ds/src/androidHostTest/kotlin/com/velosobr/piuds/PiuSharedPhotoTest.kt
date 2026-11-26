@@ -159,10 +159,16 @@ class PiuSharedPhotoTest {
         assertThat(heroTopsAfterOpening(reduceMotion = true).any { it > 20 && it < 280 }).isFalse()
     }
 
+    /**
+     * Fora da camada de transição (prévias e snapshots), piuSharedPhoto devolve o próprio
+     * modificador que recebeu, sem nada a mais: a foto é desenhada como se ele não existisse. Medir
+     * o tamanho não bastaria, porque um sharedBounds sem transição também mede o mesmo.
+     */
     @Test
-    fun `sem a camada de transicao a foto fica no lugar dela`() =
+    fun `sem a camada de transicao o modificador nao acrescenta nada`() =
         runComposeUiTest {
-            setContent { PiuTheme { Box(Modifier.size(100.dp).piuSharedPhoto("foto-1").testTag("solo")) } }
-            assertThat(onNodeWithTag("solo").fetchSemanticsNode().boundsInRoot.width).isEqualTo(100f)
+            var marked: Modifier? = null
+            setContent { PiuTheme { marked = Modifier.piuSharedPhoto("foto-1") } }
+            assertThat(marked).isEqualTo(Modifier)
         }
 }
