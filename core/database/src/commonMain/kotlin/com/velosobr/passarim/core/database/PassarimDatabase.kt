@@ -35,6 +35,9 @@ import androidx.room.RoomDatabaseConstructor
 abstract class PassarimDatabase : RoomDatabase() {
     /** O DAO dos favoritos; o Room gera a implementação. */
     abstract fun favoriteDao(): FavoriteDao
+
+    /** O DAO da contagem de aves de cada mundo do Kids. */
+    abstract fun kidsWorldCountDao(): KidsWorldCountDao
 }
 
 /**
