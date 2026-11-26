@@ -14,15 +14,22 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.velosobr.passarim.core.domain.Biome
+import com.velosobr.passarim.core.domain.BiomeFilter
+import com.velosobr.passarim.core.domain.Filters
 import com.velosobr.passarim.core.domain.SpeciesSummary
 import com.velosobr.passarim.core.presentation.ScreenError
 import com.velosobr.piuds.theme.PiuTheme
@@ -96,5 +103,38 @@ class ExploreScrollTest {
             onNode(hasSetTextAction()).performTextInput("ara")
             onNode(hasSetTextAction()).assertIsFocused()
             onNode(hasText("ara")).assertIsDisplayed()
+        }
+
+    /** Prancheta: 18 dp entre o título da tela e a primeira seção (a busca), sem a contagem. */
+    @Test
+    fun `o titulo fica a 18 dp da busca`() =
+        runComposeUiTest {
+            setContent { PiuTheme { ExploreScreen(ExploreState(items = birds, phase = ExplorePhase.Content), onAction = {}) } }
+            val title = onNode(hasText("Explorar") and isHeading()).getBoundsInRoot()
+            val search = onNode(hasSetTextAction()).getBoundsInRoot()
+            assertThat(search.top - title.bottom).isEqualTo(18.dp)
+        }
+
+    /** Filtros com a contagem por bioma principal: 41 aves no catálogo. */
+    private val filtersWith41Birds =
+        Filters(biomes = emptyList(), states = emptyList(), primaryBiomes = listOf(BiomeFilter("cerrado", "Cerrado", 41)))
+
+    /** Com a contagem de aves embaixo do título, ela fica colada nele, e a busca a 18 dp dela. */
+    @Test
+    fun `com a contagem a busca fica a 18 dp dela e a contagem colada no titulo`() =
+        runComposeUiTest {
+            setContent {
+                PiuTheme {
+                    ExploreScreen(
+                        ExploreState(items = birds, phase = ExplorePhase.Content, filters = FiltersPhase.Loaded(filtersWith41Birds)),
+                        onAction = {},
+                    )
+                }
+            }
+            val title = onNode(hasText("Explorar") and isHeading()).getBoundsInRoot()
+            val count = onNodeWithText("41 aves").getBoundsInRoot()
+            val search = onNode(hasSetTextAction()).getBoundsInRoot()
+            assertThat(count.top - title.bottom).isEqualTo(0.dp)
+            assertThat(search.top - count.bottom).isEqualTo(18.dp)
         }
 }

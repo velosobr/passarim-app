@@ -34,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.velosobr.passarim.core.domain.biomeOf
 import com.velosobr.passarim.core.presentation.ScreenError
@@ -58,7 +60,6 @@ import com.velosobr.passarim.feature.explore.presentation.resources.search_place
 import com.velosobr.passarim.feature.explore.presentation.resources.see_favorites
 import com.velosobr.passarim.feature.explore.presentation.resources.species_count
 import com.velosobr.piuds.components.PiuFilterChip
-import com.velosobr.piuds.components.PiuScreenTitle
 import com.velosobr.piuds.components.PiuSearchField
 import com.velosobr.piuds.components.PiuStateScreen
 import com.velosobr.piuds.components.StateTone
@@ -145,14 +146,27 @@ fun ExploreScreen(
     }
 }
 
-/** O título da tela e, quando os filtros já chegaram, o total de aves do catálogo. */
+/** O espaço a mais embaixo do cabeçalho: somado aos 12 dp entre os itens da grade, dá os 18 dp da prancheta até a busca. */
+private val HeaderBottomSpace = 6.dp
+
+/**
+ * O título da tela e, quando os filtros já chegaram, o total de aves do catálogo, colado embaixo
+ * dele. O título tem o estilo do PiuScreenTitle, mas sem os 8 dp que ele põe embaixo por dentro: o
+ * espaço até a busca é só o [HeaderBottomSpace] mais o espaço entre os itens da grade.
+ */
 @Composable
 private fun Header(
     state: ExploreState,
     modifier: Modifier,
 ) {
-    Column(modifier) {
-        PiuScreenTitle(stringResource(Res.string.explore_title), Modifier.padding(bottom = 0.dp))
+    Column(modifier.padding(bottom = HeaderBottomSpace)) {
+        Text(
+            stringResource(Res.string.explore_title),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            // heading(): o leitor de tela anuncia o título como cabeçalho e deixa pular até ele.
+            modifier = Modifier.padding(start = PiuDimens.screenMargin, top = 24.dp, end = PiuDimens.screenMargin).semantics { heading() },
+        )
         state.speciesTotal?.let { total ->
             Text(
                 stringResource(Res.string.species_count, total),
