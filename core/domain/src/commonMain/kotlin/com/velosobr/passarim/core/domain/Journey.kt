@@ -1,6 +1,6 @@
 // A jornada do app: Passarim (adulto) ou Passarim Kids. O tema escolhe a
-// variante do PiuDS por ela. Gravar e trocar a jornada é da frente D; aqui
-// é só o tipo.
+// variante do PiuDS por ela, e a escolha fica gravada nas preferências
+// (Settings.journey, no Settings.kt).
 
 package com.velosobr.passarim.core.domain
 

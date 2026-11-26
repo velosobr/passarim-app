@@ -3,6 +3,7 @@
 package com.velosobr.passarim.feature.settings.presentation
 
 import com.velosobr.passarim.core.domain.ImageCacheCleaner
+import com.velosobr.passarim.core.domain.Journey
 import com.velosobr.passarim.core.domain.Settings
 import com.velosobr.passarim.core.domain.SettingsRepository
 import com.velosobr.passarim.core.domain.ThemeMode
@@ -24,6 +25,8 @@ class FakeSettingsRepository(
     override suspend fun setDynamicColors(enabled: Boolean) = settings.update { it.copy(dynamicColors = enabled) }
 
     override suspend fun setAutoPlay(enabled: Boolean) = settings.update { it.copy(autoPlay = enabled) }
+
+    override suspend fun setJourney(journey: Journey) = settings.update { it.copy(journey = journey) }
 }
 
 /** Limpador falso: conta as limpezas e pode segurar a limpeza no gate até o teste liberar. */

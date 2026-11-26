@@ -11,12 +11,16 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 /**
  * As preferências, com os valores padrão de quem acabou de instalar o app.
  * [dynamicColors] usa as cores do papel de parede (Android 12+); [autoPlay]
- * toca o canto ao abrir uma ave.
+ * toca o canto ao abrir uma ave. [journey] é a última jornada escolhida;
+ * nula quer dizer primeira abertura, e o app mostra a Escolha (frente D).
+ * O "?" no tipo diz que o valor pode ser null, e o Kotlin obriga quem lê a
+ * tratar esse caso.
  */
 data class Settings(
     val theme: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColors: Boolean = false,
     val autoPlay: Boolean = false,
+    val journey: Journey? = null,
 )
 
 /**
@@ -31,4 +35,11 @@ interface SettingsRepository {
     suspend fun setDynamicColors(enabled: Boolean)
 
     suspend fun setAutoPlay(enabled: Boolean)
+
+    /**
+     * Grava a jornada escolhida. Não há como voltar para null: depois da
+     * primeira escolha, o app sempre abre numa jornada. Trocar de jornada não
+     * mexe no tema nem na reprodução automática do adulto.
+     */
+    suspend fun setJourney(journey: Journey)
 }

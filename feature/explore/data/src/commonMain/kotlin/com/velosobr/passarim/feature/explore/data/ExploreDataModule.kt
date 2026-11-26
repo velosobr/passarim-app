@@ -1,16 +1,21 @@
-// Registro dos repositórios do Explorar no Koin.
+// Registro dos repositórios do Explorar (e da checagem do Kids) no Koin.
 
 package com.velosobr.passarim.feature.explore.data
 
 import com.velosobr.passarim.core.domain.FeaturedRepository
 import com.velosobr.passarim.core.domain.FiltersRepository
+import com.velosobr.passarim.core.domain.KidsAvailabilityRepository
 import com.velosobr.passarim.feature.explore.domain.ExploreRepository
 import org.koin.dsl.module
 
-/** Repositórios de Explorar (a lista, os filtros e a "Ave do dia"). O `HttpClient` e o `MediaUrlRewriter` vêm do `coreDataModule`. */
+/**
+ * Repositórios de Explorar (a lista, os filtros e a "Ave do dia") e a checagem do Passarim Kids, que usa o mesmo
+ * `/v1/filters`. O `HttpClient` e o `MediaUrlRewriter` vêm do `coreDataModule`.
+ */
 val exploreDataModule =
     module {
         single<ExploreRepository> { RemoteExploreRepository(get(), get()) }
         single<FiltersRepository> { RemoteFiltersRepository(get()) }
         single<FeaturedRepository> { RemoteFeaturedRepository(get(), get()) }
+        single<KidsAvailabilityRepository> { RemoteKidsAvailabilityRepository(get()) }
     }
